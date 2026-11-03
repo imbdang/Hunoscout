@@ -45,22 +45,29 @@ class Resolved:
         rec = self.files.get(edge.file, {}).get("edges", {}).get(edge.id)
         return rec if rec and rec.get("sig") == edge.sig else None
 
-    def put(self, edge: Edge, xy: tuple[int, int] | None, cost_ms: int, content_y: int | None = None) -> None:
+    def put(self, edge: Edge, xy: tuple[int, int] | None, cost_ms: int, content_y: int | None = None,
+            dy: int | None = None) -> None:
         """Ghi một cạnh và lưu file ngay (discovery bị ngắt thì không mất phần đã làm).
 
         content_y: nút nằm trong vùng cuộn → vị trí trong nội dung (y trên màn + độ cuộn lúc đo);
-        khi đó xy chỉ đúng ở độ cuộn đã đo, lúc chạy phải dùng reach() + content_y.
+        khi đó xy chỉ đúng ở độ cuộn đã đo, lúc chạy dùng content_y − độ cuộn hiện tại + dy (tâm − mép trên).
         """
         doc = self.files.setdefault(edge.file, {"resolved_for": self.want, "edges": {}})
         doc["edges"][edge.id] = {
             "xy": list(xy) if xy else None,
             **({"content_y": content_y} if content_y is not None else {}),
+            **({"dy": dy} if dy is not None else {}),
             "cost_ms": cost_ms,
             "sig": edge.sig,
             "verified": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         }
         edge.cost_ms = cost_ms
         self._save(edge.file)
+
+    def forget(self, edge: Edge) -> None:
+        """Bỏ toạ độ đã học của cạnh (vd ô thiết bị đổi chỗ) — lần đi sau học lại."""
+        if self.files.get(edge.file, {}).get("edges", {}).pop(edge.id, None) is not None:
+            self._save(edge.file)
 
     def get_anchor(self, node: Node) -> dict | None:
         """Anchor đã học của node: {"text", "band": [top, bottom]}, hoặc None nếu chưa học / pattern đổi."""

@@ -1,0 +1,25 @@
+{
+  "root_type": "atmwifiv2",
+  "product": "Aptomat Wi-Fi v2",
+  "status": "draft",
+  "source": "khám trên 2fc3878f ngày 2026-11-03 (thiết bị 'Aptomat'): hold ô thiết bị → 'Chi tiết thiết bị' (1 màn, không phải loại 2 màn)",
+  "entry": "infoDevice",
+  "nodes": {
+    "infoDevice": {
+      "route": "infoDevice",
+      "param": "device",
+      "anchor": {"any": [{"key": "detailDevice"}, {"text": "{device.name}"}]},
+      "anchors": [["detailDevice", "renameDevice", "statusPower", "generalInformation"]],
+      "check": "{device.name}",
+      "scroll": {"ref": {"key": "renameDevice"}},
+      "note_anchors": "Back từ màn con giữ nguyên độ cuộn → đầu (detailDevice/renameDevice), giữa (statusPower), cuối (generalInformation) đều phải nhận được; chỉ 2 mốc đầu trang thì Back từ Thông tin chung báo lạc (~18 s đi lại từ phòng)",
+      "note": "trang cuộn (ScrollView 293–2664). Đầu trang: tên + '1 kWh', Đổi tên, Phòng, Chia sẻ, Hẹn giờ, Liên kết QR, Thêm lối tắt, Trạng thái khi cấp điện, Khoá điều khiển, Chế độ sửa chữa an toàn, Lặp tuần hoàn, Lịch sử, Cài đặt ngưỡng, Cài đặt mức giá tiền điện, Ngày chốt số điện; Thông tin chung nằm dưới mép màn.",
+      "controls": {
+        "back":         {"gesture": "back", "kind": "nav", "to": "@back"},
+        "general_info": {"target": {"key": "generalInformation"}, "kind": "nav", "to": "feature:general_info", "route": "infoDeviceCommonView",
+                         "note": "dưới mép màn lúc mới vào → phải cuộn"},
+        "rows":         {"kind": "unknown", "note": "các dòng còn lại (share/timer/cycle/history dùng chung feature với swinputv2, ngưỡng/giá điện/ngày chốt riêng ATM) chưa nối cạnh — chưa khám"}
+      }
+    }
+  }
+}

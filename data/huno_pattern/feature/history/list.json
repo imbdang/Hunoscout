@@ -1,0 +1,11 @@
+{
+  "entry": true,
+  "route": "KEY_NAME_SWITCH_HISTORY",
+  "source": "khám trên 2fc3878f ngày 2026-11-03",
+  "anchor": {"key": ["doorHistory", "history"], "suffix": " {device.name}"},
+  "anchors": [{"key": ["doorHistory", "history"], "suffix": " {device.name}"}],
+  "note": "title ghép 'Lịch sử ' + tên. Danh sách sự kiện theo ngày (desc '<nội dung>, <thời gian>'), chỉ đọc.",
+  "controls": {
+    "back": {"gesture": "back", "kind": "nav", "to": "@back"}
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "route": "EditAlarmNew",
+  "source": "khám trên 2fc3878f ngày 2026-11-03",
+  "anchor": {"key": ["addAlarm", "addTimer"], "suffix": " {device.name}"},
+  "anchors": [{"key": ["addAlarm", "addTimer"], "suffix": " {device.name}"}, "timerType"],
+  "note": "title ghép 'Thêm hẹn giờ ' + tên. Loại hẹn giờ / giờ:phút / Hành động / chạy sau khi online / Chế độ lặp: trạng thái form. Không có field pin AC/DC (Wallpad timer/swinputv2.md).",
+  "danger": ["nút 'Lưu lại': tạo hẹn giờ thật (POST v3/alarm/addalarm)"],
+  "controls": {
+    "back":        {"gesture": "back", "kind": "nav", "to": "@back", "note": "Back hệ thống về list, không hỏi xác nhận (thử 2026-11-03)"},
+    "type":        {"kind": "form", "note": "dòng 'Thời gian' (desc 'Thời gian, ..') dưới 'Loại hẹn giờ' (timerType) — mở chọn loại; giờ:phút bên dưới (timeSelect)"},
+    "action":      {"kind": "form", "note": "dòng 'BẬT' dưới 'Hành động' — chọn Bật/Tắt/Khoá trẻ em"},
+    "run_online":  {"target": {"key": "runTimerWhenReconnected"}, "kind": "form", "note": "công tắc bên phải (desc 'Bật')"},
+    "repeat_mode": {"kind": "form", "note": "dòng 'Lặp hàng tuần' dưới 'Chế độ lặp' (timerRepeatMode)"},
+    "save":        {"target": {"key": "save"}, "kind": "danger", "effect": "tạo hẹn giờ"}
+  }
+}

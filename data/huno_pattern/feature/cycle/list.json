@@ -1,0 +1,13 @@
+{
+  "entry": true,
+  "route": "KEY_NAME_TIMER_LOOP_LIST_SCREEN",
+  "source": "khám trên 2fc3878f ngày 2026-11-03; Wallpad docs/device/feature/cycle/swinputv2.md (F65557)",
+  "anchor": {"key": "timerLoop.listTimerLoop"},
+  "anchors": ["timerLoop.listTimerLoop"],
+  "note": "Lặp tuần hoàn. Không có tên thiết bị trên màn → không có check, chưa phân biệt instance khi nhà có >1 thiết bị cùng loại.",
+  "controls": {
+    "back": {"gesture": "back", "kind": "nav", "to": "@back"},
+    "add":  {"target": {"glyph": "plus"}, "kind": "nav", "to": "add"},
+    "item": {"kind": "form", "note": "dòng desc 'Thời gian bật 00:10 | Thời gian tắt 00:05 (phút:giây), Chạy mãi mãi' (giới hạn: '…, 20:00, 22:30' / '…, Ngày 20/12/2026'). Bấm → form sửa, title VẪN 'Tạo tuần hoàn' (= màn add), bánh xe mở ở giá trị dòng. Không có công tắc bật/tắt trên dòng. module/actions/cycle.py (khám 2026-11-03)"}
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "entry": true,
+  "route": "KEY_NAME_SHARE_DEVICE",
+  "source": "khám trên 2fc3878f (swinputv2 'Công tắc ') ngày 2026-11-03; quyền theo Wallpad docs/device/feature/share/",
+  "anchor": {"key": "deviceSharing"},
+  "anchors": ["deviceSharing", {"key": "listUserShared", "match": "prefix"}],
+  "note": "title 'Chia sẻ thiết bị' TRÙNG title màn thêm (add) → phân biệt bằng 'Danh sách người được chia sẻ (n)' (ghép số → match prefix). Rỗng thì có 'Thiết bị này chưa chia sẻ cho ai' (notSharedWithAnyone).",
+  "controls": {
+    "back": {"gesture": "back", "kind": "nav", "to": "@back"},
+    "add":  {"target": {"glyph": "plus"}, "kind": "nav", "to": "add", "note": "nút + góc phải header"},
+    "user": {"kind": "unknown", "note": "mỗi người đã chia sẻ là một dòng (sửa quyền / xoá chia sẻ?) — chưa có người nào để khám"}
+  }
+}

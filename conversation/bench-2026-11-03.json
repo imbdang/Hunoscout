@@ -1,0 +1,3127 @@
+{
+ "segs": [
+  {
+   "seg": "khởi động",
+   "s": 0.668916425000134,
+   "err": null
+  },
+  {
+   "seg": "route: → home",
+   "s": 4.096177178000289,
+   "err": null,
+   "out": "home"
+  },
+  {
+   "seg": "route: home → chi tiết Công tắc",
+   "s": 3.6386579160007386,
+   "err": null,
+   "out": "infoDevice@swinputv2[Công tắc ]"
+  },
+  {
+   "seg": "khoá: đọc",
+   "s": 0.3180714709997119,
+   "err": null,
+   "out": "both"
+  },
+  {
+   "seg": "khoá: đặt app",
+   "s": 2.7917160380002315,
+   "err": null,
+   "out": "app"
+  },
+  {
+   "seg": "khoá: trả both",
+   "s": 2.869514361000256,
+   "err": null,
+   "out": "both"
+  },
+  {
+   "seg": "nhấn nhả: đọc",
+   "s": 0.24557099699995888,
+   "err": null,
+   "out": "00:00"
+  },
+  {
+   "seg": "nhấn nhả: đặt 00:05",
+   "s": 4.304318208000041,
+   "err": null,
+   "out": "00:05"
+  },
+  {
+   "seg": "nhấn nhả: trả 00:00",
+   "s": 4.293863201999557,
+   "err": null,
+   "out": "00:00"
+  },
+  {
+   "seg": "hẹn giờ nhanh: đọc",
+   "s": 0.20977244999994582,
+   "err": null,
+   "out": null
+  },
+  {
+   "seg": "hẹn giờ nhanh: đặt 3 phút tắt",
+   "s": 6.002156692999961,
+   "err": null,
+   "out": null
+  },
+  {
+   "seg": "hẹn giờ nhanh: xoá",
+   "s": 2.470820017000733,
+   "err": null,
+   "out": true
+  },
+  {
+   "seg": "đầu vào: đọc",
+   "s": 3.844797349000146,
+   "err": null,
+   "out": null
+  },
+  {
+   "seg": "đầu vào AC: bật",
+   "s": 1.402145162999659,
+   "err": null,
+   "out": true
+  },
+  {
+   "seg": "đầu vào AC: trả tắt",
+   "s": 1.6207903469994562,
+   "err": null,
+   "out": false
+  },
+  {
+   "seg": "đầu vào DC xanh: bật",
+   "s": 3.0466100459998415,
+   "err": null,
+   "out": "on"
+  },
+  {
+   "seg": "đầu vào DC xanh: trả none",
+   "s": 2.4845445310002106,
+   "err": null,
+   "out": "none"
+  },
+  {
+   "seg": "hẹn giờ: danh sách",
+   "s": 4.263653962999342,
+   "err": null,
+   "out": null
+  },
+  {
+   "seg": "hẹn giờ: thêm 05:55 tắt T2,T6",
+   "s": 18.05110614900059,
+   "err": null,
+   "out": null
+  },
+  {
+   "seg": "hẹn giờ: sửa 05:55 → 05:57",
+   "s": 6.8910116070001095,
+   "err": null,
+   "out": null
+  },
+  {
+   "seg": "hẹn giờ: xoá 05:57",
+   "s": 4.892129635000856,
+   "err": null,
+   "out": null
+  },
+  {
+   "seg": "tuần hoàn: danh sách",
+   "s": 2.1953242499994303,
+   "err": null,
+   "out": null
+  },
+  {
+   "seg": "tuần hoàn: thêm 00:20/00:10",
+   "s": 6.427723836000041,
+   "err": null,
+   "out": null
+  },
+  {
+   "seg": "tuần hoàn: sửa tắt 00:15",
+   "s": 6.0720836960008455,
+   "err": null,
+   "out": null
+  },
+  {
+   "seg": "tuần hoàn: xoá",
+   "s": 5.155953974000113,
+   "err": null,
+   "out": null
+  },
+  {
+   "seg": "chia sẻ: danh sách",
+   "s": 1.8090940359998058,
+   "err": null,
+   "out": null
+  },
+  {
+   "seg": "chia sẻ: sửa quyền +timer",
+   "s": 3.442456183000104,
+   "err": "ActionError: không thấy người được chia sẻ imbdang@gmail.com",
+   "out": null
+  },
+  {
+   "seg": "chia sẻ: trả quyền",
+   "s": 3.6420461620000424,
+   "err": "ActionError: không thấy người được chia sẻ imbdang@gmail.com",
+   "out": null
+  },
+  {
+   "seg": "lịch sử: đọc",
+   "s": 2.5726413040001717,
+   "err": null,
+   "out": null
+  },
+  {
+   "seg": "thông tin chung Công tắc: đọc",
+   "s": 3.7835150840001006,
+   "err": null,
+   "out": null
+  },
+  {
+   "seg": "route: → home",
+   "s": 2.7881489419996797,
+   "err": null,
+   "out": "home"
+  },
+  {
+   "seg": "route: home → chi tiết Aptomat",
+   "s": 3.5538855619997776,
+   "err": null,
+   "out": "infoDevice@atmwifiv2[Aptomat]"
+  },
+  {
+   "seg": "thông tin chung Aptomat: đọc",
+   "s": 2.737490087999504,
+   "err": null,
+   "out": null
+  },
+  {
+   "seg": "route: → chi tiết Chống giật 4",
+   "s": 4.59336127700044,
+   "err": null,
+   "out": "infoDevice@GACHshock[Chống giật 4]"
+  },
+  {
+   "seg": "route: → chi tiết Homekit",
+   "s": 4.346059430000423,
+   "err": null,
+   "out": "infoDevice@gatewayv3[Thiết bị trung tâm Homekit]"
+  },
+  {
+   "seg": "route: → chi tiết Công tắc",
+   "s": 2.5280500369999572,
+   "err": null,
+   "out": "infoDevice@swinputv2[Công tắc ]"
+  },
+  {
+   "seg": "route: → share/add (sâu)",
+   "s": 1.9127814339999532,
+   "err": null,
+   "out": "share/add[Công tắc ]"
+  },
+  {
+   "seg": "route: share/add → home",
+   "s": 2.9242034139997486,
+   "err": null,
+   "out": "home"
+  }
+ ],
+ "steps": [
+  {
+   "seg": "route: → home",
+   "src": "timer/add[Công tắc ]",
+   "to": "timer/list[Công tắc ]",
+   "g": "back",
+   "ms": 324,
+   "how": "mù",
+   "ph": {
+    "back": 0.22,
+    "nghỉ": 0.1
+   }
+  },
+  {
+   "seg": "route: → home",
+   "src": "timer/list[Công tắc ]",
+   "to": "infoDevice@swinputv2[Công tắc ]",
+   "g": "back",
+   "ms": 306,
+   "how": "mù",
+   "ph": {
+    "back": 0.21,
+    "nghỉ": 0.1
+   }
+  },
+  {
+   "seg": "route: → home",
+   "src": "infoDevice@swinputv2[Công tắc ]",
+   "to": "detailRoom[Chưa xếp phòng]",
+   "g": "back",
+   "ms": 756,
+   "how": "back",
+   "ph": {
+    "tìm": 0.0,
+    "back": 0.15,
+    "chờ màn": 0.51,
+    "yên": 0.1
+   }
+  },
+  {
+   "seg": "route: → home",
+   "src": "detailRoom[Chưa xếp phòng]",
+   "to": "room",
+   "g": "tap",
+   "ms": 746,
+   "how": "cache",
+   "ph": {
+    "tìm": 0.0,
+    "tap": 0.2,
+    "chờ màn": 0.45,
+    "yên": 0.1
+   }
+  },
+  {
+   "seg": "route: → home",
+   "src": "room",
+   "to": "home",
+   "g": "tap",
+   "ms": 832,
+   "how": "cache",
+   "ph": {
+    "tìm": 0.0,
+    "tap": 0.25,
+    "chờ màn": 0.48,
+    "yên": 0.1
+   }
+  },
+  {
+   "seg": "route: home → chi tiết Công tắc",
+   "src": "home",
+   "to": "room",
+   "g": "tap",
+   "ms": 863,
+   "how": "cache",
+   "ph": {
+    "tìm": 0.0,
+    "tap": 0.2,
+    "chờ màn": 0.56,
+    "yên": 0.1
+   }
+  },
+  {
+   "seg": "route: home → chi tiết Công tắc",
+   "src": "room",
+   "to": "detailRoom[Chưa xếp phòng]",
+   "g": "tap",
+   "ms": 942,
+   "how": "cache",
+   "ph": {
+    "tìm": 0.0,
+    "tap": 0.2,
+    "chờ màn": 0.64,
+    "yên": 0.1
+   }
+  },
+  {
+   "seg": "route: home → chi tiết Công tắc",
+   "src": "detailRoom[Chưa xếp phòng]",
+   "to": "infoDevice@swinputv2[Công tắc ]",
+   "g": "hold",
+   "ms": 1831,
+   "how": "cache",
+   "ph": {
+    "tìm": 0.0,
+    "hold": 0.93,
+    "chờ màn": 0.55,
+    "yên": 0.35
+   }
+  },
+  {
+   "seg": "hẹn giờ: danh sách",
+   "src": "infoDevice@swinputv2[Công tắc ]",
+   "to": "timer/list[Công tắc ]",
+   "g": "tap",
+   "ms": 2094,
+   "how": "cache (cuộn)",
+   "ph": {
+    "tìm": 1.01,
+    "tap": 0.25,
+    "chờ màn": 0.73,
+    "yên": 0.1
+   }
+  },
+  {
+   "seg": "hẹn giờ: thêm 05:55 tắt T2,T6",
+   "src": "timer/list[Công tắc ]",
+   "to": "timer/add[Công tắc ]",
+   "g": "tap",
+   "ms": 989,
+   "how": "cache",
+   "ph": {
+    "tìm": 0.0,
+    "tap": 0.26,
+    "chờ màn": 0.63,
+    "yên": 0.1
+   }
+  },
+  {
+   "seg": "tuần hoàn: danh sách",
+   "src": "timer/list[Công tắc ]",
+   "to": "infoDevice@swinputv2[Công tắc ]",
+   "g": "back",
+   "ms": 790,
+   "how": "back",
+   "ph": {
+    "tìm": 0.0,
+    "back": 0.22,
+    "chờ màn": 0.47,
+    "yên": 0.1
+   }
+  },
+  {
+   "seg": "tuần hoàn: danh sách",
+   "src": "infoDevice@swinputv2[Công tắc ]",
+   "to": "cycle/list[Công tắc ]",
+   "g": "tap",
+   "ms": 930,
+   "how": "cache (cuộn)",
+   "ph": {
+    "tìm": 0.0,
+    "tap": 0.24,
+    "chờ màn": 0.59,
+    "yên": 0.1
+   }
+  },
+  {
+   "seg": "tuần hoàn: thêm 00:20/00:10",
+   "src": "cycle/list[Công tắc ]",
+   "to": "cycle/add[Công tắc ]",
+   "g": "tap",
+   "ms": 754,
+   "how": "cache",
+   "ph": {
+    "tìm": 0.0,
+    "tap": 0.21,
+    "chờ màn": 0.45,
+    "yên": 0.1
+   }
+  },
+  {
+   "seg": "chia sẻ: danh sách",
+   "src": "cycle/list[Công tắc ]",
+   "to": "infoDevice@swinputv2[Công tắc ]",
+   "g": "back",
+   "ms": 747,
+   "how": "back",
+   "ph": {
+    "tìm": 0.0,
+    "back": 0.23,
+    "chờ màn": 0.42,
+    "yên": 0.1
+   }
+  },
+  {
+   "seg": "chia sẻ: danh sách",
+   "src": "infoDevice@swinputv2[Công tắc ]",
+   "to": "share/list[Công tắc ]",
+   "g": "tap",
+   "ms": 892,
+   "how": "cache (cuộn)",
+   "ph": {
+    "tìm": 0.0,
+    "tap": 0.24,
+    "chờ màn": 0.55,
+    "yên": 0.1
+   }
+  },
+  {
+   "seg": "lịch sử: đọc",
+   "src": "share/list[Công tắc ]",
+   "to": "infoDevice@swinputv2[Công tắc ]",
+   "g": "back",
+   "ms": 695,
+   "how": "back",
+   "ph": {
+    "tìm": 0.0,
+    "back": 0.24,
+    "chờ màn": 0.36,
+    "yên": 0.1
+   }
+  },
+  {
+   "seg": "lịch sử: đọc",
+   "src": "infoDevice@swinputv2[Công tắc ]",
+   "to": "history/list[Công tắc ]",
+   "g": "tap",
+   "ms": 1039,
+   "how": "cache (cuộn)",
+   "ph": {
+    "tìm": 0.0,
+    "tap": 0.25,
+    "chờ màn": 0.69,
+    "yên": 0.1
+   }
+  },
+  {
+   "seg": "thông tin chung Công tắc: đọc",
+   "src": "history/list[Công tắc ]",
+   "to": "infoDevice@swinputv2[Công tắc ]",
+   "g": "back",
+   "ms": 833,
+   "how": "back",
+   "ph": {
+    "tìm": 0.0,
+    "back": 0.23,
+    "chờ màn": 0.5,
+    "yên": 0.1
+   }
+  },
+  {
+   "seg": "thông tin chung Công tắc: đọc",
+   "src": "infoDevice@swinputv2[Công tắc ]",
+   "to": "general_info/info[Công tắc ]",
+   "g": "tap",
+   "ms": 2447,
+   "how": "cuộn 1 lần",
+   "ph": {
+    "tìm": 1.19,
+    "tap": 0.25,
+    "chờ màn": 0.9,
+    "yên": 0.1
+   }
+  },
+  {
+   "seg": "route: → home",
+   "src": "general_info/info[Công tắc ]",
+   "to": "infoDevice@swinputv2[Công tắc ]",
+   "g": "back",
+   "ms": 347,
+   "how": "mù",
+   "ph": {
+    "back": 0.25,
+    "nghỉ": 0.1
+   }
+  },
+  {
+   "seg": "route: → home",
+   "src": "infoDevice@swinputv2[Công tắc ]",
+   "to": "detailRoom[Chưa xếp phòng]",
+   "g": "back",
+   "ms": 814,
+   "how": "back",
+   "ph": {
+    "tìm": 0.0,
+    "back": 0.22,
+    "chờ màn": 0.49,
+    "yên": 0.1
+   }
+  },
+  {
+   "seg": "route: → home",
+   "src": "detailRoom[Chưa xếp phòng]",
+   "to": "room",
+   "g": "tap",
+   "ms": 790,
+   "how": "cache",
+   "ph": {
+    "tìm": 0.0,
+    "tap": 0.21,
+    "chờ màn": 0.48,
+    "yên": 0.1
+   }
+  },
+  {
+   "seg": "route: → home",
+   "src": "room",
+   "to": "home",
+   "g": "tap",
+   "ms": 835,
+   "how": "cache",
+   "ph": {
+    "tìm": 0.0,
+    "tap": 0.24,
+    "chờ màn": 0.49,
+    "yên": 0.1
+   }
+  },
+  {
+   "seg": "route: home → chi tiết Aptomat",
+   "src": "home",
+   "to": "room",
+   "g": "tap",
+   "ms": 790,
+   "how": "cache",
+   "ph": {
+    "tìm": 0.0,
+    "tap": 0.24,
+    "chờ màn": 0.45,
+    "yên": 0.1
+   }
+  },
+  {
+   "seg": "route: home → chi tiết Aptomat",
+   "src": "room",
+   "to": "detailRoom[Chưa xếp phòng]",
+   "g": "tap",
+   "ms": 948,
+   "how": "cache",
+   "ph": {
+    "tìm": 0.0,
+    "tap": 0.25,
+    "chờ màn": 0.6,
+    "yên": 0.1
+   }
+  },
+  {
+   "seg": "route: home → chi tiết Aptomat",
+   "src": "detailRoom[Chưa xếp phòng]",
+   "to": "infoDevice@atmwifiv2[Aptomat]",
+   "g": "hold",
+   "ms": 1813,
+   "how": "cache",
+   "ph": {
+    "tìm": 0.0,
+    "hold": 1.01,
+    "chờ màn": 0.48,
+    "yên": 0.32
+   }
+  },
+  {
+   "seg": "thông tin chung Aptomat: đọc",
+   "src": "infoDevice@atmwifiv2[Aptomat]",
+   "to": "general_info/info[Aptomat]",
+   "g": "tap",
+   "ms": 2297,
+   "how": "cuộn 1 lần",
+   "ph": {
+    "tìm": 1.2,
+    "tap": 0.25,
+    "chờ màn": 0.75,
+    "yên": 0.1
+   }
+  },
+  {
+   "seg": "route: → chi tiết Chống giật 4",
+   "src": "general_info/info[Aptomat]",
+   "to": "infoDevice@atmwifiv2[Aptomat]",
+   "g": "back",
+   "ms": 322,
+   "how": "mù",
+   "ph": {
+    "back": 0.22,
+    "nghỉ": 0.1
+   }
+  },
+  {
+   "seg": "route: → chi tiết Chống giật 4",
+   "src": "infoDevice@atmwifiv2[Aptomat]",
+   "to": "detailRoom[Chưa xếp phòng]",
+   "g": "back",
+   "ms": 729,
+   "how": "back",
+   "ph": {
+    "tìm": 0.0,
+    "back": 0.13,
+    "chờ màn": 0.5,
+    "yên": 0.1
+   }
+  },
+  {
+   "seg": "route: → chi tiết Chống giật 4",
+   "src": "detailRoom[Chưa xếp phòng]",
+   "to": "room",
+   "g": "tap",
+   "ms": 814,
+   "how": "cache",
+   "ph": {
+    "tìm": 0.0,
+    "tap": 0.2,
+    "chờ màn": 0.51,
+    "yên": 0.1
+   }
+  },
+  {
+   "seg": "route: → chi tiết Chống giật 4",
+   "src": "room",
+   "to": "detailRoom[Nhà tắm]",
+   "g": "tap",
+   "ms": 934,
+   "how": "cache",
+   "ph": {
+    "tìm": 0.0,
+    "tap": 0.24,
+    "chờ màn": 0.59,
+    "yên": 0.1
+   }
+  },
+  {
+   "seg": "route: → chi tiết Chống giật 4",
+   "src": "detailRoom[Nhà tắm]",
+   "to": "infoDevice@GACHshock[Chống giật 4]",
+   "g": "hold",
+   "ms": 1453,
+   "how": "cache + title",
+   "ph": {
+    "tìm": 0.0,
+    "hold": 0.93,
+    "chờ màn": 0.42,
+    "yên": 0.1
+   }
+  },
+  {
+   "seg": "route: → chi tiết Homekit",
+   "src": "infoDevice@GACHshock[Chống giật 4]",
+   "to": "detailRoom[Nhà tắm]",
+   "g": "back",
+   "ms": 808,
+   "how": "back, học cạnh",
+   "ph": {
+    "tìm": 0.0,
+    "back": 0.22,
+    "chờ màn": 0.49,
+    "yên": 0.1
+   }
+  },
+  {
+   "seg": "route: → chi tiết Homekit",
+   "src": "detailRoom[Nhà tắm]",
+   "to": "room",
+   "g": "tap",
+   "ms": 792,
+   "how": "cache",
+   "ph": {
+    "tìm": 0.0,
+    "tap": 0.24,
+    "chờ màn": 0.45,
+    "yên": 0.1
+   }
+  },
+  {
+   "seg": "route: → chi tiết Homekit",
+   "src": "room",
+   "to": "detailRoom[Chưa xếp phòng]",
+   "g": "tap",
+   "ms": 912,
+   "how": "cache",
+   "ph": {
+    "tìm": 0.0,
+    "tap": 0.25,
+    "chờ màn": 0.57,
+    "yên": 0.1
+   }
+  },
+  {
+   "seg": "route: → chi tiết Homekit",
+   "src": "detailRoom[Chưa xếp phòng]",
+   "to": "infoDevice@gatewayv3[Thiết bị trung tâm Homekit]",
+   "g": "hold",
+   "ms": 1832,
+   "how": "cache",
+   "ph": {
+    "tìm": 0.0,
+    "hold": 0.97,
+    "chờ màn": 0.56,
+    "yên": 0.3
+   }
+  },
+  {
+   "seg": "route: → chi tiết Công tắc",
+   "src": "infoDevice@gatewayv3[Thiết bị trung tâm Homekit]",
+   "to": "detailRoom[Chưa xếp phòng]",
+   "g": "back",
+   "ms": 747,
+   "how": "back",
+   "ph": {
+    "tìm": 0.0,
+    "back": 0.23,
+    "chờ màn": 0.42,
+    "yên": 0.1
+   }
+  },
+  {
+   "seg": "route: → chi tiết Công tắc",
+   "src": "detailRoom[Chưa xếp phòng]",
+   "to": "infoDevice@swinputv2[Công tắc ]",
+   "g": "hold",
+   "ms": 1779,
+   "how": "cache",
+   "ph": {
+    "tìm": 0.0,
+    "hold": 0.95,
+    "chờ màn": 0.48,
+    "yên": 0.35
+   }
+  },
+  {
+   "seg": "route: → share/add (sâu)",
+   "src": "infoDevice@swinputv2[Công tắc ]",
+   "to": "share/list[Công tắc ]",
+   "g": "tap",
+   "ms": 1029,
+   "how": "cache (cuộn)",
+   "ph": {
+    "tìm": 0.0,
+    "tap": 0.25,
+    "chờ màn": 0.68,
+    "yên": 0.1
+   }
+  },
+  {
+   "seg": "route: → share/add (sâu)",
+   "src": "share/list[Công tắc ]",
+   "to": "share/add[Công tắc ]",
+   "g": "tap",
+   "ms": 882,
+   "how": "cache",
+   "ph": {
+    "tìm": 0.0,
+    "tap": 0.26,
+    "chờ màn": 0.53,
+    "yên": 0.1
+   }
+  },
+  {
+   "seg": "route: share/add → home",
+   "src": "share/add[Công tắc ]",
+   "to": "share/list[Công tắc ]",
+   "g": "back",
+   "ms": 278,
+   "how": "mù",
+   "ph": {
+    "back": 0.18,
+    "nghỉ": 0.1
+   }
+  },
+  {
+   "seg": "route: share/add → home",
+   "src": "share/list[Công tắc ]",
+   "to": "infoDevice@swinputv2[Công tắc ]",
+   "g": "back",
+   "ms": 264,
+   "how": "mù",
+   "ph": {
+    "back": 0.16,
+    "nghỉ": 0.1
+   }
+  },
+  {
+   "seg": "route: share/add → home",
+   "src": "infoDevice@swinputv2[Công tắc ]",
+   "to": "detailRoom[Chưa xếp phòng]",
+   "g": "back",
+   "ms": 775,
+   "how": "back",
+   "ph": {
+    "tìm": 0.0,
+    "back": 0.16,
+    "chờ màn": 0.52,
+    "yên": 0.1
+   }
+  },
+  {
+   "seg": "route: share/add → home",
+   "src": "detailRoom[Chưa xếp phòng]",
+   "to": "room",
+   "g": "tap",
+   "ms": 816,
+   "how": "cache",
+   "ph": {
+    "tìm": 0.0,
+    "tap": 0.25,
+    "chờ màn": 0.46,
+    "yên": 0.1
+   }
+  },
+  {
+   "seg": "route: share/add → home",
+   "src": "room",
+   "to": "home",
+   "g": "tap",
+   "ms": 787,
+   "how": "cache",
+   "ph": {
+    "tìm": 0.0,
+    "tap": 0.24,
+    "chờ màn": 0.45,
+    "yên": 0.1
+   }
+  }
+ ],
+ "rpc": [
+  [
+   "route: → home",
+   "deviceInfo",
+   1,
+   0.14914897000016936
+  ],
+  [
+   "route: → home",
+   "dumpWindowHierarchy",
+   1,
+   0.24536618399997678
+  ],
+  [
+   "route: → home",
+   "pressKey",
+   5,
+   1.046467415000734
+  ],
+  [
+   "route: → home",
+   "waitForExists",
+   6,
+   1.4638749309997365
+  ],
+  [
+   "route: → home",
+   "objInfo",
+   6,
+   1.4311617489993296
+  ],
+  [
+   "route: → home",
+   "click",
+   4,
+   0.9096292370004448
+  ],
+  [
+   "route: home → chi tiết Công tắc",
+   "click",
+   3,
+   1.3338698279994787
+  ],
+  [
+   "route: home → chi tiết Công tắc",
+   "waitForExists",
+   3,
+   0.7262436199998774
+  ],
+  [
+   "route: home → chi tiết Công tắc",
+   "objInfo",
+   4,
+   1.276817085001312
+  ],
+  [
+   "khoá: đọc",
+   "objInfo",
+   1,
+   0.31789448200015613
+  ],
+  [
+   "khoá: đặt app",
+   "objInfo",
+   7,
+   1.7615110750002714
+  ],
+  [
+   "khoá: đặt app",
+   "click",
+   2,
+   0.4886034710007152
+  ],
+  [
+   "khoá: trả both",
+   "objInfo",
+   7,
+   1.8309347850008635
+  ],
+  [
+   "khoá: trả both",
+   "click",
+   2,
+   0.49733128100069735
+  ],
+  [
+   "nhấn nhả: đọc",
+   "objInfo",
+   1,
+   0.24540633000015077
+  ],
+  [
+   "nhấn nhả: đặt 00:05",
+   "objInfo",
+   10,
+   2.3132612310018885
+  ],
+  [
+   "nhấn nhả: đặt 00:05",
+   "click",
+   4,
+   0.9242012009999598
+  ],
+  [
+   "nhấn nhả: đặt 00:05",
+   "dumpWindowHierarchy",
+   4,
+   0.7617512110009557
+  ],
+  [
+   "nhấn nhả: trả 00:00",
+   "objInfo",
+   10,
+   2.3290474049972545
+  ],
+  [
+   "nhấn nhả: trả 00:00",
+   "click",
+   4,
+   0.9514379490001375
+  ],
+  [
+   "nhấn nhả: trả 00:00",
+   "dumpWindowHierarchy",
+   4,
+   0.7081787710012577
+  ],
+  [
+   "hẹn giờ nhanh: đọc",
+   "objInfo",
+   1,
+   0.20964387100048043
+  ],
+  [
+   "hẹn giờ nhanh: đặt 3 phút tắt",
+   "objInfo",
+   12,
+   2.987336167000649
+  ],
+  [
+   "hẹn giờ nhanh: đặt 3 phút tắt",
+   "click",
+   5,
+   1.1349724300007438
+  ],
+  [
+   "hẹn giờ nhanh: đặt 3 phút tắt",
+   "dumpWindowHierarchy",
+   3,
+   0.5412308779996238
+  ],
+  [
+   "hẹn giờ nhanh: đặt 3 phút tắt",
+   "takeScreenshot",
+   2,
+   0.692065649000142
+  ],
+  [
+   "hẹn giờ nhanh: xoá",
+   "objInfo",
+   7,
+   1.8721470430000409
+  ],
+  [
+   "hẹn giờ nhanh: xoá",
+   "click",
+   2,
+   0.4978152220000993
+  ],
+  [
+   "đầu vào: đọc",
+   "objInfo",
+   11,
+   2.7902506979989994
+  ],
+  [
+   "đầu vào: đọc",
+   "dumpWindowHierarchy",
+   1,
+   0.3075144619997445
+  ],
+  [
+   "đầu vào: đọc",
+   "count",
+   2,
+   0.28553472099974897
+  ],
+  [
+   "đầu vào: đọc",
+   "injectInputEvent",
+   4,
+   0.40809828100009327
+  ],
+  [
+   "đầu vào AC: bật",
+   "objInfo",
+   2,
+   0.5915428039998005
+  ],
+  [
+   "đầu vào AC: bật",
+   "dumpWindowHierarchy",
+   1,
+   0.30591148599978624
+  ],
+  [
+   "đầu vào AC: bật",
+   "click",
+   1,
+   0.20277115299995785
+  ],
+  [
+   "đầu vào AC: trả tắt",
+   "objInfo",
+   2,
+   0.6051416509999399
+  ],
+  [
+   "đầu vào AC: trả tắt",
+   "dumpWindowHierarchy",
+   1,
+   0.4534548559995528
+  ],
+  [
+   "đầu vào AC: trả tắt",
+   "click",
+   1,
+   0.2601090670004851
+  ],
+  [
+   "đầu vào DC xanh: bật",
+   "objInfo",
+   7,
+   1.9997835689982821
+  ],
+  [
+   "đầu vào DC xanh: bật",
+   "click",
+   2,
+   0.5054241769994405
+  ],
+  [
+   "đầu vào DC xanh: trả none",
+   "objInfo",
+   7,
+   1.4591893030001302
+  ],
+  [
+   "đầu vào DC xanh: trả none",
+   "click",
+   2,
+   0.482404996000696
+  ],
+  [
+   "đầu vào DC xanh: trả none",
+   "waitForExists",
+   1,
+   0.12189065900020069
+  ],
+  [
+   "hẹn giờ: danh sách",
+   "objInfo",
+   5,
+   1.2467656429998897
+  ],
+  [
+   "hẹn giờ: danh sách",
+   "injectInputEvent",
+   4,
+   0.4794932800004972
+  ],
+  [
+   "hẹn giờ: danh sách",
+   "click",
+   1,
+   0.2477591630004099
+  ],
+  [
+   "hẹn giờ: danh sách",
+   "waitForExists",
+   2,
+   1.8314957519996824
+  ],
+  [
+   "hẹn giờ: danh sách",
+   "dumpWindowHierarchy",
+   1,
+   0.3052491750004265
+  ],
+  [
+   "hẹn giờ: thêm 05:55 tắt T2,T6",
+   "click",
+   13,
+   3.5248480329992162
+  ],
+  [
+   "hẹn giờ: thêm 05:55 tắt T2,T6",
+   "waitForExists",
+   5,
+   3.3832157580000057
+  ],
+  [
+   "hẹn giờ: thêm 05:55 tắt T2,T6",
+   "objInfo",
+   17,
+   4.2580157479987975
+  ],
+  [
+   "hẹn giờ: thêm 05:55 tắt T2,T6",
+   "dumpWindowHierarchy",
+   4,
+   1.11420553500011
+  ],
+  [
+   "hẹn giờ: thêm 05:55 tắt T2,T6",
+   "exist",
+   2,
+   0.2604105829996115
+  ],
+  [
+   "hẹn giờ: thêm 05:55 tắt T2,T6",
+   "setText",
+   2,
+   1.3083241140002428
+  ],
+  [
+   "hẹn giờ: thêm 05:55 tắt T2,T6",
+   "waitUntilGone",
+   2,
+   0.49839417500061245
+  ],
+  [
+   "hẹn giờ: thêm 05:55 tắt T2,T6",
+   "injectInputEvent",
+   4,
+   0.48433538300014334
+  ],
+  [
+   "hẹn giờ: thêm 05:55 tắt T2,T6",
+   "takeScreenshot",
+   2,
+   0.44783874500080856
+  ],
+  [
+   "hẹn giờ: sửa 05:55 → 05:57",
+   "objInfo",
+   6,
+   1.8894203910003853
+  ],
+  [
+   "hẹn giờ: sửa 05:55 → 05:57",
+   "click",
+   4,
+   1.163939243000641
+  ],
+  [
+   "hẹn giờ: sửa 05:55 → 05:57",
+   "dumpWindowHierarchy",
+   2,
+   0.5964124700003595
+  ],
+  [
+   "hẹn giờ: sửa 05:55 → 05:57",
+   "exist",
+   1,
+   0.1790129259998139
+  ],
+  [
+   "hẹn giờ: sửa 05:55 → 05:57",
+   "waitForExists",
+   2,
+   1.4052454950005995
+  ],
+  [
+   "hẹn giờ: sửa 05:55 → 05:57",
+   "setText",
+   1,
+   0.912948015999973
+  ],
+  [
+   "hẹn giờ: sửa 05:55 → 05:57",
+   "waitUntilGone",
+   1,
+   0.2403850249993411
+  ],
+  [
+   "hẹn giờ: xoá 05:57",
+   "objInfo",
+   8,
+   2.4129100800000742
+  ],
+  [
+   "hẹn giờ: xoá 05:57",
+   "click",
+   3,
+   0.7279609910001454
+  ],
+  [
+   "hẹn giờ: xoá 05:57",
+   "waitForExists",
+   1,
+   0.7612870519997159
+  ],
+  [
+   "hẹn giờ: xoá 05:57",
+   "dumpWindowHierarchy",
+   1,
+   0.32625259699943854
+  ],
+  [
+   "tuần hoàn: danh sách",
+   "pressKey",
+   1,
+   0.22160180299943022
+  ],
+  [
+   "tuần hoàn: danh sách",
+   "waitForExists",
+   2,
+   0.6130094970003483
+  ],
+  [
+   "tuần hoàn: danh sách",
+   "objInfo",
+   4,
+   0.7444386589995702
+  ],
+  [
+   "tuần hoàn: danh sách",
+   "click",
+   1,
+   0.24365293800019572
+  ],
+  [
+   "tuần hoàn: danh sách",
+   "dumpWindowHierarchy",
+   1,
+   0.17043904499951168
+  ],
+  [
+   "tuần hoàn: thêm 00:20/00:10",
+   "objInfo",
+   6,
+   1.600903194998864
+  ],
+  [
+   "tuần hoàn: thêm 00:20/00:10",
+   "dumpWindowHierarchy",
+   3,
+   0.5329527260000759
+  ],
+  [
+   "tuần hoàn: thêm 00:20/00:10",
+   "click",
+   6,
+   1.3183376339984534
+  ],
+  [
+   "tuần hoàn: thêm 00:20/00:10",
+   "waitForExists",
+   3,
+   0.5219708879994869
+  ],
+  [
+   "tuần hoàn: thêm 00:20/00:10",
+   "exist",
+   2,
+   0.2622907850000047
+  ],
+  [
+   "tuần hoàn: thêm 00:20/00:10",
+   "setText",
+   2,
+   0.9605938059994514
+  ],
+  [
+   "tuần hoàn: thêm 00:20/00:10",
+   "waitUntilGone",
+   2,
+   0.5054680829998688
+  ],
+  [
+   "tuần hoàn: sửa tắt 00:15",
+   "objInfo",
+   6,
+   1.6957659149984465
+  ],
+  [
+   "tuần hoàn: sửa tắt 00:15",
+   "dumpWindowHierarchy",
+   5,
+   0.8891506230002051
+  ],
+  [
+   "tuần hoàn: sửa tắt 00:15",
+   "click",
+   4,
+   1.2517265080005018
+  ],
+  [
+   "tuần hoàn: sửa tắt 00:15",
+   "exist",
+   1,
+   0.12683750500036695
+  ],
+  [
+   "tuần hoàn: sửa tắt 00:15",
+   "waitForExists",
+   1,
+   0.23786705500060634
+  ],
+  [
+   "tuần hoàn: sửa tắt 00:15",
+   "setText",
+   1,
+   0.7021379930001785
+  ],
+  [
+   "tuần hoàn: sửa tắt 00:15",
+   "waitUntilGone",
+   1,
+   0.2628103759998339
+  ],
+  [
+   "tuần hoàn: xoá",
+   "objInfo",
+   9,
+   1.9465834179982267
+  ],
+  [
+   "tuần hoàn: xoá",
+   "dumpWindowHierarchy",
+   4,
+   0.7441348449983707
+  ],
+  [
+   "tuần hoàn: xoá",
+   "click",
+   3,
+   0.714733429998887
+  ],
+  [
+   "tuần hoàn: xoá",
+   "waitForExists",
+   1,
+   0.6239208789993427
+  ],
+  [
+   "chia sẻ: danh sách",
+   "pressKey",
+   1,
+   0.23039629200047784
+  ],
+  [
+   "chia sẻ: danh sách",
+   "waitForExists",
+   2,
+   0.5088096349991247
+  ],
+  [
+   "chia sẻ: danh sách",
+   "objInfo",
+   2,
+   0.45507505899968237
+  ],
+  [
+   "chia sẻ: danh sách",
+   "click",
+   1,
+   0.2449514760000966
+  ],
+  [
+   "chia sẻ: danh sách",
+   "dumpWindowHierarchy",
+   1,
+   0.1682092669998383
+  ],
+  [
+   "chia sẻ: sửa quyền +timer",
+   "objInfo",
+   1,
+   0.10830289900059142
+  ],
+  [
+   "chia sẻ: sửa quyền +timer",
+   "waitForExists",
+   1,
+   3.1345474330000798
+  ],
+  [
+   "chia sẻ: trả quyền",
+   "dumpWindowHierarchy",
+   1,
+   0.17819465899992792
+  ],
+  [
+   "chia sẻ: trả quyền",
+   "objInfo",
+   1,
+   0.15691903100014315
+  ],
+  [
+   "chia sẻ: trả quyền",
+   "waitForExists",
+   1,
+   3.128699079999933
+  ],
+  [
+   "lịch sử: đọc",
+   "dumpWindowHierarchy",
+   2,
+   0.49928908799938654
+  ],
+  [
+   "lịch sử: đọc",
+   "pressKey",
+   1,
+   0.23857693999980256
+  ],
+  [
+   "lịch sử: đọc",
+   "waitForExists",
+   2,
+   0.42901338700085034
+  ],
+  [
+   "lịch sử: đọc",
+   "objInfo",
+   3,
+   0.9506741729992427
+  ],
+  [
+   "lịch sử: đọc",
+   "click",
+   1,
+   0.2514941320005164
+  ],
+  [
+   "thông tin chung Công tắc: đọc",
+   "pressKey",
+   1,
+   0.22927824199996394
+  ],
+  [
+   "thông tin chung Công tắc: đọc",
+   "waitForExists",
+   2,
+   0.4940842010009874
+  ],
+  [
+   "thông tin chung Công tắc: đọc",
+   "objInfo",
+   6,
+   1.7645839329998125
+  ],
+  [
+   "thông tin chung Công tắc: đọc",
+   "injectInputEvent",
+   4,
+   0.48763139299899194
+  ],
+  [
+   "thông tin chung Công tắc: đọc",
+   "click",
+   1,
+   0.2541454980000708
+  ],
+  [
+   "thông tin chung Công tắc: đọc",
+   "dumpWindowHierarchy",
+   1,
+   0.3000247469999522
+  ],
+  [
+   "route: home → chi tiết Aptomat",
+   "click",
+   3,
+   1.5073051090002991
+  ],
+  [
+   "route: home → chi tiết Aptomat",
+   "waitForExists",
+   3,
+   0.7195406590017228
+  ],
+  [
+   "route: home → chi tiết Aptomat",
+   "objInfo",
+   4,
+   1.0251626780000151
+  ],
+  [
+   "thông tin chung Aptomat: đọc",
+   "objInfo",
+   6,
+   1.4306219850004709
+  ],
+  [
+   "thông tin chung Aptomat: đọc",
+   "injectInputEvent",
+   4,
+   0.32467389500106947
+  ],
+  [
+   "thông tin chung Aptomat: đọc",
+   "click",
+   1,
+   0.25075185599962424
+  ],
+  [
+   "thông tin chung Aptomat: đọc",
+   "waitForExists",
+   1,
+   0.295498798999688
+  ],
+  [
+   "thông tin chung Aptomat: đọc",
+   "dumpWindowHierarchy",
+   1,
+   0.2831650600001012
+  ],
+  [
+   "route: → chi tiết Chống giật 4",
+   "pressKey",
+   2,
+   0.3538115139999718
+  ],
+  [
+   "route: → chi tiết Chống giật 4",
+   "waitForExists",
+   3,
+   0.797998424999605
+  ],
+  [
+   "route: → chi tiết Chống giật 4",
+   "objInfo",
+   4,
+   1.2205387029998747
+  ],
+  [
+   "route: → chi tiết Chống giật 4",
+   "click",
+   3,
+   1.379884351000328
+  ],
+  [
+   "route: → chi tiết Chống giật 4",
+   "dumpWindowHierarchy",
+   1,
+   0.3369902959993851
+  ],
+  [
+   "route: → chi tiết Homekit",
+   "pressKey",
+   1,
+   0.2226687350002976
+  ],
+  [
+   "route: → chi tiết Homekit",
+   "waitForExists",
+   4,
+   0.8696044739990612
+  ],
+  [
+   "route: → chi tiết Homekit",
+   "objInfo",
+   5,
+   1.390318594000746
+  ],
+  [
+   "route: → chi tiết Homekit",
+   "click",
+   3,
+   1.4606719509993127
+  ],
+  [
+   "route: → chi tiết Công tắc",
+   "pressKey",
+   1,
+   0.23156879099951766
+  ],
+  [
+   "route: → chi tiết Công tắc",
+   "waitForExists",
+   2,
+   0.45269271100005426
+  ],
+  [
+   "route: → chi tiết Công tắc",
+   "objInfo",
+   3,
+   0.6960903559993312
+  ],
+  [
+   "route: → chi tiết Công tắc",
+   "click",
+   1,
+   0.9467478669994307
+  ],
+  [
+   "route: → share/add (sâu)",
+   "click",
+   2,
+   0.5076269380006124
+  ],
+  [
+   "route: → share/add (sâu)",
+   "waitForExists",
+   1,
+   0.4406485830004385
+  ],
+  [
+   "route: → share/add (sâu)",
+   "objInfo",
+   2,
+   0.7635659810002835
+  ],
+  [
+   "route: share/add → home",
+   "pressKey",
+   3,
+   0.5025746359997356
+  ],
+  [
+   "route: share/add → home",
+   "waitForExists",
+   3,
+   0.7601819569999861
+  ],
+  [
+   "route: share/add → home",
+   "objInfo",
+   3,
+   0.6702589990009074
+  ],
+  [
+   "route: share/add → home",
+   "click",
+   2,
+   0.48911320099978184
+  ]
+ ],
+ "sleeps": [
+  [
+   "route: → home",
+   "_adb.py:close",
+   32,
+   0.3200000000000001
+  ],
+  [
+   "route: → home",
+   "core.py:_wait_app_process_ready",
+   1,
+   0.5
+  ],
+  [
+   "route: → home",
+   "navigate.py:run_edge",
+   3,
+   0.30000000000000004
+  ],
+  [
+   "route: → home",
+   "navigate.py:_verify",
+   6,
+   0.6
+  ],
+  [
+   "route: home → chi tiết Công tắc",
+   "_adb.py:close",
+   10,
+   0.09999999999999999
+  ],
+  [
+   "route: home → chi tiết Công tắc",
+   "navigate.py:_verify",
+   3,
+   0.30000000000000004
+  ],
+  [
+   "khoá: đọc",
+   "_adb.py:close",
+   1,
+   0.01
+  ],
+  [
+   "khoá: đặt app",
+   "_adb.py:close",
+   9,
+   0.09
+  ],
+  [
+   "khoá: đặt app",
+   "ui.py:settled",
+   2,
+   0.24
+  ],
+  [
+   "khoá: đặt app",
+   "ui.py:pick",
+   1,
+   0.3
+  ],
+  [
+   "khoá: trả both",
+   "_adb.py:close",
+   9,
+   0.09
+  ],
+  [
+   "khoá: trả both",
+   "ui.py:settled",
+   2,
+   0.24
+  ],
+  [
+   "khoá: trả both",
+   "ui.py:pick",
+   1,
+   0.3
+  ],
+  [
+   "nhấn nhả: đọc",
+   "_adb.py:close",
+   1,
+   0.01
+  ],
+  [
+   "nhấn nhả: đặt 00:05",
+   "_adb.py:close",
+   18,
+   0.18000000000000002
+  ],
+  [
+   "nhấn nhả: đặt 00:05",
+   "ui.py:pick_number",
+   1,
+   0.2
+  ],
+  [
+   "nhấn nhả: đặt 00:05",
+   "ui.py:gone",
+   1,
+   0.1
+  ],
+  [
+   "nhấn nhả: trả 00:00",
+   "_adb.py:close",
+   18,
+   0.18000000000000002
+  ],
+  [
+   "nhấn nhả: trả 00:00",
+   "ui.py:pick_number",
+   1,
+   0.2
+  ],
+  [
+   "nhấn nhả: trả 00:00",
+   "ui.py:gone",
+   1,
+   0.1
+  ],
+  [
+   "hẹn giờ nhanh: đọc",
+   "_adb.py:close",
+   1,
+   0.01
+  ],
+  [
+   "hẹn giờ nhanh: đặt 3 phút tắt",
+   "_adb.py:close",
+   22,
+   0.22000000000000006
+  ],
+  [
+   "hẹn giờ nhanh: đặt 3 phút tắt",
+   "ui.py:pick_number",
+   1,
+   0.2
+  ],
+  [
+   "hẹn giờ nhanh: đặt 3 phút tắt",
+   "press.py:set_quick_timer",
+   1,
+   0.3
+  ],
+  [
+   "hẹn giờ nhanh: đặt 3 phút tắt",
+   "ui.py:gone",
+   1,
+   0.1
+  ],
+  [
+   "hẹn giờ nhanh: xoá",
+   "_adb.py:close",
+   9,
+   0.09
+  ],
+  [
+   "hẹn giờ nhanh: xoá",
+   "ui.py:gone",
+   1,
+   0.1
+  ],
+  [
+   "đầu vào: đọc",
+   "_adb.py:close",
+   18,
+   0.18000000000000002
+  ],
+  [
+   "đầu vào: đọc",
+   "u2.py:drag",
+   1,
+   0.05
+  ],
+  [
+   "đầu vào AC: bật",
+   "_adb.py:close",
+   4,
+   0.04
+  ],
+  [
+   "đầu vào AC: bật",
+   "inputs.py:set_input_ac",
+   1,
+   0.3
+  ],
+  [
+   "đầu vào AC: trả tắt",
+   "_adb.py:close",
+   4,
+   0.04
+  ],
+  [
+   "đầu vào AC: trả tắt",
+   "inputs.py:set_input_ac",
+   1,
+   0.3
+  ],
+  [
+   "đầu vào DC xanh: bật",
+   "_adb.py:close",
+   9,
+   0.09
+  ],
+  [
+   "đầu vào DC xanh: bật",
+   "ui.py:settled",
+   2,
+   0.24
+  ],
+  [
+   "đầu vào DC xanh: bật",
+   "ui.py:pick",
+   1,
+   0.3
+  ],
+  [
+   "đầu vào DC xanh: trả none",
+   "_adb.py:close",
+   10,
+   0.09999999999999999
+  ],
+  [
+   "đầu vào DC xanh: trả none",
+   "ui.py:settled",
+   1,
+   0.12
+  ],
+  [
+   "đầu vào DC xanh: trả none",
+   "ui.py:pick",
+   1,
+   0.3
+  ],
+  [
+   "hẹn giờ: danh sách",
+   "_adb.py:close",
+   13,
+   0.12999999999999998
+  ],
+  [
+   "hẹn giờ: danh sách",
+   "u2.py:drag",
+   1,
+   0.05
+  ],
+  [
+   "hẹn giờ: danh sách",
+   "navigate.py:_verify",
+   1,
+   0.1
+  ],
+  [
+   "hẹn giờ: thêm 05:55 tắt T2,T6",
+   "_adb.py:close",
+   55,
+   0.5500000000000003
+  ],
+  [
+   "hẹn giờ: thêm 05:55 tắt T2,T6",
+   "navigate.py:_verify",
+   1,
+   0.1
+  ],
+  [
+   "hẹn giờ: thêm 05:55 tắt T2,T6",
+   "ui.py:settled",
+   1,
+   0.12
+  ],
+  [
+   "hẹn giờ: thêm 05:55 tắt T2,T6",
+   "ui.py:pick",
+   1,
+   0.3
+  ],
+  [
+   "hẹn giờ: thêm 05:55 tắt T2,T6",
+   "u2.py:drag",
+   1,
+   0.05
+  ],
+  [
+   "hẹn giờ: thêm 05:55 tắt T2,T6",
+   "ui.py:scroll_up",
+   1,
+   0.25
+  ],
+  [
+   "hẹn giờ: thêm 05:55 tắt T2,T6",
+   "timer.py:_days",
+   5,
+   1.25
+  ],
+  [
+   "hẹn giờ: thêm 05:55 tắt T2,T6",
+   "timer.py:_save",
+   1,
+   0.5
+  ],
+  [
+   "hẹn giờ: sửa 05:55 → 05:57",
+   "_adb.py:close",
+   17,
+   0.17
+  ],
+  [
+   "hẹn giờ: sửa 05:55 → 05:57",
+   "timer.py:_save",
+   1,
+   0.5
+  ],
+  [
+   "hẹn giờ: xoá 05:57",
+   "_adb.py:close",
+   17,
+   0.17
+  ],
+  [
+   "hẹn giờ: xoá 05:57",
+   "timer.py:delete_timer",
+   1,
+   0.5
+  ],
+  [
+   "tuần hoàn: danh sách",
+   "_adb.py:close",
+   9,
+   0.09
+  ],
+  [
+   "tuần hoàn: danh sách",
+   "navigate.py:_verify",
+   2,
+   0.2
+  ],
+  [
+   "tuần hoàn: thêm 00:20/00:10",
+   "_adb.py:close",
+   28,
+   0.2800000000000001
+  ],
+  [
+   "tuần hoàn: thêm 00:20/00:10",
+   "navigate.py:_verify",
+   1,
+   0.1
+  ],
+  [
+   "tuần hoàn: thêm 00:20/00:10",
+   "cycle.py:_save",
+   1,
+   0.5
+  ],
+  [
+   "tuần hoàn: sửa tắt 00:15",
+   "_adb.py:close",
+   19,
+   0.19000000000000003
+  ],
+  [
+   "tuần hoàn: sửa tắt 00:15",
+   "cycle.py:_open",
+   1,
+   0.4
+  ],
+  [
+   "tuần hoàn: sửa tắt 00:15",
+   "cycle.py:_save",
+   1,
+   0.5
+  ],
+  [
+   "tuần hoàn: xoá",
+   "_adb.py:close",
+   21,
+   0.21000000000000005
+  ],
+  [
+   "tuần hoàn: xoá",
+   "cycle.py:_open",
+   1,
+   0.4
+  ],
+  [
+   "tuần hoàn: xoá",
+   "cycle.py:delete_cycle",
+   1,
+   0.5
+  ],
+  [
+   "chia sẻ: danh sách",
+   "_adb.py:close",
+   7,
+   0.07
+  ],
+  [
+   "chia sẻ: danh sách",
+   "navigate.py:_verify",
+   2,
+   0.2
+  ],
+  [
+   "chia sẻ: sửa quyền +timer",
+   "_adb.py:close",
+   6,
+   0.060000000000000005
+  ],
+  [
+   "chia sẻ: trả quyền",
+   "_adb.py:close",
+   7,
+   0.07
+  ],
+  [
+   "lịch sử: đọc",
+   "_adb.py:close",
+   9,
+   0.09
+  ],
+  [
+   "lịch sử: đọc",
+   "navigate.py:_verify",
+   2,
+   0.2
+  ],
+  [
+   "thông tin chung Công tắc: đọc",
+   "_adb.py:close",
+   15,
+   0.15
+  ],
+  [
+   "thông tin chung Công tắc: đọc",
+   "navigate.py:_verify",
+   2,
+   0.2
+  ],
+  [
+   "thông tin chung Công tắc: đọc",
+   "u2.py:drag",
+   1,
+   0.05
+  ],
+  [
+   "route: home → chi tiết Aptomat",
+   "_adb.py:close",
+   10,
+   0.09999999999999999
+  ],
+  [
+   "route: home → chi tiết Aptomat",
+   "navigate.py:_verify",
+   3,
+   0.30000000000000004
+  ],
+  [
+   "thông tin chung Aptomat: đọc",
+   "_adb.py:close",
+   13,
+   0.12999999999999998
+  ],
+  [
+   "thông tin chung Aptomat: đọc",
+   "u2.py:drag",
+   1,
+   0.05
+  ],
+  [
+   "thông tin chung Aptomat: đọc",
+   "navigate.py:_verify",
+   1,
+   0.1
+  ],
+  [
+   "route: → chi tiết Chống giật 4",
+   "_adb.py:close",
+   13,
+   0.12999999999999998
+  ],
+  [
+   "route: → chi tiết Chống giật 4",
+   "navigate.py:run_edge",
+   1,
+   0.1
+  ],
+  [
+   "route: → chi tiết Chống giật 4",
+   "navigate.py:_verify",
+   4,
+   0.4
+  ],
+  [
+   "route: → chi tiết Homekit",
+   "_adb.py:close",
+   13,
+   0.12999999999999998
+  ],
+  [
+   "route: → chi tiết Homekit",
+   "navigate.py:_verify",
+   4,
+   0.4
+  ],
+  [
+   "route: → chi tiết Công tắc",
+   "_adb.py:close",
+   7,
+   0.07
+  ],
+  [
+   "route: → chi tiết Công tắc",
+   "navigate.py:_verify",
+   2,
+   0.2
+  ],
+  [
+   "route: → share/add (sâu)",
+   "_adb.py:close",
+   5,
+   0.05
+  ],
+  [
+   "route: → share/add (sâu)",
+   "navigate.py:_verify",
+   2,
+   0.2
+  ],
+  [
+   "route: share/add → home",
+   "_adb.py:close",
+   11,
+   0.10999999999999999
+  ],
+  [
+   "route: share/add → home",
+   "navigate.py:run_edge",
+   2,
+   0.2
+  ],
+  [
+   "route: share/add → home",
+   "navigate.py:_verify",
+   3,
+   0.30000000000000004
+  ]
+ ],
+ "adb": [
+  [
+   "khởi động",
+   "shell getprop",
+   1,
+   0.057924809999349236
+  ],
+  [
+   "khởi động",
+   "shell wm size",
+   1,
+   0.07488407900018501
+  ],
+  [
+   "khởi động",
+   "shell wm density",
+   1,
+   0.06993685699944763
+  ],
+  [
+   "khởi động",
+   "shell settings get",
+   1,
+   0.07605715400040935
+  ],
+  [
+   "khởi động",
+   "shell dumpsys package",
+   1,
+   0.08643716300048254
+  ],
+  [
+   "khởi động",
+   "shell dumpsys window",
+   1,
+   0.2620451589991717
+  ]
+ ],
+ "ui": [
+  [
+   "route: → home",
+   "goto (route)",
+   2,
+   6.884312924999904
+  ],
+  [
+   "route: home → chi tiết Công tắc",
+   "goto (route)",
+   1,
+   3.63865139400059
+  ],
+  [
+   "khoá: đọc",
+   "goto (route)",
+   1,
+   8.897000043361913e-06
+  ],
+  [
+   "khoá: đặt app",
+   "goto (route)",
+   1,
+   1.2463000530260615e-05
+  ],
+  [
+   "khoá: đặt app",
+   "find",
+   3,
+   0.8918277040011162
+  ],
+  [
+   "khoá: đặt app",
+   "need",
+   2,
+   3.6067000110051595e-05
+  ],
+  [
+   "khoá: đặt app",
+   "tap",
+   1,
+   0.23775227299938706
+  ],
+  [
+   "khoá: đặt app",
+   "settled",
+   1,
+   0.5689501150000069
+  ],
+  [
+   "khoá: đặt app",
+   "gone",
+   1,
+   0.27977966100024787
+  ],
+  [
+   "khoá: đặt app",
+   "pick",
+   1,
+   0.5512876429993412
+  ],
+  [
+   "khoá: trả both",
+   "goto (route)",
+   1,
+   1.867500031949021e-05
+  ],
+  [
+   "khoá: trả both",
+   "find",
+   3,
+   0.7586163930009207
+  ],
+  [
+   "khoá: trả both",
+   "need",
+   2,
+   9.827000212681014e-06
+  ],
+  [
+   "khoá: trả both",
+   "tap",
+   1,
+   0.24365952400057722
+  ],
+  [
+   "khoá: trả both",
+   "settled",
+   1,
+   0.6832574869995369
+  ],
+  [
+   "khoá: trả both",
+   "gone",
+   1,
+   0.38762199499979033
+  ],
+  [
+   "khoá: trả both",
+   "pick",
+   1,
+   0.5539246399994227
+  ],
+  [
+   "nhấn nhả: đọc",
+   "goto (route)",
+   1,
+   1.1732000530173536e-05
+  ],
+  [
+   "nhấn nhả: đặt 00:05",
+   "goto (route)",
+   1,
+   1.1562000509002246e-05
+  ],
+  [
+   "nhấn nhả: đặt 00:05",
+   "find",
+   4,
+   1.0193970239997725
+  ],
+  [
+   "nhấn nhả: đặt 00:05",
+   "need",
+   4,
+   2.2170999727677554e-05
+  ],
+  [
+   "nhấn nhả: đặt 00:05",
+   "tap",
+   4,
+   0.9244395750001786
+  ],
+  [
+   "nhấn nhả: đặt 00:05",
+   "elements",
+   4,
+   0.7648281020001377
+  ],
+  [
+   "nhấn nhả: đặt 00:05",
+   "gone",
+   2,
+   0.780432018999818
+  ],
+  [
+   "nhấn nhả: đặt 00:05",
+   "pick_number",
+   1,
+   0.3874698930003433
+  ],
+  [
+   "nhấn nhả: trả 00:00",
+   "goto (route)",
+   1,
+   1.4827999621047638e-05
+  ],
+  [
+   "nhấn nhả: trả 00:00",
+   "find",
+   4,
+   0.9597027820009316
+  ],
+  [
+   "nhấn nhả: trả 00:00",
+   "need",
+   4,
+   4.030399941257201e-05
+  ],
+  [
+   "nhấn nhả: trả 00:00",
+   "tap",
+   4,
+   0.951631348999399
+  ],
+  [
+   "nhấn nhả: trả 00:00",
+   "elements",
+   4,
+   0.7116016180007136
+  ],
+  [
+   "nhấn nhả: trả 00:00",
+   "gone",
+   2,
+   0.8256740260003426
+  ],
+  [
+   "nhấn nhả: trả 00:00",
+   "pick_number",
+   1,
+   0.39812235699992016
+  ],
+  [
+   "hẹn giờ nhanh: đọc",
+   "goto (route)",
+   1,
+   2.034799945249688e-05
+  ],
+  [
+   "hẹn giờ nhanh: đặt 3 phút tắt",
+   "goto (route)",
+   1,
+   1.2524000339908525e-05
+  ],
+  [
+   "hẹn giờ nhanh: đặt 3 phút tắt",
+   "find",
+   6,
+   1.4384536770003251
+  ],
+  [
+   "hẹn giờ nhanh: đặt 3 phút tắt",
+   "need",
+   6,
+   2.6939998861053027e-05
+  ],
+  [
+   "hẹn giờ nhanh: đặt 3 phút tắt",
+   "tap",
+   5,
+   1.1351953140010664
+  ],
+  [
+   "hẹn giờ nhanh: đặt 3 phút tắt",
+   "elements",
+   3,
+   0.5434087349995025
+  ],
+  [
+   "hẹn giờ nhanh: đặt 3 phút tắt",
+   "gone",
+   2,
+   0.9945915810012593
+  ],
+  [
+   "hẹn giờ nhanh: đặt 3 phút tắt",
+   "pick_number",
+   1,
+   0.39706272200055537
+  ],
+  [
+   "hẹn giờ nhanh: đặt 3 phút tắt",
+   "green",
+   2,
+   0.7342687660002412
+  ],
+  [
+   "hẹn giờ nhanh: xoá",
+   "goto (route)",
+   1,
+   7.775000085530337e-06
+  ],
+  [
+   "hẹn giờ nhanh: xoá",
+   "find",
+   3,
+   0.8029264659999171
+  ],
+  [
+   "hẹn giờ nhanh: xoá",
+   "need",
+   3,
+   1.547800002299482e-05
+  ],
+  [
+   "hẹn giờ nhanh: xoá",
+   "tap",
+   2,
+   0.4979403959996489
+  ],
+  [
+   "hẹn giờ nhanh: xoá",
+   "gone",
+   1,
+   0.6612258160002966
+  ],
+  [
+   "đầu vào: đọc",
+   "goto (route)",
+   1,
+   9.838000551098958e-06
+  ],
+  [
+   "đầu vào: đọc",
+   "reach",
+   3,
+   3.034341807000601
+  ],
+  [
+   "đầu vào: đọc",
+   "elements",
+   1,
+   0.30924816300012026
+  ],
+  [
+   "đầu vào AC: bật",
+   "goto (route)",
+   1,
+   1.4737000128661748e-05
+  ],
+  [
+   "đầu vào AC: bật",
+   "reach",
+   1,
+   0.2109212369996385
+  ],
+  [
+   "đầu vào AC: bật",
+   "elements",
+   1,
+   0.30741670099996554
+  ],
+  [
+   "đầu vào AC: bật",
+   "tap",
+   1,
+   0.20280489600008877
+  ],
+  [
+   "đầu vào AC: trả tắt",
+   "goto (route)",
+   1,
+   1.0630000360833947e-05
+  ],
+  [
+   "đầu vào AC: trả tắt",
+   "reach",
+   1,
+   0.22570984800040605
+  ],
+  [
+   "đầu vào AC: trả tắt",
+   "elements",
+   1,
+   0.4549440519995187
+  ],
+  [
+   "đầu vào AC: trả tắt",
+   "tap",
+   1,
+   0.2601425000002564
+  ],
+  [
+   "đầu vào DC xanh: bật",
+   "goto (route)",
+   1,
+   1.4166000255499966e-05
+  ],
+  [
+   "đầu vào DC xanh: bật",
+   "reach",
+   1,
+   0.34705539900005533
+  ],
+  [
+   "đầu vào DC xanh: bật",
+   "tap",
+   1,
+   0.2567305539996596
+  ],
+  [
+   "đầu vào DC xanh: bật",
+   "find",
+   1,
+   0.31034589299997606
+  ],
+  [
+   "đầu vào DC xanh: bật",
+   "need",
+   1,
+   5.0589997044880874e-06
+  ],
+  [
+   "đầu vào DC xanh: bật",
+   "settled",
+   1,
+   0.6368072819996087
+  ],
+  [
+   "đầu vào DC xanh: bật",
+   "gone",
+   1,
+   0.19012884699986898
+  ],
+  [
+   "đầu vào DC xanh: bật",
+   "pick",
+   1,
+   0.5491001020009207
+  ],
+  [
+   "đầu vào DC xanh: trả none",
+   "goto (route)",
+   1,
+   7.884999831730966e-06
+  ],
+  [
+   "đầu vào DC xanh: trả none",
+   "reach",
+   1,
+   0.24539260100027604
+  ],
+  [
+   "đầu vào DC xanh: trả none",
+   "tap",
+   1,
+   0.24368054899969138
+  ],
+  [
+   "đầu vào DC xanh: trả none",
+   "find",
+   1,
+   0.4303045309998197
+  ],
+  [
+   "đầu vào DC xanh: trả none",
+   "need",
+   1,
+   5.32000012753997e-06
+  ],
+  [
+   "đầu vào DC xanh: trả none",
+   "settled",
+   1,
+   0.2809004780001487
+  ],
+  [
+   "đầu vào DC xanh: trả none",
+   "gone",
+   1,
+   0.15400116900036664
+  ],
+  [
+   "đầu vào DC xanh: trả none",
+   "pick",
+   1,
+   0.5389568919990779
+  ],
+  [
+   "hẹn giờ: danh sách",
+   "goto (route)",
+   1,
+   2.0943023909994736
+  ],
+  [
+   "hẹn giờ: danh sách",
+   "find",
+   1,
+   1.86260263999975
+  ],
+  [
+   "hẹn giờ: danh sách",
+   "elements",
+   1,
+   0.30671091099975456
+  ],
+  [
+   "hẹn giờ: thêm 05:55 tắt T2,T6",
+   "goto (route)",
+   1,
+   0.989263899999969
+  ],
+  [
+   "hẹn giờ: thêm 05:55 tắt T2,T6",
+   "elements",
+   4,
+   1.118939223999405
+  ],
+  [
+   "hẹn giờ: thêm 05:55 tắt T2,T6",
+   "tap",
+   9,
+   2.239709691999451
+  ],
+  [
+   "hẹn giờ: thêm 05:55 tắt T2,T6",
+   "set_wheel",
+   2,
+   3.408345671999996
+  ],
+  [
+   "hẹn giờ: thêm 05:55 tắt T2,T6",
+   "find",
+   8,
+   4.9180254630009586
+  ],
+  [
+   "hẹn giờ: thêm 05:55 tắt T2,T6",
+   "reveal",
+   2,
+   0.40529638000043633
+  ],
+  [
+   "hẹn giờ: thêm 05:55 tắt T2,T6",
+   "need",
+   3,
+   1.3544000466936268e-05
+  ],
+  [
+   "hẹn giờ: thêm 05:55 tắt T2,T6",
+   "settled",
+   1,
+   0.29893498600085877
+  ],
+  [
+   "hẹn giờ: thêm 05:55 tắt T2,T6",
+   "gone",
+   1,
+   0.2479294149998168
+  ],
+  [
+   "hẹn giờ: thêm 05:55 tắt T2,T6",
+   "pick",
+   1,
+   0.5445003240001824
+  ],
+  [
+   "hẹn giờ: thêm 05:55 tắt T2,T6",
+   "scroll_up",
+   1,
+   0.7848506719992656
+  ],
+  [
+   "hẹn giờ: thêm 05:55 tắt T2,T6",
+   "green",
+   2,
+   0.4856735280000066
+  ],
+  [
+   "hẹn giờ: sửa 05:55 → 05:57",
+   "goto (route)",
+   1,
+   5.0199996621813625e-06
+  ],
+  [
+   "hẹn giờ: sửa 05:55 → 05:57",
+   "find",
+   5,
+   3.0976230289998057
+  ],
+  [
+   "hẹn giờ: sửa 05:55 → 05:57",
+   "need",
+   3,
+   1.3546000445785467e-05
+  ],
+  [
+   "hẹn giờ: sửa 05:55 → 05:57",
+   "elements",
+   2,
+   0.5990121290005845
+  ],
+  [
+   "hẹn giờ: sửa 05:55 → 05:57",
+   "tap",
+   2,
+   0.5208021489997918
+  ],
+  [
+   "hẹn giờ: sửa 05:55 → 05:57",
+   "set_wheel",
+   1,
+   1.9313605839997763
+  ],
+  [
+   "hẹn giờ: xoá 05:57",
+   "goto (route)",
+   1,
+   7.483999979740474e-06
+  ],
+  [
+   "hẹn giờ: xoá 05:57",
+   "find",
+   7,
+   3.174647482999717
+  ],
+  [
+   "hẹn giờ: xoá 05:57",
+   "need",
+   3,
+   1.4274999557528645e-05
+  ],
+  [
+   "hẹn giờ: xoá 05:57",
+   "tap",
+   1,
+   0.24415562600006524
+  ],
+  [
+   "hẹn giờ: xoá 05:57",
+   "elements",
+   1,
+   0.3278499469997769
+  ],
+  [
+   "tuần hoàn: danh sách",
+   "goto (route)",
+   1,
+   1.7221099560001676
+  ],
+  [
+   "tuần hoàn: danh sách",
+   "elements",
+   1,
+   0.1712380149992896
+  ],
+  [
+   "tuần hoàn: thêm 00:20/00:10",
+   "goto (route)",
+   2,
+   0.7546877539998604
+  ],
+  [
+   "tuần hoàn: thêm 00:20/00:10",
+   "elements",
+   3,
+   0.5358512120001251
+  ],
+  [
+   "tuần hoàn: thêm 00:20/00:10",
+   "tap",
+   3,
+   0.7900805909994233
+  ],
+  [
+   "tuần hoàn: thêm 00:20/00:10",
+   "set_wheel",
+   2,
+   2.403583715001332
+  ],
+  [
+   "tuần hoàn: thêm 00:20/00:10",
+   "find",
+   2,
+   0.748927964998984
+  ],
+  [
+   "tuần hoàn: thêm 00:20/00:10",
+   "need",
+   1,
+   5.631000931316521e-06
+  ],
+  [
+   "tuần hoàn: sửa tắt 00:15",
+   "goto (route)",
+   2,
+   1.3235000551503617e-05
+  ],
+  [
+   "tuần hoàn: sửa tắt 00:15",
+   "elements",
+   5,
+   0.893797194000399
+  ],
+  [
+   "tuần hoàn: sửa tắt 00:15",
+   "tap",
+   3,
+   0.8207667639999272
+  ],
+  [
+   "tuần hoàn: sửa tắt 00:15",
+   "find",
+   3,
+   0.9901064839996252
+  ],
+  [
+   "tuần hoàn: sửa tắt 00:15",
+   "need",
+   2,
+   1.0147999091714155e-05
+  ],
+  [
+   "tuần hoàn: sửa tắt 00:15",
+   "set_wheel",
+   1,
+   1.7609002279996275
+  ],
+  [
+   "tuần hoàn: xoá",
+   "goto (route)",
+   2,
+   1.741299911373062e-05
+  ],
+  [
+   "tuần hoàn: xoá",
+   "elements",
+   4,
+   0.7473808209997514
+  ],
+  [
+   "tuần hoàn: xoá",
+   "tap",
+   2,
+   0.5000520880003023
+  ],
+  [
+   "tuần hoàn: xoá",
+   "find",
+   4,
+   1.7917547609995381
+  ],
+  [
+   "tuần hoàn: xoá",
+   "need",
+   1,
+   5.540000529435929e-06
+  ],
+  [
+   "chia sẻ: danh sách",
+   "goto (route)",
+   1,
+   1.6400366959996973
+  ],
+  [
+   "chia sẻ: danh sách",
+   "elements",
+   1,
+   0.16902647299957607
+  ],
+  [
+   "chia sẻ: sửa quyền +timer",
+   "goto (route)",
+   1,
+   6.692000170005485e-06
+  ],
+  [
+   "chia sẻ: sửa quyền +timer",
+   "find",
+   1,
+   3.2429456900008518
+  ],
+  [
+   "chia sẻ: sửa quyền +timer",
+   "need",
+   1,
+   1.299399900744902e-05
+  ],
+  [
+   "chia sẻ: trả quyền",
+   "goto (route)",
+   1,
+   0.1791833340002995
+  ],
+  [
+   "chia sẻ: trả quyền",
+   "find",
+   1,
+   3.2857203319999826
+  ],
+  [
+   "chia sẻ: trả quyền",
+   "need",
+   1,
+   9.888000022328924e-06
+  ],
+  [
+   "lịch sử: đọc",
+   "goto (route)",
+   1,
+   1.9061335380001765
+  ],
+  [
+   "lịch sử: đọc",
+   "find",
+   1,
+   0.3359547840000232
+  ],
+  [
+   "lịch sử: đọc",
+   "elements",
+   1,
+   0.3304884819999643
+  ],
+  [
+   "thông tin chung Công tắc: đọc",
+   "goto (route)",
+   1,
+   3.2816957029999685
+  ],
+  [
+   "thông tin chung Công tắc: đọc",
+   "find",
+   1,
+   0.1997602450001068
+  ],
+  [
+   "thông tin chung Công tắc: đọc",
+   "elements",
+   1,
+   0.3019308849998197
+  ],
+  [
+   "route: home → chi tiết Aptomat",
+   "goto (route)",
+   1,
+   3.5538795110005594
+  ],
+  [
+   "thông tin chung Aptomat: đọc",
+   "goto (route)",
+   1,
+   2.2978215200000704
+  ],
+  [
+   "thông tin chung Aptomat: đọc",
+   "find",
+   1,
+   0.15500993099976768
+  ],
+  [
+   "thông tin chung Aptomat: đọc",
+   "elements",
+   1,
+   0.2845383629992284
+  ],
+  [
+   "route: → chi tiết Chống giật 4",
+   "goto (route)",
+   1,
+   4.5933568989994455
+  ],
+  [
+   "route: → chi tiết Homekit",
+   "goto (route)",
+   1,
+   4.346051315000295
+  ],
+  [
+   "route: → chi tiết Công tắc",
+   "goto (route)",
+   1,
+   2.52804465600002
+  ],
+  [
+   "route: → share/add (sâu)",
+   "goto (route)",
+   1,
+   1.9127736589998676
+  ],
+  [
+   "route: share/add → home",
+   "goto (route)",
+   1,
+   2.924190269999599
+  ]
+ ]
+}

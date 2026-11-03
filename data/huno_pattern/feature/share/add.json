@@ -1,0 +1,17 @@
+{
+  "route": "KEY_NAME_DEVICE_SHARE",
+  "source": "khám trên 2fc3878f ngày 2026-11-03; route chưa đối chiếu (KEY_NAME_DEVICE_SHARE / KEY_NAME_DEVICE_SHARE_ONE)",
+  "anchor": {"key": "deviceSharing"},
+  "anchors": ["deviceSharing", ["sharePermissionText", "editPermissionTitleText"]],
+  "note": "form chia sẻ: tab Số điện thoại / Email, ô nhập, 7 quyền (OtherDeviceNoChangeIcon với swinputv2 — Wallpad share/swinputv2.md). Mọi thứ là trạng thái form, chỉ nút Chia sẻ gửi đi.",
+  "danger": ["nút 'Chia sẻ' cuối màn: chia sẻ thiết bị thật cho số điện thoại / email đã nhập"],
+  "controls": {
+    "back":       {"gesture": "back", "kind": "nav", "to": "@back", "note": "Back hệ thống về list, không hỏi xác nhận (thử 2026-11-03)"},
+    "tab_phone":  {"target": {"key": "phone"}, "kind": "form"},
+    "tab_email":  {"target": {"key": "email"}, "kind": "form"},
+    "input":      {"target": {"key": "enterPhoneNumberShare"}, "kind": "form", "note": "ô nhập (placeholder)"},
+    "select_all": {"target": {"key": "selectAll"}, "kind": "form"},
+    "permission": {"kind": "form", "note": "7 dòng quyền: controlDeviceText, fullPermissionAlarmText, permissionCollectionText, permissionSettingBasicText, permissionSettingAdvancedText, permissionViewHistoryText, permissionNotifyDeviceOfflineText"},
+    "submit":     {"target": {"key": "share"}, "kind": "danger", "effect": "chia sẻ thiết bị"}
+  }
+}

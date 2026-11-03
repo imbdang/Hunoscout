@@ -16,14 +16,6 @@
     "plus": "F0415"
   },
   "placeholders": {
-    "favorite": {
-      "from": "devices",
-      "where": "suggest == 1",
-      "order": "index_suggest",
-      "key": "name",
-      "bind": "device",
-      "note": "thiết bị trong mục \"Thiết bị hay dùng\" (equipmentUsed) ở Home"
-    },
     "room": {
       "from": "rooms",
       "order": "index",
@@ -44,25 +36,18 @@
   "nodes": {
     "home": {
       "route": "home",
-      "anchors": ["equipmentUsed"],
+      "anchors": [["equipmentUsed", "commonContext", {"text": "{home.name}"}]],
       "anchor": {"any": [{"text": "{home.name}"}, {"key": "equipmentUsed"}, {"key": "commonContext"}], "band": false},
-      "note": "title (tên nhà) cuộn theo nội dung, có lúc không trên màn → chấp nhận cả tiêu đề mục; không học vị trí",
+      "note": "title (tên nhà) cuộn theo nội dung, có lúc không trên màn → chấp nhận cả tiêu đề mục; không học vị trí. Nhận màn: có một trong ba (mục Thiết bị hay dùng chỉ hiện khi có thiết bị yêu thích; cuộn qua thì mất)",
       "danger": [
         "ô ngữ cảnh trong mục commonContext: tap = chạy ngữ cảnh",
         "ô thiết bị: tap = bật/tắt, chỉ được hold",
         "nút mic nổi góc phải dưới"
       ],
       "edges": [
-        {"to": "room", "action": {"gesture": "tap", "target": {"glyph": "view-grid"}}},
-        {
-          "for_each": "favorite",
-          "to": "{device.entry}",
-          "cost": 20000,
-          "note": "Home dài, phải cuộn + dễ kéo-làm-mới → chi phí cao để ưu tiên đi qua detailRoom",
-          "action": {"gesture": "hold", "target": {"desc": "{device.name}", "match": "part", "after": "equipmentUsed"}},
-          "when": "block_control == 0 and blocked == 0"
-        }
-      ]
+        {"to": "room", "action": {"gesture": "tap", "target": {"glyph": "view-grid"}}}
+      ],
+      "note_device": "không có cạnh Home → thiết bị (mục Thiết bị hay dùng): vào thiết bị luôn qua room → detailRoom (bỏ ngày 2026-11-03 theo yêu cầu)"
     },
     "room": {
       "route": "room",

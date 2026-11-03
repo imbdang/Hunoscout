@@ -4,6 +4,11 @@
   "status": "draft",
   "source": "màn: features/device-common/screens/4178_InfoDeviceRoute.js; dòng cài đặt công tắc: features/energy-meter/components/4203_SettingSwitchView.js; khám trên 2fc3878f ngày 2026-10-27",
   "entry": "infoDevice",
+  "share": {"template": "Switch",
+            "perms": ["control", "timer", "collection", "basic", "advanced", "history", "notify_offline"],
+            "default": ["control", "timer", "collection", "basic", "advanced", "history"],
+            "source": "Wallpad docs/device/feature/share/sswitch2v.md (F19640 → F19607)",
+            "note": "cùng 7 quyền như swinputv2, khác chữ phụ (control: Bật/Tắt; basic có đổi icon; advanced: cấp điện, nhấn nhả, khoá). Chưa thử trên máy."},
   "nodes": {
     "infoDevice": {
       "route": "infoDevice",

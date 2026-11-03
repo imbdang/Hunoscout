@@ -20,7 +20,7 @@ from enum import Enum, auto
 
 from . import config
 from . import interact as adb
-from .parse_data import Capture, check_fresh, latest_response, parse_house
+from .parse_data import Capture, LogcatCapture, check_fresh, latest_response, parse_house
 from .ui_map import Edge, Lexicon, Lost, Map, Navigator, Resolved, instantiate, load_docs
 from .ui_map.locate import learns_band
 
@@ -50,6 +50,7 @@ class Report:
     failed: list[tuple[str, str]] = field(default_factory=list)
     unexplored: list[str] = field(default_factory=list)   # cạnh tới màn chưa biết cách nhận ra
     pruned: list[str] = field(default_factory=list)
+    tiles: list[str] = field(default_factory=list)        # cạnh hold vào ô thiết bị vừa ghi lại toạ độ
     transitions: list[str] = field(default_factory=list)
 
 
@@ -75,8 +76,9 @@ class Scout:
 
     def _fetch_house(self, fresh: bool):
         """Danh sách nhà/thiết bị: fresh → mở lại app qua hook rồi lấy response mới (mặc định)."""
-        if fresh:
-            cap = Capture(config.CAPTURE_SCRIPT, self.serial)
+        if fresh:                                # không có script collector (máy khác) → đọc thẳng logcat
+            cap = (Capture(config.CAPTURE_SCRIPT, self.serial) if config.CAPTURE_SCRIPT.exists()
+                   else LogcatCapture(config.EXPORTS, self.serial))
             t = time.monotonic()
             cap.start()
             try:
@@ -91,8 +93,10 @@ class Scout:
             self.report.warnings.append(warn)
         return parse_house(resp, config.HOME_ID, observed.isoformat())
 
-    def start(self, fresh: bool = True) -> Report:
-        r = self.report
+    def load(self, fresh: bool) -> None:
+        """IDLE: danh sách nhà/thiết bị → map + toạ độ đã học của máy này. Không chạm màn hình
+        (trừ fresh: mở lại app để lấy danh sách qua hook). Gọi lại được để làm mới map."""
+        r = self.report = Report(transitions=self.report.transitions)
         house = self._fetch_house(fresh)
         r.devices = len(house.devices)
         if house.duplicates:
@@ -111,18 +115,25 @@ class Scout:
         self.res.apply_costs(self.graph)
         self.nav = Navigator(self.graph, self.res, Lexicon(config.I18N), glyphs)
 
+    def start(self, fresh: bool = True) -> Report:
+        self.load(fresh)
+        r = self.report
         if adb.current_package() != config.APP_PACKAGE:
             raise Lost(f"app {config.APP_PACKAGE} không ở màn hình trước — mở app rồi chạy lại")
         missing, r.unexplored = self.plan()
         unlearned = self.unlearned()
-        if missing or unlearned:
-            self._go(State.DISCOVERY, f"core: thiếu toạ độ {len(missing)} cạnh, chưa học title {len(unlearned)} màn")
+        if missing or unlearned or fresh:
+            self._go(State.DISCOVERY, f"core: thiếu toạ độ {len(missing)} cạnh, chưa học title {len(unlearned)} màn"
+                     + (", quét lại ô thiết bị" if fresh else ""))
             if missing:
                 done, failed = self.nav.discover(missing)
                 r.resolved += [e.id for e in done]
                 r.failed += [(e.id, why) for e, why in failed]
             self._learn_anchors()
-        self._go(State.ACTIVE, f"{len(r.resolved)} cạnh mới, {len(r.anchors)} title mới, {len(r.failed)} lỗi")
+            if fresh:
+                self._scan_tiles()
+        self._go(State.ACTIVE, f"{len(r.resolved)} cạnh mới, {len(r.anchors)} title mới, {len(r.tiles)} ô thiết bị, "
+                 f"{len(r.failed)} lỗi")
         return r
 
     def usable(self, e: Edge) -> bool:
@@ -147,9 +158,15 @@ class Scout:
         return missing, unexplored
 
     def unlearned(self) -> list[str]:
-        """Màn core đã khám nhưng chưa học vị trí title trên máy này (màn thiết bị học khi đi tới)."""
+        """Màn core đã khám nhưng chưa học vị trí title trên máy này (màn thiết bị học khi đi tới).
+
+        Bỏ màn không có cạnh vào (popup tự bật, vd popup.switchHouse): không đi tới được để học,
+        học khi nó tự xuất hiện — giống plan().
+        """
+        reachable = {e.to for e in self.graph.edges()} | {"home"}
         return [n.id for n in self.graph.nodes.values()
-                if n.file == "core" and n.explored and learns_band(n) and self.res.get_anchor(n) is None]
+                if n.file == "core" and n.explored and learns_band(n) and n.id in reachable
+                and self.res.get_anchor(n) is None]
 
     def _learn_anchors(self) -> None:
         for nid in self.unlearned():
@@ -161,6 +178,18 @@ class Scout:
                     self.report.failed.append((nid, "không thấy title trên màn"))
             except (Lost, LookupError) as err:
                 self.report.failed.append((nid, f"học title: {err}"))
+
+    def _scan_tiles(self) -> None:
+        """Vị trí ô thiết bị đổi theo thiết bị thêm/bớt, trạng thái → mỗi lần discovery đọc lại màn từng phòng."""
+        for room in self.graph.nodes.values():
+            holds = [e for e in room.edges if e.action.gesture == "hold" and e.action.target and e.action.target.desc]
+            if room.file != "core" or not holds:
+                continue
+            try:
+                self.nav.goto(room.id, self.usable)
+                self.report.tiles += self.nav.scan_tiles(holds)
+            except (Lost, LookupError) as err:
+                self.report.failed.append((room.id, f"quét ô thiết bị: {err}"))
 
     # ---- ACTIVE ----
 

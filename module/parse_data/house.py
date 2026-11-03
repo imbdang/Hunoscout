@@ -25,6 +25,9 @@ class Device:
     index_suggest: int
     index_in_room: int
     last_online: str | None
+    # Số liên kết — dòng tương ứng trên màn thiết bị chỉ hiện khi > 0 (useNeoLogic / useSt02Logic)
+    neo_links: int = 0        # len(data_extra.neoLinks): công tắc ngữ cảnh (neo R6) đã liên kết
+    st02_links: int = 0       # len(data_extra.listSt02Linked): cảm biến cầu thang ST02 đã liên kết
 
 
 @dataclass(slots=True)
@@ -84,6 +87,7 @@ def parse_house(resp: dict, home_id: str, observed_at: str) -> House:
             default=_int(r.get("default_room")), hidden=_int(r.get("is_hidden")),
         ))
         for d in r.get("devices") or []:
+            extra = d.get("data_extra") if isinstance(d.get("data_extra"), dict) else {}   # thiết bị không có thì là ""
             dev = Device(
                 id=str(d["id"]), name=d["name"], root_type=d["root_type"], type=d.get("type") or "",
                 root_id=d.get("root_id") or "", index_in_root=_int(d.get("index_in_root")),
@@ -92,6 +96,7 @@ def parse_house(resp: dict, home_id: str, observed_at: str) -> House:
                 active=_int(d.get("active")), suggest=_int(d.get("suggest")),
                 index_suggest=_int(d.get("index_suggest")), index_in_room=_int(d.get("index_in_room")),
                 last_online=d.get("last_online"),
+                neo_links=len(extra.get("neoLinks") or {}), st02_links=len(extra.get("listSt02Linked") or []),
             )
             if dev.name in devices:
                 dup.add(dev.name)
