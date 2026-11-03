@@ -1,0 +1,131 @@
+{
+  "app": "com.iot.hunonic",
+  "app_version": "4.0.19",
+  "status": "draft",
+  "source": "tab: features/home-room/components/3473_HomeTabBar.js; header Room manager: features/home-room/screens/3087_RoomRoute.js; thẻ phòng → detailRoom: features/device-common/components/2813_module_2813.js; đi thử tay trên máy 2fc3878f ngày 2026-10-25",
+  "glyphs": {
+    "home": "F02DC",
+    "view-grid": "F0570",
+    "flash": "EC17",
+    "storefront": "F07C7",
+    "menu": "F035C",
+    "cog-outline": "F08BB",
+    "chevron-left": "F0141",
+    "close": "F0156",
+    "power": "F0425",
+    "plus": "F0415"
+  },
+  "placeholders": {
+    "favorite": {
+      "from": "devices",
+      "where": "suggest == 1",
+      "order": "index_suggest",
+      "key": "name",
+      "bind": "device",
+      "note": "thiết bị trong mục \"Thiết bị hay dùng\" (equipmentUsed) ở Home"
+    },
+    "room": {
+      "from": "rooms",
+      "order": "index",
+      "key": "name",
+      "bind": "room",
+      "require": "default == 1",
+      "note": "mọi phòng của nhà; luôn có phòng mặc định \"Chưa xếp phòng\" (default_room == 1)"
+    },
+    "room_device": {
+      "from": "devices",
+      "where": "room_id == {room.id}",
+      "order": "index_in_room",
+      "key": "name",
+      "bind": "device",
+      "note": "thiết bị trong phòng đang mở"
+    }
+  },
+  "nodes": {
+    "home": {
+      "route": "home",
+      "anchors": ["equipmentUsed"],
+      "anchor": {"any": [{"text": "{home.name}"}, {"key": "equipmentUsed"}, {"key": "commonContext"}], "band": false},
+      "note": "title (tên nhà) cuộn theo nội dung, có lúc không trên màn → chấp nhận cả tiêu đề mục; không học vị trí",
+      "danger": [
+        "ô ngữ cảnh trong mục commonContext: tap = chạy ngữ cảnh",
+        "ô thiết bị: tap = bật/tắt, chỉ được hold",
+        "nút mic nổi góc phải dưới"
+      ],
+      "edges": [
+        {"to": "room", "action": {"gesture": "tap", "target": {"glyph": "view-grid"}}},
+        {
+          "for_each": "favorite",
+          "to": "{device.entry}",
+          "cost": 20000,
+          "note": "Home dài, phải cuộn + dễ kéo-làm-mới → chi phí cao để ưu tiên đi qua detailRoom",
+          "action": {"gesture": "hold", "target": {"desc": "{device.name}", "match": "part", "after": "equipmentUsed"}},
+          "when": "block_control == 0 and blocked == 0"
+        }
+      ]
+    },
+    "room": {
+      "route": "room",
+      "anchors": ["roomManager"],
+      "anchor": {"key": "roomManager"},
+      "danger": [
+        "ô thiết bị nhỏ trong thẻ phòng: tap = bật/tắt",
+        "nút thêm (svg addDevice) góc phải: mở form tạo phòng"
+      ],
+      "edges": [
+        {"to": "home", "action": {"gesture": "tap", "target": {"glyph": "home"}}},
+        {
+          "for_each": "room",
+          "to": "detailRoom[{room.name}]",
+          "action": {"gesture": "tap", "target": {"desc": "{room.name}", "match": "prefix"}}
+        },
+        {"to": "sortRoom", "action": {"gesture": "tap", "target": {"glyph": "cog-outline"}}}
+      ]
+    },
+    "detailRoom": {
+      "route": "detailRoom",
+      "param": "room",
+      "anchors": [["turnOnAll", "pressAddDevice"]],
+      "anchor": {"text": "{room.name}"},
+      "check": "{room.name}",
+      "danger": [
+        "nút turnOnAll / turnOffAll: bật/tắt mọi thiết bị trong phòng",
+        "ô thiết bị: tap = bật/tắt, chỉ được hold"
+      ],
+      "note": "phòng có thiết bị: hiện turnOnAll/turnOffAll; phòng rỗng: chỉ có pressAddDevice + nút cog ở header. Thoát bằng nút ‹ header, KHÔNG dùng Back hệ thống: ở phòng rỗng 'Nhà tắm', Back hệ thống sang detailRoom của phòng mặc định thay vì về Room manager (tái hiện 3/3 lần ngày 2026-10-25, máy 2fc3878f)",
+      "edges": [
+        {"to": "room", "action": {"gesture": "tap", "target": {"glyph": "chevron-left"}}},
+        {
+          "for_each": "room_device",
+          "to": "{device.entry}",
+          "action": {"gesture": "hold", "target": {"desc": "{device.name}", "match": "part"}},
+          "when": "block_control == 0 and blocked == 0"
+        }
+      ]
+    },
+    "popup.switchHouse": {
+      "route": "AlertAutoSwitchHouse",
+      "overlay": true,
+      "anchors": ["assistant"],
+      "anchor": {"key": "assistant"},
+      "note": "tự bật khi mở app nếu có nhà khác ở gần vị trí hiện tại (features/switch/logic/2892_module_2892.js). Không có cạnh vào; where() nhận ra rồi đóng bằng Huỷ.",
+      "danger": ["Xác nhận: chuyển sang nhà khác → map của nhà đang test sai hết"],
+      "controls": {
+        "cancel":  {"target": {"text": "Huỷ"}, "kind": "nav", "to": "home", "note": "chữ mặc định của dialog, khác mã Unicode với key cancel ('Hủy')"},
+        "confirm": {"target": {"key": "confirm"}, "kind": "danger"}
+      }
+    },
+    "sortRoom": {
+      "route": "sortRoom",
+      "anchors": ["sortText"],
+      "anchor": {"key": "editRoomNew"},
+      "danger": [
+        "icon close trên mỗi thẻ: xoá phòng",
+        "nhấn giữ + kéo thẻ: đổi thứ tự phòng"
+      ],
+      "edges": [
+        {"to": "room", "action": {"gesture": "back"}}
+      ]
+    }
+  }
+}

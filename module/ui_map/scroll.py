@@ -1,0 +1,92 @@
+"""Tìm phần tử trong màn có vùng cuộn mà không dump: hỏi trên máy, chưa thấy thì kéo từng nấc.
+
+Vị trí trong nội dung: content_y = y_trên_màn + scroll. Biết content_y (học trong discovery) và
+scroll hiện tại (pointer) thì kéo đúng một lần là tới; không biết thì dò từng nấc.
+Độ cuộn đo bằng một phần tử mốc (`ref`) trước/sau mỗi lần kéo; mốc không dịch nữa = hết nội dung.
+"""
+from __future__ import annotations
+
+import time
+from dataclasses import dataclass
+
+from .. import interact as adb
+
+
+@dataclass(slots=True)
+class Area:
+    """Vùng cuộn trên màn: chỉ phần tử nằm trọn trong [top, bottom] mới coi là chạm được."""
+    top: int
+    bottom: int
+    x: int                    # cột để kéo (giữa màn, tránh nút ở mép)
+
+    def inside(self, b: tuple[int, int, int, int]) -> bool:
+        return b[1] >= self.top and b[3] <= self.bottom
+
+
+@dataclass(slots=True)
+class Reach:
+    bounds: tuple[int, int, int, int] | None
+    drags: int                # số lần kéo
+    scrolled: int             # px đã cuộn thêm (đo bằng mốc)
+    ms: int
+    end: bool = False         # đã chạm cuối nội dung
+
+
+SLOP = 50   # px Android nuốt ở đầu mỗi lần kéo (đo trên 2fc3878f: kéo 250 → cuộn 200)
+
+
+def _drag_by(area: Area, px: int) -> None:
+    start = area.bottom - 40
+    adb.drag(area.x, start, max(area.top + 40, start - px))
+
+
+def to_top(area: Area, ref: dict, ref_top: int, max_drags: int = 6) -> int:
+    """Về đầu trang mà KHÔNG kéo quá đầu (kéo quá = pull-to-refresh, app tải lại dữ liệu).
+
+    ref_top: y của mốc khi màn ở đầu trang (học trong discovery). Mốc đã ở đó → không kéo gì.
+    Còn thiếu bao nhiêu thì kéo xuống đúng bấy nhiêu (+SLOP), chậm, không quán tính. → số lần kéo.
+    """
+    for n in range(max_drags + 1):
+        b = adb.locate(ref)
+        if b and b[1] >= ref_top - 3:
+            return n
+        if n == max_drags:
+            break
+        need = ref_top - b[1] if b else int((area.bottom - area.top) * 0.5)   # mốc khuất phía trên
+        start = area.top + 40
+        adb.drag(area.x, start, min(area.bottom - 40, start + need + SLOP))
+    return max_drags
+
+
+def reach(selector: dict, area: Area, ref: dict, *, content_y: int | None = None, scroll: int = 0,
+          step: float = 0.5, max_drags: int = 8) -> Reach:
+    """Đưa phần tử vào vùng nhìn thấy → khung thật của nó.
+
+    ref: selector một phần tử luôn có trong nội dung cuộn, dùng làm mốc đo độ cuộn.
+    content_y + scroll (từ pointer): kéo thẳng tới vị trí cần, rồi hỏi máy xác nhận.
+    Không có: kéo từng nấc `step` × chiều cao vùng, hỏi sau mỗi nấc.
+    """
+    t0 = time.monotonic()
+    done = lambda b, n, s, end=False: Reach(b, n, s, int((time.monotonic() - t0) * 1000), end)
+    b = adb.locate(selector)
+    if b and area.inside(b):
+        return done(b, 0, 0)
+
+    drags = scrolled = 0
+    mark = adb.locate(ref)
+    plan = [content_y - scroll - (area.top + area.bottom) // 2] if content_y is not None else []
+    while drags < max_drags:
+        px = plan.pop(0) if plan else int((area.bottom - area.top) * step)
+        if px <= 0:
+            break
+        _drag_by(area, px)
+        drags += 1
+        b, new = adb.locate(selector), adb.locate(ref)
+        moved = mark[1] - new[1] if mark and new else px
+        scrolled += moved
+        mark = new
+        if b and area.inside(b):
+            return done(b, drags, scrolled)
+        if abs(moved) < 5:                       # mốc không dịch → hết nội dung
+            return done(None, drags, scrolled, end=True)
+    return done(None, drags, scrolled)

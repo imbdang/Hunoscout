@@ -1,0 +1,35 @@
+# --- Python ---
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- Dữ liệu sinh ra khi chạy ---
+# Chỉ commit pattern dùng chung (data/huno_pattern/).
+# data/<serial>/ là riêng từng điện thoại: profile máy, toạ độ, title đã học.
+data/*
+!data/huno_pattern/
+
+# Ảnh chụp, báo cáo test
+runs/
+
+# Dump cây UI: có thể chứa dữ liệu nhạy cảm (đã gặp ô mật khẩu hiện chữ thường)
+*.xml
+*.uix
+
+# --- Bí mật / cấu hình cục bộ ---
+.env
+.env.*
+.claude/settings.local.json
+
+# --- Editor / hệ điều hành ---
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store

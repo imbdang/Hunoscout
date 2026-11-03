@@ -1,0 +1,41 @@
+{
+  "root_type": "sswitch2v",
+  "product": "Ổ cắm SK01",
+  "status": "draft",
+  "source": "màn: features/device-common/screens/4178_InfoDeviceRoute.js; dòng cài đặt công tắc: features/energy-meter/components/4203_SettingSwitchView.js; khám trên 2fc3878f ngày 2026-10-27",
+  "entry": "infoDevice",
+  "nodes": {
+    "infoDevice": {
+      "route": "infoDevice",
+      "param": "device",
+      "anchor": {"any": [{"key": "detailDevice"}, {"text": "{device.name}"}]},
+      "anchors": [["detailDevice", "renameDevice"]],
+      "check": "{device.name}",
+      "scroll": {"ref": {"key": "renameDevice"}},
+      "note": "title = 'Chi tiết thiết bị' ở đầu trang, = tên thiết bị khi cuộn (useDeviceNameAppBar). Cuộn tối đa ~284 px trên 2fc3878f.",
+      "controls": {
+        "back":           {"target": {"glyph": "chevron-left"}, "kind": "nav", "to": "@back"},
+        "power":          {"target": {"desc": "Tắt"}, "kind": "action", "danger": true,
+                           "effect": "bật/tắt ổ cắm thật", "note": "nhãn Tắt/Bật viết cứng tiếng Việt, không qua i18n"},
+        "rename":         {"target": {"key": "renameDevice"}, "kind": "popup", "note": "showModalEditName — lưu = đổi tên thiết bị"},
+        "room":           {"target": {"key": "room"}, "kind": "popup", "note": "sheet chọn phòng — chọn = chuyển thiết bị sang phòng khác"},
+        "share":          {"target": {"key": "share"}, "kind": "nav", "to": "feature:share", "route": "KEY_NAME_SHARE_DEVICE"},
+        "timer":          {"target": {"key": "normalTimer"}, "kind": "nav", "to": "feature:timer", "route": "listAlarm",
+                           "note": "VI là 'Hẹn giờ' (normalTimer), KHÔNG phải 'Hẹn giờ hành động' (timer); EN cả hai là 'Timer'"},
+        "qr_link":        {"target": {"text": "Liên kết QR"}, "kind": "nav", "to": "feature:qr_link", "route": "ScanQRLinkDevice",
+                           "note": "chữ viết cứng; màn quét QR mở camera"},
+        "shortcut":       {"target": {"key": "shotcut"}, "kind": "external", "note": "Linking.openURL(deeplink) — rời app"},
+        "power_state":    {"target": {"key": "statusPower"}, "kind": "popup", "note": "sheet giữ nguyên/bật/tắt — chọn = gửi lệnh cấu hình"},
+        "press_mode":     {"target": {"key": "pressMode"}, "kind": "popup", "note": "ModalPressMode — chọn = gửi lệnh cấu hình"},
+        "quick_timer":    {"target": {"key": "quickTimer"}, "kind": "popup", "note": "ModalQuickAlarmNew; mở = gửi lệnh ĐỌC hẹn giờ"},
+        "repeat":         {"target": {"key": "periodicallyRepeat"}, "kind": "popup"},
+        "lock":           {"target": {"key": "lockSwitch"}, "kind": "popup", "note": "sheet khoá trên thiết bị/app — chọn = gửi lệnh"},
+        "history":        {"target": {"key": "doorHistory"}, "kind": "nav", "to": "feature:history", "route": "KEY_NAME_SWITCH_HISTORY"},
+        "notify_offline": {"target": {"key": "notifyDeviceOff"}, "kind": "popup", "note": "sheet bật/tắt thông báo mất kết nối"},
+        "general_info":   {"target": {"key": "generalInformation"}, "kind": "nav", "to": "feature:general_info", "route": "infoDeviceCommonView"},
+        "header_right":   {"kind": "unknown", "note": "nút góc phải header (1094,154)-(1202,262), chưa tra"},
+        "icon":           {"kind": "unknown", "note": "icon thiết bị đầu màn, chưa tra"}
+      }
+    }
+  }
+}
