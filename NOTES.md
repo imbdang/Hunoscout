@@ -246,3 +246,55 @@ share (--phone/--email, --perms), share-edit WHO --perms, unshare WHO.
 
 ## 2026-11-03 — benchmark toàn cục
 Số liệu + kịch bản + dữ liệu thô: `conversation/2026-11-03-benchmark.md` (138.9 s, 88 % thời gian là RPC uiautomator2).
+
+## 2026-11-04 — sau khi cắm lại cáp: server u2 không bật được; cuộn lên đầu trang tap lệch
+- adbutils `dev.shell("setsid … &")` thì tiến trình nền chết ngay khi phiên shell đóng (sau khi adb daemon khởi động
+  lại); adb CLI thì sống → `_launch_detached` gọi `adb -s <serial> shell …`. Bật server từ đầu: 1.0 s.
+- `lowest()` (mốc đo cuộn) chọn desc "… , .." — ".." là icon › bị dump làm hỏng → selector không khớp chữ thật → mất
+  mốc → ghi độ cuộn 1185 (thật 853) → `to_top` kéo quá đầu 332 px → pull-to-refresh → tap "Hẹn giờ" lệch, lạc ~10 s.
+  Sửa: mốc ưu tiên text TextView, bỏ chữ có ".."; `to_top` dùng độ cuộn đã biết (kéo đúng 1 lần), không biết thì kéo
+  1/3 vùng mỗi lần rồi kiểm. Đọc đầu vào → Hẹn giờ: 6.6 s (lạc) → 3.1 s (route 1.04–1.14 s, về đầu trang 0.47 s).
+
+## 2026-11-04 — agent test qua MCP + web theo dõi
+- `module/mcp_server`: tool `devices` + mỗi hàm catalog + tự lái (`screen/tap/back/scroll/open_app/goto`) + `phone_time`,
+  `wait` (≤120 s/lần) + ghi lượt chạy (`run_start/case_start/case_end/note/run_end`) vào
+  `<phiên>/results/<HHMMSS>/` (status.json, steps.jsonl, cases/<id>.json, shots/, report.md). Mọi kết quả
+  `{status, result, events, route, observations}`; failed kèm context (màn nhận ra, danger, phần tử + toạ độ, ảnh) —
+  agent tự quyết. observations = HTTP (mitm flows.jsonl) + topic MQTT publish trong khoảng gọi.
+- `module/monitor`: web chỉ đọc TestWorkspace (không tạo Scout) → chạy song song với agent. Cổng 8766.
+- `actions/power.py` `power-get`: "Đang bật/Đang tắt" (i18n online/offline) ở thẻ đầu màn chi tiết.
+- Agent mỗi thiết bị một thư mục (`TestWorkspace/test/swinput`: CLAUDE.md + .mcp.json), chạy
+  `claude -p … --strict-mcp-config --mcp-config .mcp.json --allowedTools mcp__hunoscout Read Glob Grep`.
+  Effort: đặt rõ `CLAUDE_EFFORT=medium` (không đặt thì kế thừa xhigh từ shell cha / settings.json — lượt 134523 chạy
+  Opus 5.5 xhigh).
+
+## 2026-11-04 — chuyển sang app 4.0.23 (bản CH Play ký lại cho mitm) + action đổi phòng
+- APK: HunonicMitm `repack_apk.py build --pull` — bản Store là split APK (base + arm64 + en + xxhdpi) → gộp bằng
+  APKEditor rồi mới repack. Repack riêng base rồi ký lại split = lệch ID resource → crash `NinePatch.hasAlpha()` null.
+  Bản gốc giữ ở `HunonicMitm/build/pulled/`. App mới KHÔNG có hook REST (`HUNONIC_REST_QA`).
+- Danh sách thiết bị: `parse_data.MitmCapture` đọc `flows.jsonl` của mitmdump `sniff_api.py` (env `MITM_EVIDENCE`,
+  `config.MITM_FLOWS`), chỉ các dòng ghi sau start(). 4.0.23 gọi `/v3/device/listDeviceOfHomeSelect` (không còn `v2`),
+  cùng cấu trúc response. mitmdump phải chạy + điện thoại trỏ proxy thì `--fresh` mới lấy được danh sách.
+- i18n: `~/ReverseProject/HunonicApp/4.0.23/i18n/{vi,en,lo}.js` (bundle HBC v96, function 8806=vi 8807=en 8808=lo),
+  `config.I18N` trỏ thẳng vào đó. 74 key mà pattern + actions dùng đều còn, chữ không đổi.
+- Discovery fresh + đi hết map trên 4.0.23: mọi màn tới được (toạ độ 4.0.19 tự bỏ, học lại). `contextLink` không có
+  cạnh vì Công tắc chưa liên kết công tắc ngữ cảnh.
+- detailRoom: Back hệ thống vẫn sai trên 4.0.23 (phòng thường → detailRoom[Chưa xếp phòng]; phòng mặc định → room)
+  → giữ nút ‹ header. Các màn khác dùng Back hệ thống.
+- Action `room-get` / `room-set` (`module/actions/room.py`, catalog → web + MCP): dòng Phòng → sheet "Chọn phòng"
+  → chọn = `POST /v3/device/updateRoot` ngay + banner "Thành công, Cập nhật thành công" (react-native-flash-message,
+  ~3 s, đè cả header, bấm vào = ẩn). Sau khi đổi: chờ response danh sách mới (mitm) → `Scout.reload()` (dựng lại
+  map, giữ 📍; web "Làm mới" dùng chung) → Back về detailRoom[phòng cũ] → đi lại vào qua phòng mới (cạnh vào đổi).
+  Đo: ~8.5–10 s, 4 lần liên tiếp 2 chiều không lạc (tap ‹ ở phòng cũ xảy ra ~5 s sau khi chọn, banner đã tắt).
+- `press._sub`: đọc dòng lúc nó vừa vẽ lại (StaleObjectException) → coi như chưa đọc được, đọc lại.
+
+## 2026-11-04 — web monitor giao diện mới (`module/monitor/index.html`)
+- Mission: thanh trạm = mọi testcase (thứ tự đã chạy → còn lại), màu theo verdict; chú Claude nhỏ đứng ở case đang chạy
+  (xong lượt → đứng ở cờ 🏁, dừng → mắt nhắm). Stage: thanh bước của case đang chạy / đang chọn = `auto.plan` + trạm
+  "Kết luận"; lần gọi tool thật khớp lần lượt vào bước (cùng tên tool, nhìn trước 3 bước; gọi lại cùng tool → ×n;
+  tool khác = "bước tự lái"). Chú Claude lớn đứng ở bước hiện tại, đi bộ khi sang trạm; lời thoại: tool đang chạy /
+  đếm ngược `wait` / tự lái / failed / note mới nhất / "đang nghĩ" kể từ bước cuối. Lưới card: thanh bước mini.
+- Chi tiết testcase + Log nằm trong panel trượt bên phải (ẩn mặc định, nhớ trạng thái bằng localStorage); danh sách
+  phiên/lượt chạy là sidebar ẩn được (☰).
+- MCP ghi thêm `status.busy = {tool, args, since}` lúc tool bắt đầu (xoá khi xong) để web biết agent đang làm gì.
+- Chú Claude: SVG tự vẽ (robot cam đất), không dùng logo.

@@ -20,7 +20,7 @@ from enum import Enum, auto
 
 from . import config
 from . import interact as adb
-from .parse_data import Capture, LogcatCapture, check_fresh, latest_response, parse_house
+from .parse_data import Capture, MitmCapture, check_fresh, latest_response, parse_house
 from .ui_map import Edge, Lexicon, Lost, Map, Navigator, Resolved, instantiate, load_docs
 from .ui_map.locate import learns_band
 
@@ -76,9 +76,9 @@ class Scout:
 
     def _fetch_house(self, fresh: bool):
         """Danh sách nhà/thiết bị: fresh → mở lại app qua hook rồi lấy response mới (mặc định)."""
-        if fresh:                                # không có script collector (máy khác) → đọc thẳng logcat
+        if fresh:                                # không có script collector (máy khác) → đọc response qua mitm
             cap = (Capture(config.CAPTURE_SCRIPT, self.serial) if config.CAPTURE_SCRIPT.exists()
-                   else LogcatCapture(config.EXPORTS, self.serial))
+                   else MitmCapture(config.EXPORTS, config.MITM_FLOWS))
             t = time.monotonic()
             cap.start()
             try:
@@ -87,7 +87,7 @@ class Scout:
                 cap.wait_list()
             finally:
                 cap.stop()
-            log.info("danh sách thiết bị mới qua hook: %.1f s", time.monotonic() - t)
+            log.info("danh sách thiết bị mới: %.1f s", time.monotonic() - t)
         resp, observed = latest_response(config.EXPORTS)
         if not fresh and (warn := check_fresh(observed, config.MAX_AGE)):
             self.report.warnings.append(warn)
@@ -114,6 +114,18 @@ class Scout:
         r.pruned = self.res.prune(self.graph)
         self.res.apply_costs(self.graph)
         self.nav = Navigator(self.graph, self.res, Lexicon(config.I18N), glyphs)
+
+    def reload(self) -> None:
+        """Dựng lại map từ pattern + danh sách đã lưu (không chạm màn hình), giữ 📍 cũ nếu node còn."""
+        old = self.nav
+        self.load(fresh=False)
+        if old is None or old.cur not in self.graph.nodes:
+            return
+        live = self.graph.nodes
+        self.nav.cur = old.cur
+        self.nav.stack = [x for x in old.stack if x in live]
+        self.nav.scroll = {k: v for k, v in old.scroll.items() if k in live}
+        self.nav.came_from = {k: v for k, v in old.came_from.items() if k in live and v in live}
 
     def start(self, fresh: bool = True) -> Report:
         self.load(fresh)

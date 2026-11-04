@@ -1,0 +1,28 @@
+{
+  "resolved_for": {
+    "w": 1220,
+    "h": 2712,
+    "density": 480,
+    "font_scale": 1.0,
+    "app": "4.0.23"
+  },
+  "edges": {
+    "infoDevice@gatewayv3[Thiết bị trung tâm Homekit]>detailRoom[Chưa xếp phòng]": {
+      "xy": null,
+      "cost_ms": 502,
+      "sig": "5521dc7523",
+      "verified": "2026-11-04T06:24:36+00:00"
+    }
+  },
+  "nodes": {
+    "infoDevice@gatewayv3[Thiết bị trung tâm Homekit]": {
+      "text": "Chi tiết thiết bị",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "b998f57357",
+      "verified": "2026-11-04T06:24:35+00:00"
+    }
+  }
+}

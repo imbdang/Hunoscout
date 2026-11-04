@@ -118,8 +118,9 @@ def edit_share(scout, device: str, who: str, perms: list[str]) -> dict:
     _check(names, perms)
     scout.goto(node(scout, "share/list", device))
     ui = Ui(scout)
-    ui.d.click(ui.d.window_size()[0] - 305, _row_y(ui, who))
+    ui.click(ui.d.window_size()[0] - 305, _row_y(ui, who))
     ui.need(ui.text_sel(key="editPermissionHeaderText"), "hộp thoại Chỉnh sửa quyền")
+    ui.settle()
     _set_perms(ui, perms, names)
     ui.tap(ui.need(ui.option_sel(key="save"), "nút Lưu lại"))
     if not ui.gone(ui.text_sel(key="editPermissionHeaderText"), 5.0):
@@ -132,8 +133,9 @@ def unshare(scout, device: str, who: str) -> dict:
     """Ngừng chia sẻ cho `who`: 🗑 → hộp thoại "Xoá chia sẻ" → Xoá."""
     scout.goto(node(scout, "share/list", device))
     ui = Ui(scout)
-    ui.d.click(ui.d.window_size()[0] - 174, _row_y(ui, who))
+    ui.click(ui.d.window_size()[0] - 174, _row_y(ui, who))
     ui.need(ui.text_sel(key="deleteSharedDevice"), "hộp thoại Xoá chia sẻ")
+    ui.settle()
     ui.pick("delete", what="nút Xoá")
     if not ui.gone({"textStartsWith": who}, 6.0):
         raise ActionError(f"bấm Xoá nhưng {who} vẫn trong danh sách")

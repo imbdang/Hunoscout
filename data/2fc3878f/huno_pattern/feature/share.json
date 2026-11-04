@@ -1,0 +1,52 @@
+{
+  "resolved_for": {
+    "w": 1220,
+    "h": 2712,
+    "density": 480,
+    "font_scale": 1.0,
+    "app": "4.0.23"
+  },
+  "edges": {
+    "share/list[Công tắc ]>share/add[Công tắc ]": {
+      "xy": [
+        1148,
+        207
+      ],
+      "cost_ms": 843,
+      "sig": "247e3bd5f8",
+      "verified": "2026-11-04T06:16:37+00:00"
+    },
+    "share/add[Công tắc ]>share/list[Công tắc ]": {
+      "xy": null,
+      "cost_ms": 466,
+      "sig": "e2c5c82ca7",
+      "verified": "2026-11-04T06:16:38+00:00"
+    },
+    "share/list[Công tắc ]>infoDevice@swinputv2[Công tắc ]": {
+      "xy": null,
+      "cost_ms": 478,
+      "sig": "775d8f90a4",
+      "verified": "2026-11-04T06:16:38+00:00"
+    }
+  },
+  "nodes": {
+    "share/list[Công tắc ]": {
+      "text": "Chia sẻ thiết bị",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "c76a07a500",
+      "verified": "2026-11-04T06:16:37+00:00"
+    },
+    "share/add[Công tắc ]": {
+      "text": "Chia sẻ thiết bị",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "c76a07a500",
+      "verified": "2026-11-04T06:16:38+00:00"
+    }
+  }
+}

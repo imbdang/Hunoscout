@@ -128,10 +128,9 @@ class App:
             logging.getLogger().removeHandler(fwd)
 
     def refresh(self) -> dict:
-        s, old = self.s, self.s.nav
+        s = self.s
         before = set(s.graph.nodes) if s.graph else set()
-        s.load(fresh=False)
-        _keep_pointer(s, old)
+        s.reload()
         if s.state is not State.ACTIVE:          # vd discovery trước đó lỗi giữa chừng
             s._go(State.ACTIVE, "làm mới map từ web")
         after = set(s.graph.nodes)
@@ -153,17 +152,6 @@ class App:
                   "total_ms": int((time.monotonic() - t0) * 1000)})
         finally:
             logging.getLogger().removeHandler(fwd)
-
-def _keep_pointer(s: Scout, old) -> None:
-    """Map vừa dựng lại (Navigator mới): giữ vị trí 📍 cũ nếu node còn — không chạm màn hình."""
-    if old is None or old.cur not in s.graph.nodes:
-        return
-    live = s.graph.nodes
-    s.nav.cur = old.cur
-    s.nav.stack = [x for x in old.stack if x in live]
-    s.nav.scroll = {k: v for k, v in old.scroll.items() if k in live}
-    s.nav.came_from = {k: v for k, v in old.came_from.items() if k in live and v in live}
-
 
 class Handler(BaseHTTPRequestHandler):
     app: App

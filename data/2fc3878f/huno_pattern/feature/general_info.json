@@ -1,0 +1,43 @@
+{
+  "resolved_for": {
+    "w": 1220,
+    "h": 2712,
+    "density": 480,
+    "font_scale": 1.0,
+    "app": "4.0.23"
+  },
+  "edges": {
+    "general_info/info[Công tắc ]>infoDevice@swinputv2[Công tắc ]": {
+      "xy": null,
+      "cost_ms": 661,
+      "sig": "775d8f90a4",
+      "verified": "2026-11-04T06:18:09+00:00"
+    },
+    "general_info/info[Aptomat]>infoDevice@atmwifiv2[Aptomat]": {
+      "xy": null,
+      "cost_ms": 489,
+      "sig": "04766a9847",
+      "verified": "2026-11-04T06:24:28+00:00"
+    }
+  },
+  "nodes": {
+    "general_info/info[Công tắc ]": {
+      "text": "Công tắc",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "53fdbfd9f7",
+      "verified": "2026-11-04T06:16:42+00:00"
+    },
+    "general_info/info[Aptomat]": {
+      "text": "Aptomat",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "8af45e60db",
+      "verified": "2026-11-04T06:24:28+00:00"
+    }
+  }
+}

@@ -48,8 +48,9 @@ def _item_sel(ui: Ui, existing: str) -> dict:
 
 def _open_item(scout, ui: Ui, existing: str) -> None:
     b = ui.need(_item_sel(ui, existing), f"hẹn giờ {existing}")
-    ui.d.click(min(400, b[2] - 200), (b[1] + b[3]) // 2)        # phần chữ giờ, tránh công tắc bên phải
+    ui.click(min(400, b[2] - 200), (b[1] + b[3]) // 2)        # phần chữ giờ, tránh công tắc bên phải
     ui.need(ui.text_sel(key="editAlarm", prefix=True), "màn Sửa hẹn giờ", 4.0)
+    ui.settle(ui.SCREEN_MS)                      # màn còn trượt vào: tap thùng rác / bánh xe ngay thì hụt
 
 
 # ---- form ----
@@ -128,7 +129,7 @@ def _days(ui: Ui, days: list[str], save: dict) -> None:
     for k, b, on in zip(DAYS, boxes, ui.green(boxes)):
         if (k in want) != on:
             ui.tap(b)
-            time.sleep(0.25)
+            time.sleep(0.1)
     got = {k for k, on in zip(DAYS, ui.green(boxes)) if on}
     if got != want:
         raise ActionError(f"chọn thứ {sorted(want)} nhưng màn đang chọn {sorted(got)}")
@@ -176,7 +177,6 @@ def _save(scout, ui: Ui, list_node: str) -> None:
     if not ok:
         raise ActionError("bấm Lưu lại nhưng không về danh sách hẹn giờ (form báo lỗi?)")
     arrive(scout, list_node)
-    time.sleep(0.5)
 
 
 def _clock(ui: Ui) -> tuple[int, int]:
@@ -243,8 +243,12 @@ def delete_timer(scout, device: str, at: str) -> dict:
     ui = Ui(scout)
     _open_item(scout, ui, at)
     w = ui.d.window_size()[0]
-    ui.d.click(w - 72, 207)                      # thùng rác góc phải header (1094–1202, 154–262)
-    ui.need(ui.text_sel(key="messageDeleteAlarm"), "hộp thoại xác nhận xoá", 3.0)
+    for _ in range(2):                           # thùng rác góc phải header (1094–1202, 154–262)
+        ui.click(w - 72, 207)                    # vừa lưu xong danh sách còn tải lại → có lúc cú bấm đầu không ăn
+        if ui.find(ui.text_sel(key="messageDeleteAlarm"), 2.5):
+            break
+    else:
+        raise ActionError("bấm thùng rác 2 lần nhưng không thấy hộp thoại xác nhận xoá")
     btn = ui.find({"textMatches": ui.text_sel(key=["confirm", "delete", "ok"])["textMatches"]}, 1.0)
     if btn is None:
         raise ActionError("không thấy nút xác nhận trong hộp thoại xoá")

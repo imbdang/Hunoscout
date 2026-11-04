@@ -15,6 +15,8 @@ from .history import history
 from .info import general_info
 from .inputs import get_inputs, set_input_ac, set_input_dc
 from .lock import MODES, get_lock, set_lock
+from .power import get_power
+from .room import get_room, set_room
 from .press import delete_quick_timer, get_press_mode, get_quick_timer, set_press_mode, set_quick_timer
 from .share import PERMS, edit_share, share, shared_users, unshare
 from .timer import ACTION, DAYS, KIND, REPEAT, add_timer, delete_timer, edit_timer, list_timers
@@ -57,6 +59,12 @@ _CYCLE_FORM = [
 
 ACTIONS = [
     # ---- màn chi tiết thiết bị ----
+    {"id": "power-get", "label": "Bật/tắt: đọc trạng thái", "feature": "device", "at": "infoDevice@", "fn": get_power,
+     "params": []},
+    {"id": "room-get", "label": "Phòng: đọc", "feature": "device", "at": "infoDevice@", "needs": "room",
+     "fn": get_room, "params": []},
+    {"id": "room-set", "label": "Phòng: đổi", "feature": "device", "at": "infoDevice@", "needs": "room",
+     "fn": set_room, "danger": True, "params": [P("room", "Phòng", required=True, hint="tên phòng trong nhà")]},
     {"id": "lock-get", "label": "Khoá công tắc: đọc", "feature": "device", "at": "infoDevice@", "needs": "lock",
      "fn": get_lock, "params": []},
     {"id": "lock-set", "label": "Khoá công tắc: đặt", "feature": "device", "at": "infoDevice@", "needs": "lock",

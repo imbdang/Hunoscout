@@ -134,7 +134,7 @@ class Navigator:
         node = self.g.nodes[node_id]
         top = self.res.scroll_ref_top(node)
         if node.scroll and top is not None and self.scroll.get(node_id) != 0:
-            to_top(self._area(node), spec_selector(node.scroll["ref"], self.lex), top)
+            to_top(self._area(node), spec_selector(node.scroll["ref"], self.lex), top, known=self.scroll.get(node_id))
             self.scroll[node_id] = 0
 
     # ---- thực hiện một cạnh ----
@@ -301,6 +301,7 @@ class Navigator:
 
     def _act(self, edge: Edge, xy: tuple[int, int] | None) -> None:
         self._els = None
+        self.last_act = time.monotonic()         # actions.Ui lấy mốc này: màn vừa mở còn trượt → chờ trước khi tap
         g = edge.action.gesture
         if g == "back":
             adb.back()

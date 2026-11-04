@@ -11,12 +11,18 @@ from __future__ import annotations
 import re
 import time
 
+from ..interact import u2 as U2
 from .ui import ActionError, Ui, arrive, node
 
 
 def _sub(ui: Ui, key: str) -> str:
     """Chữ phụ của dòng ở màn chi tiết: "Chế độ nhấn nhả, Tắt, .." → "Tắt"."""
-    desc = ui.d(**ui.row_sel(key=key)).info["contentDescription"]
+    try:
+        desc = ui.d(**ui.row_sel(key=key)).info["contentDescription"]
+    except U2.u2.exceptions.RPCError as err:              # hộp thoại còn đang đóng, che trang / dòng vừa vẽ lại → đọc lại sau
+        if isinstance(err, U2.u2.UiObjectNotFoundError) or "StaleObjectException" in str(err):
+            return ""
+        raise
     rest = [p.strip() for p in desc.split(",")[1:] if p.strip() != ".."]
     return rest[0] if rest else ""
 
@@ -102,6 +108,7 @@ def set_press_mode(scout, device: str, value: str) -> str:
     title = ui.text_sel(key="autoClickMode")
     ui.tap(ui.need(ui.row_sel(key="pressMode"), "dòng Chế độ nhấn nhả"))
     ui.need(title, "hộp thoại Chế độ nhấn nhả")
+    ui.settle()
     _set_numbers(ui, [m, s], ["phút", "giây"])
     ui.tap(ui.need(ui.option_sel(key="save"), "nút Lưu lại"))
     if not ui.gone(title, 4.0):
@@ -134,6 +141,7 @@ def _open_quick(ui: Ui) -> dict:
     save = ui.option_sel(key="saveAlarm")
     ui.tap(ui.need(ui.row_sel(key="quickTimer"), "dòng Hẹn giờ nhanh"))
     ui.need(save, "hộp thoại Hẹn giờ nhanh")
+    ui.settle()
     return save
 
 

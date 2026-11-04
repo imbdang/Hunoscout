@@ -51,11 +51,13 @@ def _mark(area: Area, ref: dict, px: int) -> tuple[dict, int] | None:
     return adb.lowest(area.top, area.bottom)
 
 
-def to_top(area: Area, ref: dict, ref_top: int, max_drags: int = 6) -> int:
-    """Về đầu trang mà KHÔNG kéo quá đầu (kéo quá = pull-to-refresh, app tải lại dữ liệu).
+def to_top(area: Area, ref: dict, ref_top: int, max_drags: int = 6, known: int | None = None) -> int:
+    """Về đầu trang mà KHÔNG kéo quá đầu (kéo quá = pull-to-refresh: trang bị đẩy xuống + app tải lại → tap lệch).
 
     ref_top: y của mốc khi màn ở đầu trang (học trong discovery). Mốc đã ở đó → không kéo gì.
-    Còn thiếu bao nhiêu thì kéo xuống đúng bấy nhiêu (+SLOP), chậm, không quán tính. → số lần kéo.
+    Mốc thấy được → kéo đúng phần còn thiếu. Mốc khuất phía trên: biết độ cuộn (`known`, pointer navigator) → kéo đúng
+    bấy nhiêu 1 lần; không biết → kéo 1/3 vùng mỗi lần rồi kiểm (trước kéo cứng nửa vùng ~1185 px trong khi trang chỉ
+    cuộn 853 px → quá đầu → tải lại). → số lần kéo.
     """
     for n in range(max_drags + 1):
         b = adb.locate(ref)
@@ -63,7 +65,12 @@ def to_top(area: Area, ref: dict, ref_top: int, max_drags: int = 6) -> int:
             return n
         if n == max_drags:
             break
-        need = ref_top - b[1] if b else int((area.bottom - area.top) * 0.5)   # mốc khuất phía trên
+        if b:
+            need = ref_top - b[1]
+        elif known:
+            need, known = known, None                 # chỉ tin độ cuộn cho lần kéo đầu
+        else:
+            need = int((area.bottom - area.top) / 3)
         start = area.top + 40
         adb.drag(area.x, start, min(area.bottom - 40, start + need + SLOP))
     return max_drags

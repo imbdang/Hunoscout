@@ -105,7 +105,6 @@ def _save(scout, ui: Ui, lst: str) -> None:
                                        "timerLoop.maxLimit"]))
         raise ActionError("bấm Lưu lại nhưng không về danh sách tuần hoàn" + (" (app báo lỗi)" if err else ""))
     arrive(scout, lst)
-    time.sleep(0.5)
 
 
 def list_cycles(scout, device: str) -> list[str]:
@@ -221,7 +220,7 @@ def delete_cycle(scout, device: str, index: int = 0) -> dict:
     """Xoá tuần hoàn thứ `index`: mở form → thùng rác góc phải header → xác nhận (nếu app hỏi)."""
     ui, lst, item = _open(scout, device, index)
     w = ui.d.window_size()[0]
-    ui.d.click(w - 72, 207)
+    ui.click(w - 72, 207)
     btn = ui.find(ui.text_sel(key=["confirm", "delete", "ok"]), 2.0)
     if btn and not ui.find(ui.text_sel(key="timerLoop.listTimerLoop")):
         ui.tap(btn)

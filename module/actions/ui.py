@@ -29,12 +29,17 @@ def _rx(texts: list[str], prefix: bool = False) -> str:
 
 
 class Ui:
+    SHEET_MS = 900       # sheet trượt lên xong ~0.54 s sau tap mở khi JS rảnh; 650 ms còn hụt (sheet DC sau khi cuộn)
+    SCREEN_MS = 1100     # mở cả màn (vd Sửa hẹn giờ): 900 ms còn tap hụt thùng rác header
     SCROLL_X = 1195      # cột trống bên phải form (dòng chỉ tới x≈1160): kéo ở đây để cuộn, không chạm trúng gì
     WAIT = 3.0
 
     def __init__(self, scout):
         self.s, self.lex = scout, scout.nav.lex
         self.d = U2._dev()
+        # lúc tap gần nhất (tap mở sheet / màn) — settle() chờ màn trượt xong theo mốc này; mới route tới thì lấy mốc
+        # thao tác cuối của navigator (form vừa mở bằng route cũng đang trượt vào)
+        self.last_tap = getattr(scout.nav, "last_act", 0.0)
 
     # ---- chữ → selector ----
     def texts(self, key: str | list[str] | None = None, text: str | None = None) -> list[str]:
@@ -91,27 +96,34 @@ class Ui:
 
     def settled(self, sel: dict, what: str, timeout: float = WAIT) -> tuple[int, int, int, int]:
         """Vị trí khi đã đứng yên (sheet đang trượt lên → toạ độ đọc giữa chừng sẽ tap trúng mục bên dưới)."""
+        # Cây UI báo vị trí CUỐI từ ~0.3–0.4 s sau tap mở sheet, lúc sheet chưa hiện / còn trượt (ảnh chụp sheet khoá:
+        # 0.40 s còn lệch ~150 px, 0.54 s mới đúng chỗ) → hỏi lặp vị trí không biết được; chờ đủ 0.65 s từ tap mở.
         b = self.need(sel, what, timeout)
-        end = time.monotonic() + 1.5
-        while time.monotonic() < end:
-            time.sleep(0.12)
-            nb = U2.locate(sel)
-            if nb == b:
-                return b
-            b = nb or b
-        return b
+        self.settle()
+        # đọc lại ngay trước khi tap: danh sách trong sheet có lúc tự dịch ~1 mục sau khi mở (sheet khoá có ▼ cuộn được)
+        # → vị trí đọc lúc mới hiện đã cũ, tap trúng mục bên dưới (chọn both ra none, DC Bật ra Tắt — 2026-11-03)
+        return U2.locate(sel) or b
 
     def gone(self, sel: dict, timeout: float = WAIT) -> bool:
-        end = time.monotonic() + timeout
-        while time.monotonic() < end:
-            if U2.locate(sel) is None:
-                return True
-            time.sleep(0.1)
-        return False
+        """Chờ ngay trên máy (1 RPC waitUntilGone) — trước hỏi lặp locate mỗi 0.1 s, mỗi lần 1 RPC ~0.15–0.25 s."""
+        return self.d(**sel).wait_gone(timeout=timeout)
 
     # ---- chạm ----
     def tap(self, b: tuple[int, int, int, int]) -> None:
+        """Tap trong form/sheet: click thường (giữ 100 ms). Tap 10 ms (U2.tap) chỉ dùng cho route — mục sheet / bánh
+        xe có lúc không nhận (đo 2026-11-03)."""
         self.d.click((b[0] + b[2]) // 2, (b[1] + b[3]) // 2)
+        self.last_tap = time.monotonic()
+
+    def settle(self, ms: int | None = None) -> None:
+        """Vừa mở màn / sheet / hộp thoại (thấy trong cây UI từ ~0.3–0.4 s sau tap, lúc còn trượt vào) → chờ đủ
+        SHEET_MS kể từ tap mở rồi mới tap tiếp. Trước chạy đúng nhờ RPC chậm; RPC nhanh lên thì tap rơi vào lúc trượt."""
+        time.sleep(max(0.0, (ms or self.SHEET_MS) / 1000 - (time.monotonic() - self.last_tap)))
+
+    def click(self, x: int, y: int) -> None:
+        """Click thường (giữ 100 ms) ở toạ độ — mở hộp thoại / màn bằng icon không có trong cây UI."""
+        self.d.click(x, y)
+        self.last_tap = time.monotonic()
 
     def drag(self, x: int, y1: int, y2: int, hold: float = 0.3) -> None:
         """Kéo rồi đứng yên `hold` s trước khi nhả → không văng (bánh xe khớp nấc, danh sách dừng đúng chỗ).
@@ -155,10 +167,19 @@ class Ui:
         b = self.settled(sel, what)
         # Bấm phần chữ bên trái dòng, KHÔNG bấm tâm: sheet "Khoá công tắc" có nút ▼ () đè giữa mép dưới
         # danh sách, cách tâm dòng cuối "Không khoá" ~15 px → bấm tâm lúc trúng dòng, lúc trúng ▼ (sheet đứng im).
+        # click thường (giữ 100 ms) — mục trong sheet có lúc không nhận tap 10 ms
         self.d.click(b[0] + min(160, (b[2] - b[0]) // 4), (b[1] + b[3]) // 2)
-        if not self.gone(sel):
-            raise ActionError(f"chọn {what} xong sheet không đóng")
-        time.sleep(0.3)
+        # Sheet đóng = tại đúng khung vừa bấm không còn mục đó. KHÔNG chờ "không còn phần tử nào khớp": trang bên dưới
+        # có thể có phần tử cùng chữ (công tắc 'Bật' ở form hẹn giờ, công tắc AC 'Tắt') → chờ mãi, báo sai.
+        # Chờ trên máy tới khi mục biến mất (sheet trượt xuống xong); còn thấy sau 1.5 s → có thể là phần tử cùng chữ
+        # của trang bên dưới → coi là đóng nếu nó KHÔNG còn ở đúng khung vừa bấm.
+        if self.d(**sel).wait_gone(timeout=1.5):
+            return
+        end = time.monotonic() + self.WAIT
+        while U2.locate(sel) == b:
+            if time.monotonic() > end:
+                raise ActionError(f"chọn {what} xong sheet không đóng")
+            time.sleep(0.1)
 
     def cancel_sheet(self) -> None:
         sel = self.option_sel(key="cancel")
@@ -235,6 +256,7 @@ class Ui:
         một lần mở → hộp thoại thừa bật lên sau khi đã xong (chặn các thao tác sau). Nên: bấm 1 lần, chờ tới 4 s;
         trước khi bấm thì Huỷ hộp thoại thừa nếu còn.
         Đo trên 2fc3878f: ~1.6–1.9 s/bánh xe (bấm · chờ hộp thoại ~0.5 · setText · click(selector) OK · wait_gone)."""
+        self.settle()                                    # form vừa mở (route / tap) còn trượt → bấm bánh xe hụt
         box = self.d(className="android.widget.EditText")
         ok = self.d(className="android.widget.Button", **self.text_sel(key="ok", text="OK"))
         cancel = self.d(className="android.widget.Button", **self.text_sel(key="cancel", text="Huỷ"))

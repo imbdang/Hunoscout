@@ -1,0 +1,28 @@
+{
+  "resolved_for": {
+    "w": 1220,
+    "h": 2712,
+    "density": 480,
+    "font_scale": 1.0,
+    "app": "4.0.23"
+  },
+  "edges": {
+    "infoDevice@GACHshock[Chống giật 4]>detailRoom[Nhà tắm]": {
+      "xy": null,
+      "cost_ms": 469,
+      "sig": "df471cd43f",
+      "verified": "2026-11-04T06:24:32+00:00"
+    }
+  },
+  "nodes": {
+    "infoDevice@GACHshock[Chống giật 4]": {
+      "text": "Chi tiết thiết bị",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "4d1e0b349d",
+      "verified": "2026-11-04T06:24:32+00:00"
+    }
+  }
+}

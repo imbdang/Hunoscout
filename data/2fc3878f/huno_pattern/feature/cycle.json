@@ -1,0 +1,52 @@
+{
+  "resolved_for": {
+    "w": 1220,
+    "h": 2712,
+    "density": 480,
+    "font_scale": 1.0,
+    "app": "4.0.23"
+  },
+  "edges": {
+    "cycle/list[Công tắc ]>cycle/add[Công tắc ]": {
+      "xy": [
+        1146,
+        207
+      ],
+      "cost_ms": 721,
+      "sig": "5341c8d2ca",
+      "verified": "2026-11-04T06:16:35+00:00"
+    },
+    "cycle/add[Công tắc ]>cycle/list[Công tắc ]": {
+      "xy": null,
+      "cost_ms": 465,
+      "sig": "4f7b67035c",
+      "verified": "2026-11-04T06:16:35+00:00"
+    },
+    "cycle/list[Công tắc ]>infoDevice@swinputv2[Công tắc ]": {
+      "xy": null,
+      "cost_ms": 559,
+      "sig": "775d8f90a4",
+      "verified": "2026-11-04T06:16:36+00:00"
+    }
+  },
+  "nodes": {
+    "cycle/list[Công tắc ]": {
+      "text": "Danh sách hẹn giờ tuần hoàn",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "770810624b",
+      "verified": "2026-11-04T06:16:34+00:00"
+    },
+    "cycle/add[Công tắc ]": {
+      "text": "Tạo tuần hoàn",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "df782c9dc5",
+      "verified": "2026-11-04T06:16:35+00:00"
+    }
+  }
+}

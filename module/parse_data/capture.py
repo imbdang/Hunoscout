@@ -126,3 +126,54 @@ class LogcatCapture:
         if self._out:
             self._out.close()
         self.log.unlink(missing_ok=True)
+
+
+class MitmCapture:
+    """App không có hook (bản 4.0.23 ký lại cho mitm): đọc response danh sách trong flows.jsonl của sniff_api.py
+    (HunonicMitm) — chỉ các dòng ghi SAU start(), rồi ghi exports/ giống LogcatCapture."""
+    PATHS = ("/v3/device/listDeviceOfHomeSelect", "/v3/device/listDeviceOfHomeSelectv2")
+
+    def __init__(self, exports: Path, flows: Path):
+        self.exports, self.flows = exports, flows
+        self.since: datetime | None = None
+        self._pos = 0
+
+    def start(self) -> None:
+        self.exports.mkdir(parents=True, exist_ok=True)
+        self._pos = self.flows.stat().st_size if self.flows.exists() else 0
+        self.since = datetime.now(timezone.utc)
+
+    def _latest(self) -> dict | None:
+        if not self.flows.exists():
+            return None
+        with open(self.flows, "rb") as f:
+            f.seek(self._pos)
+            lines = f.read().decode("utf-8", "replace").splitlines()
+        found = None
+        for line in lines:
+            try:
+                flow = json.loads(line)
+            except ValueError:                     # dòng cuối đang ghi dở
+                continue
+            if flow.get("path") in self.PATHS and isinstance(flow.get("resp_body"), dict):
+                found = flow["resp_body"]
+        return found
+
+    def wait_list(self, timeout: float = 45) -> datetime:
+        end = time.monotonic() + timeout
+        while time.monotonic() < end:
+            time.sleep(1)
+            if resp := self._latest():
+                if resp.get("status") is not True:
+                    raise DataError(f"response danh sách thiết bị status={resp.get('status')!r}")
+                for name, obj in ((RESPONSE, resp), (INVENTORY, {"observed_at": self.since.isoformat(timespec="seconds"),
+                                                                 "source": f"mitm {self.flows} (MitmCapture)"})):
+                    path = self.exports / name
+                    path.write_text(json.dumps(obj, ensure_ascii=False), encoding="utf-8")
+                    path.chmod(0o600)
+                return self.since
+        raise DataError(f"{timeout:.0f}s không thấy response danh sách thiết bị trong {self.flows}. "
+                        "mitmdump (sniff_api.py) có đang chạy và điện thoại có trỏ proxy về máy này không?")
+
+    def stop(self) -> None:
+        pass

@@ -1,0 +1,28 @@
+{
+  "resolved_for": {
+    "w": 1220,
+    "h": 2712,
+    "density": 480,
+    "font_scale": 1.0,
+    "app": "4.0.23"
+  },
+  "edges": {
+    "history/list[Công tắc ]>infoDevice@swinputv2[Công tắc ]": {
+      "xy": null,
+      "cost_ms": 588,
+      "sig": "775d8f90a4",
+      "verified": "2026-11-04T06:16:40+00:00"
+    }
+  },
+  "nodes": {
+    "history/list[Công tắc ]": {
+      "text": "Lịch sử Công tắc",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "7f625486cf",
+      "verified": "2026-11-04T06:16:39+00:00"
+    }
+  }
+}

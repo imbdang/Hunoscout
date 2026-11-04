@@ -37,8 +37,12 @@ def _ac_switch(ui: Ui):
     return sw, sw.desc.strip() in on
 
 
-def _dc_value(ui: Ui, sel: dict) -> str:
-    desc = ui.d(**sel).info["contentDescription"]
+def _dc_value(ui: Ui, sel: dict) -> str | None:
+    """Hành động đang đặt của dòng DC; None nếu dòng chưa đọc được (sheet chọn còn đang trượt xuống che trang)."""
+    try:
+        desc = ui.d(**sel).info["contentDescription"]
+    except U2.u2.exceptions.UiObjectNotFoundError:
+        return None
     sub = next((p.strip() for p in desc.split(",")[1:] if p.strip() != ".."), "")
     for name, key in DC_ACTION.items():
         if sub in ui.texts(key):

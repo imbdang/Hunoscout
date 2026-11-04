@@ -32,7 +32,7 @@
         "power":          {"target": {"desc": "Tắt"}, "kind": "action", "danger": true,
                            "effect": "bật/tắt thiết bị thật", "note": "desc đổi theo trạng thái: 'Tắt' khi đang tắt, 'Bật' khi đang bật — viết cứng tiếng Việt"},
         "rename":         {"target": {"key": "renameDevice"}, "kind": "popup", "note": "showModalEditName — lưu = đổi tên thiết bị"},
-        "room":           {"target": {"key": "room"}, "kind": "popup", "note": "sheet chọn phòng — chọn = chuyển thiết bị sang phòng khác"},
+        "room":           {"target": {"key": "room"}, "kind": "popup", "note": "sheet Chọn phòng (selectRoom): mọi phòng của nhà, phòng hiện tại tô xanh, không có nút huỷ. Chọn = POST /v3/device/updateRoot ngay (không hỏi lại) + banner \"Thành công, Cập nhật thành công\" ~3 s đè header; app tự tải lại listDeviceOfHomeSelect. Chữ phụ dòng = tên phòng. module/actions/room.py (đã thử 2026-11-04, app 4.0.23)"},
         "share":          {"target": {"key": "share"}, "kind": "nav", "to": "feature:share", "route": "KEY_NAME_SHARE_DEVICE"},
         "timer":          {"target": {"key": "normalTimer"}, "kind": "nav", "to": "feature:timer", "route": "listAlarm",
                            "note": "VI 'Hẹn giờ' (normalTimer), KHÔNG phải 'Hẹn giờ hành động'"},

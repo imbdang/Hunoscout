@@ -1,0 +1,9 @@
+Clawd pets — https://github.com/abderrahimghazali/clawd-pet (MIT, xem LICENSE), commit b208f0c04a4084a17f4e5f5adf5198a752be0b36
+Clawd là mascot của Claude Code (trademark Anthropic); bộ SVG này là hàng cộng đồng.
+
+tâm trạng agent → file gốc (public/pets/)
+  idle → clawd-idle-living.svg      walk → clawd-crab-walking.svg
+  work → clawd-working-tool-calling  wait → clawd-sleeping.svg
+  fix  → clawd-driving.svg (tự lái)  fail → clawd-error.svg
+  done → clawd-celebrating.svg       stop → clawd-coffee.svg (nghỉ)
+Sửa: wait đổi viewBox về "-15 -25 45 45" cho cùng khung; fail bỏ rect .error-flash (nháy đỏ cả ô).

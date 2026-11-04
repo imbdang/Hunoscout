@@ -1,0 +1,618 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<title>Hunoscout Monitor</title>
+<style>
+  :root {
+    --bg:#060a13; --panel:rgba(14,22,42,.78); --line:rgba(120,160,255,.14); --line2:rgba(120,160,255,.28);
+    --text:#e3eaf8; --muted:#8393b2; --dim:#56647f;
+    --cyan:#22d3ee; --violet:#8b5cf6; --blue:#4f8cff;
+    --ok:#34d399; --fail:#f87171; --block:#a78bfa; --review:#38bdf8; --warn:#fbbf24;
+    --claude:#d97757; --claude2:#f3b08f;
+    --mono: ui-monospace, "JetBrains Mono", SFMono-Regular, Menlo, Consolas, monospace;
+    --drawer: min(720px, 46vw);
+  }
+  * { box-sizing:border-box; }
+  html, body { margin:0; height:100%; color:var(--text); font:13px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  body { background:
+    radial-gradient(1100px 560px at 78% -12%, rgba(139,92,246,.17), transparent 60%),
+    radial-gradient(900px 520px at -5% 8%, rgba(34,211,238,.10), transparent 60%),
+    linear-gradient(rgba(120,160,255,.045) 1px, transparent 1px) 0 0/32px 32px,
+    linear-gradient(90deg, rgba(120,160,255,.045) 1px, transparent 1px) 0 0/32px 32px,
+    var(--bg); overflow:hidden; }
+  .mono { font-family:var(--mono); font-size:12px; }
+  .muted { color:var(--muted); }
+  button { font:inherit; }
+
+  /* ---- header ---- */
+  header { height:54px; display:flex; align-items:center; gap:12px; padding:0 16px; border-bottom:1px solid var(--line);
+    background:rgba(6,10,19,.72); backdrop-filter:blur(10px); position:relative; z-index:7; }
+  .brand { display:flex; align-items:center; gap:10px; font-weight:750; letter-spacing:.12em; font-size:14px; }
+  .brand small { display:block; color:var(--muted); font:500 9.5px/1 var(--mono); letter-spacing:.28em; margin-top:2px; }
+  .btn { color:var(--text); background:rgba(255,255,255,.03); border:1px solid var(--line2); border-radius:10px;
+    padding:5px 11px; cursor:pointer; display:inline-flex; gap:6px; align-items:center; transition:.15s; }
+  .btn:hover { border-color:var(--cyan); box-shadow:0 0 0 3px rgba(34,211,238,.09); }
+  .btn.on { border-color:var(--cyan); color:var(--cyan); background:rgba(34,211,238,.08); }
+  .live { display:flex; align-items:center; gap:7px; color:var(--muted); font:12px var(--mono); }
+  .live i { width:8px; height:8px; border-radius:50%; background:var(--ok); box-shadow:0 0 10px var(--ok); }
+  .live.off i { background:var(--fail); box-shadow:0 0 10px var(--fail); }
+
+  /* ---- khung ---- */
+  #app { display:flex; height:calc(100% - 54px); }
+  aside { width:272px; flex:none; border-right:1px solid var(--line); overflow:auto; padding:12px;
+    background:rgba(7,12,24,.62); transition:margin-left .25s ease; }
+  body.noside aside { margin-left:-272px; }
+  main { flex:1; overflow:auto; padding:16px 18px 48px; min-width:0; transition:padding-right .28s ease; }
+  @media (min-width:1280px) { body.drawer main { padding-right:calc(var(--drawer) + 18px); } }
+  .panel { background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:14px 16px; margin-bottom:14px;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.04), 0 14px 34px rgba(0,0,0,.28); position:relative; }
+  .ptitle { font:650 10px/1 var(--mono); letter-spacing:.24em; color:var(--muted); text-transform:uppercase;
+    display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+  .ptitle::before { content:""; width:6px; height:6px; border-radius:2px; background:var(--cyan); box-shadow:0 0 8px var(--cyan); }
+  .ptitle .r { margin-left:auto; letter-spacing:.06em; text-transform:none; font-weight:500; display:flex; gap:6px; }
+  .empty { color:var(--muted); padding:28px; text-align:center; }
+
+  /* ---- sidebar ---- */
+  .grp { color:var(--muted); font:600 10px var(--mono); letter-spacing:.2em; text-transform:uppercase; margin:12px 4px 6px; }
+  .dev { margin:8px 4px 4px; font-weight:600; }
+  .run { display:flex; align-items:center; gap:7px; padding:6px 9px; border-radius:9px; cursor:pointer; margin:3px 0;
+    border:1px solid transparent; }
+  .run:hover { background:rgba(255,255,255,.03); border-color:var(--line); }
+  .run.sel { background:rgba(34,211,238,.07); border-color:rgba(34,211,238,.35); }
+
+  /* ---- chip / badge ---- */
+  .badge { font:600 10.5px/1.6 var(--mono); padding:0 8px; border-radius:999px; border:1px solid var(--line2);
+    color:var(--muted); white-space:nowrap; letter-spacing:.04em; }
+  .s-running { color:var(--warn); border-color:rgba(251,191,36,.45); background:rgba(251,191,36,.07); }
+  .s-done { color:var(--ok); border-color:rgba(52,211,153,.45); background:rgba(52,211,153,.07); }
+  .s-stopped { color:var(--fail); border-color:rgba(248,113,113,.4); background:rgba(248,113,113,.07); }
+  .v-PASS { color:var(--ok); border-color:rgba(52,211,153,.5); background:rgba(52,211,153,.09); }
+  .v-FAIL { color:var(--fail); border-color:rgba(248,113,113,.5); background:rgba(248,113,113,.09); }
+  .v-BLOCKED { color:var(--block); border-color:rgba(167,139,250,.5); background:rgba(167,139,250,.09); }
+  .v-NEED-REVIEW { color:var(--review); border-color:rgba(56,189,248,.5); background:rgba(56,189,248,.09); }
+  .v-RUN { color:var(--warn); border-color:rgba(251,191,36,.5); background:rgba(251,191,36,.08); }
+  .chip { font:11px var(--mono); padding:1px 7px; border-radius:7px; background:rgba(255,255,255,.04); border:1px solid var(--line); }
+  .ok { color:var(--ok); } .bad { color:var(--fail); }
+
+  /* ---- HUD ---- */
+  .hud { display:flex; flex-wrap:wrap; gap:16px; align-items:center; }
+  .hud h2 { margin:0; font-size:18px; letter-spacing:.01em; }
+  .hud .sub { color:var(--muted); font:12px var(--mono); margin-top:2px; }
+  .tiles { display:flex; gap:10px; flex-wrap:wrap; margin-left:auto; }
+  .tile { min-width:88px; padding:8px 12px; border:1px solid var(--line); border-radius:12px; background:rgba(255,255,255,.02); }
+  .tile b { display:block; font:700 20px/1.15 var(--mono); }
+  .tile span { font:600 9.5px var(--mono); letter-spacing:.16em; color:var(--muted); text-transform:uppercase; }
+  .summary { margin-top:10px; color:var(--muted); border-top:1px dashed var(--line2); padding-top:8px; }
+
+  /* ---- thanh (rail) ---- */
+  .rail { position:relative; margin:0 26px; }
+  .rail .track, .rail .fill { position:absolute; left:0; height:4px; border-radius:4px; }
+  .rail .track { right:0; background:rgba(120,160,255,.14); }
+  .rail .fill { background:linear-gradient(90deg, var(--cyan), var(--violet)); box-shadow:0 0 12px rgba(34,211,238,.45);
+    transition:width .9s cubic-bezier(.4,.1,.2,1); }
+  .stn { position:absolute; transform:translate(-50%, -50%); border-radius:50%; cursor:pointer;
+    background:#0b1222; border:2px solid rgba(120,160,255,.35); transition:.2s; }
+  .stn:hover { border-color:var(--cyan); }
+  .stn.PASS, .stn.done { background:var(--ok); border-color:var(--ok); box-shadow:0 0 10px rgba(52,211,153,.55); }
+  .stn.FAIL, .stn.failed { background:var(--fail); border-color:var(--fail); box-shadow:0 0 10px rgba(248,113,113,.55); }
+  .stn.BLOCKED { background:var(--block); border-color:var(--block); box-shadow:0 0 10px rgba(167,139,250,.5); }
+  .stn.NEED-REVIEW { background:var(--review); border-color:var(--review); box-shadow:0 0 10px rgba(56,189,248,.5); }
+  .stn.skipped { border-style:dashed; opacity:.6; }
+  .stn.cur { border-color:var(--warn); background:#2a2108; animation:ring 1.4s infinite; }
+  .stn.focus { outline:2px solid var(--cyan); outline-offset:3px; }
+  .stn.flag { border-radius:6px; }
+  @keyframes ring { 0% { box-shadow:0 0 0 0 rgba(251,191,36,.55); } 100% { box-shadow:0 0 0 12px rgba(251,191,36,0); } }
+  .lbl { position:absolute; transform:translateX(-50%); text-align:center; pointer-events:none; }
+
+  #mission .rail { height:96px; }
+  #mission .track, #mission .fill { top:66px; }
+  #mission .stn { top:68px; width:15px; height:15px; }
+  #mission .lbl { top:82px; font:10px var(--mono); color:var(--muted); }
+  #mission .lbl.cur { color:var(--warn); }
+
+  #stage .rail { height:250px; margin:0 70px; }
+  #stage .track, #stage .fill { top:168px; }
+  #stage .stn { top:170px; width:24px; height:24px; display:flex; align-items:center; justify-content:center;
+    font:700 10px var(--mono); color:#06101c; }
+  #stage .stn:not(.done):not(.failed):not(.cur):not(.PASS):not(.FAIL):not(.BLOCKED):not(.NEED-REVIEW) { color:var(--muted); }
+  #stage .lbl { top:190px; width:var(--lw, 132px); font-size:11.5px; line-height:1.3; color:var(--text); }
+  #stage .lbl .d { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  #stage .lbl .chip { display:inline-block; margin-top:3px; color:var(--cyan); }
+  #stage .lbl .n { color:var(--muted); font:10px var(--mono); }
+  .stagehead { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .stagehead .t { font-size:16px; font-weight:650; }
+  .stagefoot { display:flex; gap:14px; flex-wrap:wrap; color:var(--muted); font:12px var(--mono); margin-top:6px; }
+  .stagefoot .evt { color:var(--warn); }
+  .verdictline { margin-top:8px; padding:8px 10px; border-radius:10px; background:rgba(255,255,255,.025); border:1px solid var(--line); }
+
+  /* ---- agent ---- */
+  .agent { position:absolute; top:0; transform:translateX(-50%); transition:left .9s cubic-bezier(.4,.1,.2,1);
+    pointer-events:none; z-index:2; }
+  .agent.hide { display:none; }
+  /* Clawd: 8 ảnh chồng nhau, chỉ hiện ảnh của tâm trạng hiện tại (walk đè lên khi đang trượt); không tâm trạng → idle */
+  .pet { position:relative; }
+  .pet img { position:absolute; display:none; filter:drop-shadow(0 4px 8px rgba(217,119,87,.3)); }
+  .pet img.idle { display:block; }
+  .agent:is(.walk,.work,.wait,.fix,.fail,.done,.stop) .pet img.idle { display:none; }
+  .agent.walk img.walk, .agent.work:not(.walk) img.work, .agent.wait:not(.walk) img.wait, .agent.fix:not(.walk) img.fix,
+  .agent.fail:not(.walk) img.fail, .agent.done:not(.walk) img.done, .agent.stop:not(.walk) img.stop { display:block; }
+  #mAgent { top:auto; bottom:36px; } #sAgent { top:auto; bottom:94px; }   /* đặt theo chân: chân Clawd đứng ngay trên chấm của thanh */
+  .bubble { position:absolute; left:calc(100% + 6px); top:2px; white-space:nowrap; max-width:380px; overflow:hidden;
+    text-overflow:ellipsis; padding:6px 11px; border-radius:12px 12px 12px 3px; background:rgba(12,20,42,.96);
+    border:1px solid rgba(217,119,87,.55); font-size:12px; box-shadow:0 8px 22px rgba(0,0,0,.45); color:var(--text); }
+  .agent.flip .bubble { left:auto; right:calc(100% + 6px); border-radius:12px 12px 3px 12px; }
+  .agent.mini .bubble { top:-2px; font-size:11px; padding:3px 8px; max-width:240px; }
+  .nametag { position:absolute; left:50%; transform:translateX(-50%); bottom:100%; font:600 9px var(--mono);
+    letter-spacing:.2em; color:var(--claude2); margin-bottom:2px; }
+
+  /* ---- lưới case ---- */
+  #grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:10px; }
+  .card { border:1px solid var(--line); border-radius:13px; padding:10px 12px; background:rgba(255,255,255,.018); cursor:pointer;
+    transition:.15s; position:relative; }
+  .card:hover { border-color:var(--line2); background:rgba(255,255,255,.03); }
+  .card.focus { border-color:rgba(34,211,238,.6); box-shadow:0 0 0 3px rgba(34,211,238,.08); }
+  .card.cur { border-color:rgba(251,191,36,.55); }
+  .card .top { display:flex; gap:8px; align-items:center; }
+  .card .id { font:700 12px var(--mono); color:var(--cyan); }
+  .card .t { margin-top:4px; font-weight:550; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; min-height:39px; }
+  .card .g { color:var(--muted); font-size:11px; }
+  .rail.tiny { height:34px; margin:2px 8px 0; }
+  .tiny .track, .tiny .fill { top:24px; height:3px; }
+  .tiny .stn { top:25px; width:9px; height:9px; border-width:1.5px; cursor:inherit; }
+  .tiny .agent { top:auto; bottom:14px; }
+
+  /* ---- drawer ---- */
+  #drawer { position:fixed; top:54px; right:0; bottom:0; width:var(--drawer); min-width:380px; display:flex; flex-direction:column;
+    background:rgba(8,13,27,.97); border-left:1px solid var(--line2); box-shadow:-24px 0 44px rgba(0,0,0,.5);
+    transform:translateX(104%); transition:transform .28s ease; z-index:6; backdrop-filter:blur(12px); }
+  body.drawer #drawer { transform:none; }
+  .dhead { display:flex; gap:6px; align-items:center; padding:10px 12px; border-bottom:1px solid var(--line); }
+  .tab { padding:5px 12px; border-radius:9px; cursor:pointer; color:var(--muted); border:1px solid transparent; background:none; }
+  .tab.on { color:var(--text); border-color:var(--line2); background:rgba(255,255,255,.04); }
+  .dtools { display:flex; gap:10px; align-items:center; padding:8px 12px; border-bottom:1px solid var(--line); color:var(--muted); }
+  .dtools select { font:inherit; color:var(--text); background:#0d1528; border:1px solid var(--line2); border-radius:8px; padding:2px 6px; }
+  #dbody { flex:1; overflow:auto; padding:10px 14px 30px; }
+  .detail h4 { margin:14px 0 5px; font:650 10px var(--mono); letter-spacing:.2em; color:var(--muted); text-transform:uppercase; }
+  .detail ol, .detail ul { margin:0; padding-left:20px; }
+  .detail li { margin:2px 0; }
+  table { border-collapse:collapse; width:100%; } td, th { border:1px solid var(--line); padding:5px 7px; vertical-align:top; text-align:left; }
+  th { color:var(--muted); font-weight:500; }
+  .st { border:1px solid var(--line); border-radius:11px; margin:7px 0; padding:8px 10px; background:rgba(255,255,255,.02); }
+  .st.failed { border-color:rgba(248,113,113,.45); background:rgba(248,113,113,.05); }
+  .st .h { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .st .time { color:var(--muted); } .st .tool { font-weight:700; color:var(--cyan); }
+  .st .args { color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:360px; }
+  .route { color:var(--muted); font-size:11px; margin-top:3px; }
+  .evt { color:var(--warn); font-size:12px; margin-top:3px; }
+  .res { margin-top:4px; white-space:pre-wrap; word-break:break-word; color:#b9c6df; max-height:150px; overflow:auto; }
+  .obs { margin-top:4px; } .obs summary { cursor:pointer; color:var(--review); font-size:12px; }
+  .shot { margin-top:6px; } .shot img { height:150px; border-radius:7px; border:1px solid var(--line2); cursor:zoom-in; }
+  .note { margin:7px 0; padding:6px 10px; border-left:3px solid var(--claude); background:rgba(217,119,87,.07); border-radius:0 9px 9px 0; }
+  .sep { margin:14px 0 6px; display:flex; align-items:center; gap:8px; color:var(--muted); font-size:12px; }
+  .sep::after { content:""; flex:1; border-top:1px dashed var(--line2); }
+
+  #modal { position:fixed; inset:0; background:#000c; display:none; align-items:center; justify-content:center; z-index:9; }
+  #modal img { max-height:94vh; max-width:94vw; border-radius:8px; }
+  #modal pre { background:#0d1528; border:1px solid var(--line2); padding:16px; border-radius:12px; max-width:900px;
+    max-height:88vh; overflow:auto; white-space:pre-wrap; }
+  @media (max-width:900px) {
+    aside { position:fixed; top:54px; bottom:0; left:0; z-index:6; } body.noside aside { margin-left:-272px; }
+    #drawer { width:100vw; min-width:0; } main { padding:12px 10px 40px; } .rail { margin:0 14px; }
+  }
+</style>
+</head>
+<body class="noside">
+<header>
+  <button class="btn" id="sideBtn" title="Danh sách phiên / lượt chạy">☰</button>
+  <div class="brand"><span id="logo"></span><div>HUNOSCOUT<small>TEST · MONITOR</small></div></div>
+  <span class="muted mono" id="root"></span>
+  <span style="flex:1"></span>
+  <button class="btn" id="detailBtn">📄 Chi tiết testcase</button>
+  <button class="btn" id="logBtn">🧾 Log</button>
+  <button class="btn" id="reportBtn">📊 Báo cáo</button>
+  <span class="live" id="live"><i></i><span id="clock"></span></span>
+</header>
+<div id="app">
+  <aside id="tree"></aside>
+  <main>
+    <section class="panel" id="hud"><div class="empty">Chọn một lượt chạy (☰)</div></section>
+    <section class="panel" id="mission">
+      <div class="ptitle">Mission · các testcase<span class="r" id="missionInfo"></span></div>
+      <div class="rail"><div class="track"></div><div class="fill" id="mFill"></div><div id="mStations"></div>
+        <div class="agent mini hide" id="mAgent"></div></div>
+    </section>
+    <section class="panel" id="stage">
+      <div class="ptitle">Stage · các bước của testcase<span class="r">
+        <button class="btn" id="stageDetail">📄 Chi tiết</button><button class="btn" id="stageLog">🧾 Log case</button></span></div>
+      <div id="sHead"></div>
+      <div class="rail"><div class="track"></div><div class="fill" id="sFill"></div><div id="sStations"></div>
+        <div class="agent hide" id="sAgent"></div></div>
+      <div id="sFoot"></div>
+    </section>
+    <section class="panel"><div class="ptitle">Testcase<span class="r muted" id="gridInfo"></span></div><div id="grid"></div></section>
+  </main>
+</div>
+<div id="drawer">
+  <div class="dhead">
+    <button class="tab" data-tab="detail">📄 Chi tiết testcase</button><button class="tab" data-tab="log">🧾 Log</button>
+    <span style="flex:1"></span><button class="btn" id="closeDrawer" title="Ẩn panel">✕</button>
+  </div>
+  <div class="dtools" id="logTools">
+    <select id="logScope"><option value="case">Case đang xem</option><option value="all">Tất cả bước</option></select>
+    <span style="flex:1"></span><label><input type="checkbox" id="follow" checked> Theo dõi</label>
+  </div>
+  <div id="dbody"></div>
+</div>
+<div id="modal"></div>
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const api = (p, q) => fetch(p + (q ? "?" + new URLSearchParams(q) : "")).then(r => r.ok ? r.json() : Promise.reject(r.status));
+const STATE = {running: "đang chạy", done: "xong", stopped: "đã dừng"};
+const VLABEL = {PASS: "PASS", FAIL: "FAIL", BLOCKED: "BLOCKED", "NEED-REVIEW": "CẦN XEM"};
+const MANUAL = new Set(["screen", "tap", "back", "scroll", "open_app", "goto", "devices", "phone_time"]);
+
+let tree = [], sel = null, run = null, steps = [], next = 0, tcs = [], focus = null;
+const sigs = {};
+const prefs = (() => { try { return JSON.parse(localStorage.getItem("monitor") || "{}"); } catch { return {}; } })();
+const save = () => { try { localStorage.setItem("monitor", JSON.stringify(prefs)); } catch {} };
+
+// ---- chú Claude: Clawd pixel động (bộ SVG cộng đồng clawd-pet, MIT — xem clawd/SOURCE.txt) ----
+// ảnh 45×45 ô (y -25..20), thân Clawd 15×9 ô ở giữa (y 6..15) → hộp .pet ôm đúng thân, chân chạm đáy hộp
+const MOODS = ["idle", "walk", "work", "wait", "fix", "fail", "done", "stop"];
+function clawd(w) {
+  const cw = w * 1.2, s = cw * 3;
+  return `<div class="pet" style="width:${cw}px;height:${cw * 9 / 15}px">` + MOODS.map(m =>
+    `<img class="${m}" src="/clawd/${m}.svg" alt="" style="width:${s}px;height:${s}px;left:${-cw}px;bottom:${-s * 5 / 45}px">`).join("") + `</div>`;
+}
+$("#logo").innerHTML = clawd(22);
+$("#mAgent").innerHTML = clawd(44) + `<div class="bubble" id="mBubble"></div>`;
+$("#sAgent").innerHTML = clawd(80) + `<div class="bubble" id="sBubble"></div><div class="nametag">CLAUDE</div>`;
+
+// đặt agent: vị trí % trên thanh + tâm trạng; đổi vị trí → đi bộ trong lúc trượt
+function place(el, pct, mood, bubble, instant) {
+  const prev = el.dataset.pct, key = String(pct.toFixed(2));
+  el.classList.remove("hide", "work", "wait", "fail", "fix", "done", "stop", "idle");
+  el.classList.add(mood);
+  el.classList.toggle("flip", pct > 62);
+  if (instant) { el.style.transition = "none"; el.style.left = pct + "%"; el.offsetWidth; el.style.transition = ""; }
+  else if (prev !== key) {
+    el.classList.add("walk"); clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove("walk"), 950);
+    el.style.left = pct + "%";
+  }
+  el.dataset.pct = key;
+  const b = el.querySelector(".bubble");
+  if (b.dataset.html !== bubble) { b.innerHTML = bubble; b.dataset.html = bubble; }
+  b.style.display = bubble ? "" : "none";
+}
+
+// ---- thời gian ----
+const T = ts => new Date(String(ts).replace(" ", "T"));
+function dur(a, b) {
+  if (!a) return "";
+  const s = Math.max(0, Math.round(((b ? T(b) : new Date()) - T(a)) / 1000));
+  return s >= 3600 ? `${Math.floor(s / 3600)}h${String(Math.floor(s / 60) % 60).padStart(2, "0")}`
+       : s >= 60 ? `${Math.floor(s / 60)}p${String(s % 60).padStart(2, "0")}` : `${s}s`;
+}
+function left(until) {
+  const [h, m, s] = String(until).split(":").map(Number), d = new Date(); d.setHours(h, m, s || 0, 0);
+  return Math.max(0, Math.round((d - new Date()) / 1000));
+}
+function tick() {
+  $("#clock").textContent = new Date().toLocaleTimeString("vi-VN");
+  document.querySelectorAll("[data-since]").forEach(e => e.textContent = dur(e.dataset.since, e.dataset.end || null));
+  document.querySelectorAll("[data-until]").forEach(e => e.textContent = left(e.dataset.until) + "s");
+}
+
+// ---- dữ liệu suy ra ----
+const verdictOf = id => (run?.status?.cases || {})[id];
+const runningId = () => run?.status?.case ? String(run.status.case.id) : null;
+const callsOf = id => steps.filter(s => s.type === "tool" && String(s.case) === id);
+const tcOf = id => tcs.find(t => String(t.id) === id) || {id};
+function order() {
+  const seen = [], add = id => { id = String(id); if (!seen.includes(id)) seen.push(id); };
+  steps.forEach(s => s.type === "case_start" && add(s.id));
+  Object.keys(run?.status?.cases || {}).forEach(add);
+  tcs.forEach(t => add(t.id));
+  return seen;
+}
+// khớp lần lượt các lần gọi tool thật vào bước trong auto.plan (tool cùng tên, nhìn trước tối đa 3 bước);
+// gọi lại cùng tool (retry, wait nhiều lần) → gắn vào bước vừa khớp; tool khác (screen/tap… tự lái) → đếm riêng
+function progress(t, calls) {
+  const st = (t.auto?.plan || []).map(p => ({label: p.do || p.tool || "", tool: p.tool || null, call: null, n: 0}));
+  let i = 0, extra = 0;
+  for (const c of calls) {
+    let hit = -1;
+    for (let k = i; k < st.length && k < i + 3; k++) if (st[k].tool === c.tool) { hit = k; break; }
+    if (hit < 0) {
+      if (i > 0 && st[i - 1].tool === c.tool) { st[i - 1].call = c; st[i - 1].n++; } else extra++;
+      continue;
+    }
+    for (let k = i; k < hit; k++) st[k].skipped = true;
+    st[hit].call = c; st[hit].n = 1; i = hit + 1;
+  }
+  return {st, done: i, extra};
+}
+const shortArgs = a => { const s = a && Object.keys(a).length ? JSON.stringify(a) : ""; return s.length > 60 ? s.slice(0, 58) + "…" : s; };
+const pctOf = (i, n) => n <= 1 ? 100 : i * 100 / (n - 1);   // trạm cuối (cờ) luôn ở 100%
+// trạm hiện tại của agent trên case đang chạy + tâm trạng + lời thoại
+function agentState(id, p) {
+  const s = run.status || {}, busy = s.busy, waiting = s.waiting, calls = callsOf(id);
+  let at = Math.min(p.done, p.st.length);
+  if (busy && p.done > 0 && p.st[p.done - 1]?.tool === busy.tool && p.st[p.done]?.tool !== busy.tool) at = p.done - 1;
+  const last = calls[calls.length - 1];
+  const note = [...steps].reverse().find(x => x.type === "note" && String(x.case) === id);
+  let mood = "idle", say;
+  if (waiting) {
+    mood = "wait";
+    say = `⏳ chờ tới ${esc(waiting.until)} · còn <b data-until="${esc(waiting.until)}">${left(waiting.until)}s</b>${waiting.reason ? " — " + esc(waiting.reason) : ""}`;
+  } else if (busy && MANUAL.has(busy.tool)) {
+    mood = "fix"; say = `🔧 tự lái: <b>${esc(busy.tool)}</b> ${esc(shortArgs(busy.args))} · <span data-since="${esc(busy.since)}"></span>`;
+  } else if (busy) {
+    mood = "work"; say = `⚙ <b>${esc(busy.tool)}</b> ${esc(shortArgs(busy.args))} · <span data-since="${esc(busy.since)}"></span>`;
+  } else if (last && last.status === "failed" && (!note || note.ts <= last.ts)) {
+    mood = "fail"; say = `⚠ ${esc(last.tool)} failed — đang xem lỗi…`;
+  } else if (note && (!last || note.ts >= last.ts)) {
+    say = `💬 ${esc(note.text.length > 90 ? note.text.slice(0, 88) + "…" : note.text)}`;
+  } else {
+    say = `🤔 đang nghĩ… <span data-since="${esc(last?.ts || s.case?.started || s.updated)}"></span>`;
+  }
+  return {at, mood, say};
+}
+
+// ---- vẽ ----
+function vbadge(v, running) {
+  if (running) return `<span class="badge v-RUN">ĐANG CHẠY</span>`;
+  return v ? `<span class="badge v-${esc(v)}">${esc(VLABEL[v] || v)}</span>` : `<span class="badge">chưa chạy</span>`;
+}
+
+function renderHud() {
+  const st = run.status || {}, cs = st.cases || {}, total = order().length, done = Object.keys(cs).length;
+  const cnt = k => Object.values(cs).filter(v => v === k).length, end = st.state !== "running" ? st.updated : null;
+  const ag = run.meta?.agent || run.meta?.config?.agent;    // run.yaml: model / effort / session của agent
+  const html = `<div class="hud">
+      <div><h2>${esc(st.title || "Lượt chạy")}</h2>
+        <div class="sub">${esc(st.run)} · ${esc((st.session || "").split("/").slice(-3).join("/"))} · bắt đầu ${esc((st.started || "").slice(11))}</div>
+        ${ag ? `<div class="sub">🤖 ${esc(ag.model || "?")} · effort ${esc(ag.effort || "?")} · session ${esc(String(ag.session_id || "").slice(0, 8))}</div>` : ""}</div>
+      <span class="badge s-${esc(st.state)}">${esc(STATE[st.state] || st.state)}</span>
+      <div class="tiles">
+        <div class="tile"><b data-since="${esc(st.started)}"${end ? ` data-end="${esc(end)}"` : ""}>${dur(st.started, end)}</b><span>thời gian</span></div>
+        <div class="tile"><b>${done}<span style="font-size:12px;color:var(--muted)">/${total}</span></b><span>đã chạy</span></div>
+        <div class="tile"><b class="ok">${cnt("PASS")}</b><span>pass</span></div>
+        <div class="tile"><b class="bad">${cnt("FAIL")}</b><span>fail</span></div>
+        <div class="tile"><b style="color:var(--block)">${cnt("BLOCKED")}</b><span>blocked</span></div>
+        <div class="tile"><b style="color:var(--review)">${cnt("NEED-REVIEW")}</b><span>cần xem</span></div>
+      </div></div>${st.summary ? `<div class="summary">${esc(st.summary)}</div>` : ""}`;
+  if (sigs.hud !== html) { $("#hud").innerHTML = html; sigs.hud = html; }
+}
+
+function renderMission() {
+  const ids = order(), n = ids.length + 1, cur = runningId(), st = run.status || {};
+  const pos = i => pctOf(i, n);
+  const html = ids.map((id, i) => {
+    const v = verdictOf(id), c = cur === id;
+    return `<div class="stn ${esc(v || "")} ${c ? "cur" : ""} ${focus === id ? "focus" : ""}" data-id="${esc(id)}"
+      style="left:${pos(i)}%" title="${esc(id)} · ${esc(tcOf(id).title || "")}${v ? " — " + esc(VLABEL[v] || v) : ""}"></div>
+      <div class="lbl ${c ? "cur" : ""}" style="left:${pos(i)}%">${esc(id)}</div>`;
+  }).join("") + `<div class="stn flag ${st.state === "done" ? "PASS" : ""}" style="left:100%" title="Kết thúc lượt"></div>
+    <div class="lbl" style="left:100%">🏁</div>`;
+  if (sigs.mission !== html) { $("#mStations").innerHTML = html; sigs.mission = html; }
+  $("#missionInfo").textContent = `${Object.keys(st.cases || {}).length}/${ids.length} case`;
+  let at, mood = "idle", say;
+  if (cur) {
+    at = ids.indexOf(cur);
+    mood = st.waiting ? "wait" : st.busy ? (MANUAL.has(st.busy.tool) ? "fix" : "work") : "idle";
+    say = `${esc(cur)} · ${esc(st.busy?.tool || (st.waiting ? "chờ" : "đang nghĩ"))}`;
+  } else if (st.state === "done") { at = n - 1; mood = "done"; say = "xong lượt chạy 🎉"; }
+  else if (st.state === "stopped") { at = Math.max(0, ids.findIndex(id => !verdictOf(id))); mood = "stop"; say = "đã dừng"; }
+  else { at = ids.findIndex(id => !verdictOf(id)); if (at < 0) at = n - 1; say = "chuẩn bị case kế"; }
+  $("#mFill").style.width = pos(at) + "%";
+  place($("#mAgent"), pos(at), mood, say, sigs.mRun !== sel.run);
+  sigs.mRun = sel.run;
+}
+
+function stageCase() { return focus || runningId() || [...order()].reverse().find(id => verdictOf(id)) || order()[0]; }
+
+function renderStage() {
+  const id = stageCase();
+  if (!id) return;
+  const t = tcOf(id), calls = callsOf(id), p = progress(t, calls), running = runningId() === id;
+  const v = verdictOf(id), res = run.cases?.[id], n = p.st.length + 1;
+  const ag = running ? agentState(id, p) : null;
+  const head = `<div class="stagehead"><span class="t"><span class="mono" style="color:var(--cyan)">${esc(id)}</span> · ${esc(t.title || "")}</span>
+      ${vbadge(v, running)}${t.group ? `<span class="chip">${esc(t.group)}</span>` : ""}
+      ${running && run.status.case?.started ? `<span class="muted mono">⏱ <span data-since="${esc(run.status.case.started)}"></span></span>` : ""}
+      ${focus && runningId() && focus !== runningId() ? `<button class="btn" id="followRun">↩ về case đang chạy</button>` : ""}</div>`;
+  const stations = p.st.map((s, i) => {
+    const cls = s.call ? (s.call.status === "ok" ? "done" : "failed") : s.skipped ? "skipped" : (running && ag.at === i ? "cur" : "");
+    return `<div class="stn ${cls}" style="left:${pctOf(i, n)}%" title="${esc(s.label)}">${i + 1}</div>
+      <div class="lbl" style="left:${pctOf(i, n)}%"><div class="d">${esc(s.label)}</div>
+        ${s.tool ? `<span class="chip">${esc(s.tool)}</span>` : ""}${s.n > 1 ? ` <span class="n">×${s.n}</span>` : ""}</div>`;
+  }).join("") + `<div class="stn flag ${esc(v || "")} ${running && ag.at >= p.st.length ? "cur" : ""}" style="left:100%" title="Kết luận">⚑</div>
+      <div class="lbl" style="left:100%"><div class="d">Kết luận</div>${v ? vbadge(v) : ""}</div>`;
+  const failed = calls.filter(c => c.status === "failed").length, evts = calls.flatMap(c => c.events || []);
+  const foot = `<div class="stagefoot"><span>🔧 ${calls.length} lần gọi tool</span>${p.extra ? `<span>+${p.extra} bước tự lái</span>` : ""}
+      ${failed ? `<span class="bad">✗ ${failed} failed</span>` : ""}${evts.length ? `<span class="evt">⚠ ${esc(evts[evts.length - 1])}</span>` : ""}</div>
+      ${res ? `<div class="verdictline">${vbadge(res.verdict)} ${esc(res.summary || "")}</div>` : ""}
+      ${!p.st.length ? `<div class="muted" style="margin-top:6px">Testcase không có auto.plan — xem log.</div>` : ""}`;
+  if (sigs.sHead !== head) { $("#sHead").innerHTML = head; sigs.sHead = head; }
+  if (sigs.sSt !== stations) { $("#sStations").innerHTML = stations; sigs.sSt = stations; }
+  if (sigs.sFoot !== foot) { $("#sFoot").innerHTML = foot; sigs.sFoot = foot; }
+  const rw = $("#stage .rail").clientWidth;               // nhãn co theo khoảng cách trạm (panel mở → thanh hẹp)
+  $("#sStations").style.setProperty("--lw", Math.max(64, Math.min(132, rw / Math.max(1, n - 1) - 10)) + "px");
+  const fillTo = running ? ag.at : (v ? n - 1 : p.done);
+  $("#sFill").style.width = pctOf(Math.min(fillTo, n - 1), n) + "%";
+  const agent = $("#sAgent"), key = sel.run + "|" + id;
+  if (running) place(agent, pctOf(Math.min(ag.at, n - 1), n), ag.mood, ag.say, sigs.sCase !== key);
+  else agent.classList.add("hide");
+  sigs.sCase = key;
+}
+
+function renderGrid() {
+  const ids = order(), cur = runningId();
+  const html = ids.map(id => {
+    const t = tcOf(id), p = progress(t, callsOf(id)), v = verdictOf(id), n = p.st.length + 1, c = cur === id;
+    const at = c ? agentState(id, p).at : -1, fill = c ? at : v ? n - 1 : p.done;
+    const dots = p.st.map((s, i) => `<div class="stn ${s.call ? (s.call.status === "ok" ? "done" : "failed") : s.skipped ? "skipped" : at === i ? "cur" : ""}" style="left:${pctOf(i, n)}%"></div>`).join("")
+      + `<div class="stn flag ${esc(v || "")} ${c && at >= p.st.length ? "cur" : ""}" style="left:100%"></div>`;
+    return `<div class="card ${focus === id ? "focus" : ""} ${c ? "cur" : ""}" data-id="${esc(id)}">
+      <div class="top"><span class="id">${esc(id)}</span>${vbadge(v, c)}<span style="flex:1"></span><span class="g">${esc(t.group || "")}</span></div>
+      <div class="t">${esc(t.title || "")}</div>
+      <div class="rail tiny"><div class="track"></div><div class="fill" style="width:${pctOf(Math.min(fill, n - 1), n)}%"></div>${dots}
+        ${c ? `<div class="agent mini" style="left:${pctOf(Math.min(at, n - 1), n)}%">${clawd(16)}</div>` : ""}</div></div>`;
+  }).join("") || `<div class="empty">Không có testcase</div>`;
+  if (sigs.grid !== html) { $("#grid").innerHTML = html; sigs.grid = html; }
+  $("#gridInfo").textContent = `${ids.length} case · bấm để xem trên Stage`;
+}
+
+// ---- panel: chi tiết testcase / log ----
+function list(a, tag = "ol") {
+  return a && a.length ? `<${tag}>${a.map(x => `<li>${esc(typeof x === "string" ? x : JSON.stringify(x))}</li>`).join("")}</${tag}>` : `<div class="muted">—</div>`;
+}
+function detailHtml(id) {
+  const t = tcOf(id), res = run?.cases?.[id], plan = t.auto?.plan || [];
+  let h = `<div class="detail"><div class="stagehead"><span class="t"><span class="mono" style="color:var(--cyan)">${esc(id)}</span> · ${esc(t.title || "")}</span>${vbadge(verdictOf(id), runningId() === id)}</div>`;
+  if (res) h += `<h4>Kết quả</h4><div>${vbadge(res.verdict)} ${esc(res.summary)}</div>` + (res.checks?.length ? `<table style="margin-top:6px">
+    <tr><th>Kiểm</th><th>Mong đợi</th><th>Thực tế</th><th></th></tr>${res.checks.map(c => `<tr><td>${esc(c.name)}</td>
+    <td>${esc(c.expected)}</td><td>${esc(c.actual)}</td><td class="${c.ok ? "ok" : "bad"}">${c.ok ? "✓" : "✗"}</td></tr>`).join("")}</table>` : "");
+  h += `<h4>Điều kiện</h4>${list(t.pre, "ul")}<h4>Các bước (gốc)</h4>${list(t.steps)}<h4>Mong muốn (gốc)</h4>${list(t.expect, "ul")}`;
+  if (plan.length) h += `<h4>Kế hoạch tự động</h4><ol>${plan.map(p => `<li>${esc(p.do || "")}${p.tool ? ` <span class="chip">${esc(p.tool)}${p.args ? " " + esc(JSON.stringify(p.args)) : ""}</span>` : ""}</li>`).join("")}</ol>`;
+  if (t.auto?.oracle) h += `<h4>Kiểm chứng</h4>${list(Object.entries(t.auto.oracle).map(([k, v]) => `${k}: ${v}`), "ul")}`;
+  if (t.auto?.cleanup?.length) h += `<h4>Dọn dẹp</h4>${list(t.auto.cleanup.map(c => (c.do || "") + (c.tool ? ` [${c.tool}]` : "")))}`;
+  if (t.auto?.notes) h += `<h4>Ghi chú</h4><div>${esc(t.auto.notes)}</div>`;
+  return h + `</div>`;
+}
+function stepHtml(s) {
+  const t = esc((s.ts || "").slice(11));
+  if (s.type === "note") return `<div class="note"><span class="muted mono">${t}</span> ${esc(s.text)}</div>`;
+  if (s.type === "case_start") return `<div class="sep">▶ ${esc(s.id)} ${esc(s.title || "")} <span class="mono">${t}</span></div>`;
+  if (s.type === "case_end") return `<div class="sep">■ ${esc(s.id)} ${vbadge(s.verdict)} ${esc(s.summary)} <span class="mono">${t}</span></div>`;
+  if (s.type === "run_end") return `<div class="sep">🏁 Kết thúc lượt: ${esc(s.summary)}</div>`;
+  if (s.type !== "tool") return `<div class="muted mono">${esc(JSON.stringify(s))}</div>`;
+  const o = s.observations || {}, http = o.http || [], mqtt = o.mqtt || [];
+  const args = Object.keys(s.args || {}).length ? JSON.stringify(s.args) : "";
+  return `<div class="st ${s.status === "failed" ? "failed" : ""}">
+    <div class="h"><span class="time mono">${t}</span><span class="tool mono">${esc(s.tool)}</span>
+      <span class="args mono">${esc(args)}</span><span style="flex:1"></span>
+      ${s.screen ? `<span class="chip">${esc(s.screen)}</span>` : ""}
+      <span class="${s.status === "ok" ? "ok" : "bad"}">${s.status === "ok" ? "ok" : "failed" + (s.error ? " · " + esc(s.error) : "")}</span>
+      <span class="muted mono">${((s.ms || 0) / 1000).toFixed(1)}s</span></div>
+    ${s.route?.length ? `<div class="route mono">↳ ${s.route.map(esc).join("  →  ")}</div>` : ""}
+    ${(s.events || []).map(e => `<div class="evt">⚠ ${esc(e)}</div>`).join("")}
+    ${s.result && s.result !== "null" ? `<div class="res mono">${esc(s.result)}</div>` : ""}
+    ${http.length || mqtt.length ? `<details class="obs"><summary>HTTP ${http.length} · MQTT ${mqtt.length}</summary><div class="mono res">${
+      http.map(h => `${esc(h.ts.slice(11))} ${esc(h.method)} ${esc(h.path)} → ${esc(h.status)}${h.req ? "  " + esc(h.req) : ""}`).join("\n")}${
+      http.length && mqtt.length ? "\n" : ""}${mqtt.map(m => `${esc(m.ts.slice(11))} ${esc(m.dir)} ${esc(m.topic)}`).join("\n")}</div></details>` : ""}
+    ${s.shot ? `<div class="shot"><img loading="lazy" src="/file?${new URLSearchParams({path: sel.run + "/" + s.shot})}"></div>` : ""}
+  </div>`;
+}
+function renderDrawer(force) {
+  const tab = prefs.tab || "detail";
+  document.querySelectorAll(".tab").forEach(b => b.classList.toggle("on", b.dataset.tab === tab));
+  $("#detailBtn").classList.toggle("on", !!prefs.drawer && tab === "detail");
+  $("#logBtn").classList.toggle("on", !!prefs.drawer && tab === "log");
+  $("#logTools").style.display = tab === "log" ? "" : "none";
+  if (!prefs.drawer || !run) return;
+  const id = stageCase(), box = $("#dbody");
+  if (tab === "detail") {
+    const html = id ? detailHtml(id) : `<div class="empty">Chưa có testcase</div>`;
+    if (force || sigs.drawer !== html) { box.innerHTML = html; sigs.drawer = html; }
+    return;
+  }
+  const scope = $("#logScope").value, show = scope === "case" && id ? steps.filter(s => String(s.case ?? s.id) === id) : steps;
+  const key = `log:${scope}:${id}:${show.length}`;
+  if (force || sigs.drawer !== key) {
+    const stick = box.scrollTop + box.clientHeight >= box.scrollHeight - 30;
+    box.innerHTML = show.map(stepHtml).join("") || `<div class="empty">Chưa có bước nào</div>`;
+    if ($("#follow").checked && (stick || force)) box.scrollTop = box.scrollHeight;
+    sigs.drawer = key;
+  }
+}
+function openDrawer(tab, toggle = true) {
+  prefs.drawer = toggle && prefs.drawer && prefs.tab === tab ? false : true;
+  prefs.tab = tab; save();
+  document.body.classList.toggle("drawer", prefs.drawer);
+  renderDrawer(true); setTimeout(render, 320);
+}
+function render() {
+  if (!run) return;
+  renderHud(); renderMission(); renderStage(); renderGrid(); renderDrawer(); tick();
+}
+
+// ---- sidebar: phiên / lượt chạy ----
+async function loadTree() {
+  try {
+    const t = await api("/api/tree"); tree = t.suites; $("#root").textContent = t.root; $("#live").className = "live";
+  } catch { $("#live").className = "live off"; return; }
+  let h = "";
+  for (const s of tree) {
+    h += `<div class="grp">${esc(s.suite)}</div>`;
+    for (const d of s.sessions) for (const dev of d.devices) {
+      h += `<div class="dev">${esc(d.date)} · ${esc(dev.name)}</div>`;
+      if (!dev.runs.length) h += `<div class="run muted" style="cursor:default">chưa có lượt chạy</div>`;
+      for (const r of dev.runs) {
+        const vs = Object.values(r.cases || {}), pass = vs.filter(v => v === "PASS").length;
+        h += `<div class="run ${sel && sel.run === r.dir ? "sel" : ""}" data-run="${esc(r.dir)}" data-tc="${esc(dev.testcases)}">
+          <span class="mono">${esc(r.run)}</span><span class="badge s-${esc(r.state)}">${esc(STATE[r.state] || r.state)}</span>
+          <span class="muted">${pass}/${vs.length} pass</span></div>`;
+      }
+    }
+  }
+  h = h || `<div class="empty">Chưa có phiên nào</div>`;
+  if (sigs.tree !== h) { $("#tree").innerHTML = h; sigs.tree = h; }
+  if (!sel) { const first = document.querySelector(".run[data-run]"); if (first) pick(first.dataset.run, first.dataset.tc); }
+}
+async function pick(dir, tcDir) {
+  sel = {run: dir, tc: tcDir}; steps = []; next = 0; focus = null; run = null;
+  for (const k of Object.keys(sigs)) if (k !== "tree") delete sigs[k];
+  document.querySelectorAll(".run").forEach(x => x.classList.toggle("sel", x.dataset.run === dir));
+  tcs = await api("/api/testcases", {dir: tcDir}).catch(() => []);
+  await poll();
+}
+async function poll() {
+  if (!sel) return;
+  try {
+    run = await api("/api/run", {dir: sel.run});
+    const r = await api("/api/steps", {dir: sel.run, from: next});
+    if (r.steps.length) { steps.push(...r.steps); next = r.next; }
+    render(); $("#live").className = "live";
+  } catch { $("#live").className = "live off"; }
+}
+
+// ---- sự kiện ----
+function setFocus(id) { focus = focus === id ? null : id; render(); }
+$("#tree").addEventListener("click", e => { const r = e.target.closest(".run[data-run]"); if (r) pick(r.dataset.run, r.dataset.tc); });
+$("#mStations").addEventListener("click", e => { const s = e.target.closest(".stn[data-id]"); if (s) setFocus(s.dataset.id); });
+$("#grid").addEventListener("click", e => { const c = e.target.closest(".card"); if (c) setFocus(c.dataset.id); });
+$("#sHead").addEventListener("click", e => { if (e.target.closest("#followRun")) { focus = null; render(); } });
+$("#sideBtn").onclick = () => { prefs.side = document.body.classList.toggle("noside") ? 0 : 1; save(); $("#sideBtn").classList.toggle("on", !!prefs.side); };
+$("#detailBtn").onclick = () => openDrawer("detail");
+$("#logBtn").onclick = () => openDrawer("log");
+$("#stageDetail").onclick = () => openDrawer("detail", false);
+$("#stageLog").onclick = () => { $("#logScope").value = "case"; openDrawer("log", false); };
+document.querySelectorAll(".tab").forEach(b => b.onclick = () => { prefs.tab = b.dataset.tab; save(); renderDrawer(true); });
+$("#closeDrawer").onclick = () => { prefs.drawer = false; save(); document.body.classList.remove("drawer"); renderDrawer(); setTimeout(render, 320); };
+window.addEventListener("resize", () => render());
+$("#logScope").onchange = () => renderDrawer(true);
+$("#dbody").addEventListener("click", e => {
+  const img = e.target.closest(".shot img"); if (!img) return;
+  $("#modal").innerHTML = `<img src="${img.src}">`; $("#modal").style.display = "flex";
+});
+$("#reportBtn").onclick = () => {
+  $("#modal").innerHTML = `<pre>${esc(run?.report || "Chưa có báo cáo (agent ghi khi kết thúc lượt chạy).")}</pre>`;
+  $("#modal").style.display = "flex";
+};
+$("#modal").onclick = () => { $("#modal").style.display = "none"; };
+
+if (prefs.side) document.body.classList.remove("noside");
+$("#sideBtn").classList.toggle("on", !!prefs.side);
+document.body.classList.toggle("drawer", !!prefs.drawer);
+renderDrawer();
+setInterval(tick, 1000); setInterval(poll, 1500); setInterval(loadTree, 5000);
+tick(); loadTree();
+</script>
+</body>
+</html>

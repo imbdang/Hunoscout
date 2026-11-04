@@ -1,0 +1,181 @@
+{
+  "resolved_for": {
+    "w": 1220,
+    "h": 2712,
+    "density": 480,
+    "font_scale": 1.0,
+    "app": "4.0.23"
+  },
+  "edges": {
+    "home>room": {
+      "xy": [
+        366,
+        2571
+      ],
+      "cost_ms": 887,
+      "sig": "93a8443469",
+      "verified": "2026-11-04T06:06:05+00:00"
+    },
+    "room>home": {
+      "xy": [
+        122,
+        2571
+      ],
+      "cost_ms": 536,
+      "sig": "5af31b2dbc",
+      "verified": "2026-11-04T06:06:06+00:00"
+    },
+    "room>detailRoom[Chưa xếp phòng]": {
+      "xy": [
+        240,
+        736
+      ],
+      "cost_ms": 940,
+      "sig": "c0c1b02ba0",
+      "verified": "2026-11-04T06:06:07+00:00"
+    },
+    "room>detailRoom[Nhà tắm]": {
+      "xy": [
+        240,
+        1320
+      ],
+      "cost_ms": 913,
+      "sig": "76d3a72c06",
+      "verified": "2026-11-04T06:06:09+00:00"
+    },
+    "room>detailRoom[aa]": {
+      "xy": [
+        240,
+        1885
+      ],
+      "cost_ms": 775,
+      "sig": "957e6ec147",
+      "verified": "2026-11-04T06:06:11+00:00"
+    },
+    "detailRoom[aa]>room": {
+      "xy": [
+        73,
+        265
+      ],
+      "cost_ms": 624,
+      "sig": "46e33559a2",
+      "verified": "2026-11-04T06:06:11+00:00"
+    },
+    "room>sortRoom": {
+      "xy": [
+        1052,
+        183
+      ],
+      "cost_ms": 824,
+      "sig": "2c3e81455d",
+      "verified": "2026-11-04T06:06:12+00:00"
+    },
+    "sortRoom>room": {
+      "xy": null,
+      "cost_ms": 463,
+      "sig": "4b67529d12",
+      "verified": "2026-11-04T06:06:13+00:00"
+    },
+    "detailRoom[Chưa xếp phòng]>infoDevice@gatewayv3[Thiết bị trung tâm Homekit]": {
+      "xy": [
+        223,
+        892
+      ],
+      "cost_ms": 3000,
+      "sig": "0d80e170dd",
+      "verified": "2026-11-04T06:12:49+00:00"
+    },
+    "detailRoom[Chưa xếp phòng]>infoDevice@atmwifiv2[Aptomat]": {
+      "xy": [
+        610,
+        892
+      ],
+      "cost_ms": 3000,
+      "sig": "b0e670138e",
+      "verified": "2026-11-04T06:12:49+00:00"
+    },
+    "detailRoom[Nhà tắm]>infoDevice@GACHshock[Chống giật 4]": {
+      "xy": [
+        223,
+        892
+      ],
+      "cost_ms": 3000,
+      "sig": "20481dc5b0",
+      "verified": "2026-11-04T06:12:51+00:00"
+    },
+    "detailRoom[Nhà tắm]>room": {
+      "xy": [
+        73,
+        265
+      ],
+      "cost_ms": 688,
+      "sig": "46e33559a2",
+      "verified": "2026-11-04T06:13:20+00:00"
+    },
+    "detailRoom[Chưa xếp phòng]>infoDevice@swinputv2[Công tắc ]": {
+      "xy": [
+        996,
+        933
+      ],
+      "cost_ms": 1464,
+      "sig": "bbea139fd0",
+      "verified": "2026-11-04T06:24:11+00:00"
+    },
+    "detailRoom[Chưa xếp phòng]>room": {
+      "xy": [
+        73,
+        265
+      ],
+      "cost_ms": 738,
+      "sig": "46e33559a2",
+      "verified": "2026-11-04T06:27:34+00:00"
+    }
+  },
+  "nodes": {
+    "room": {
+      "text": "Quản lý phòng",
+      "band": [
+        148,
+        218
+      ],
+      "sig": "2a3e01048c",
+      "verified": "2026-11-04T06:06:05+00:00"
+    },
+    "detailRoom[Chưa xếp phòng]": {
+      "text": "Chưa xếp phòng",
+      "band": [
+        230,
+        300
+      ],
+      "sig": "9516caed3c",
+      "verified": "2026-11-04T06:06:08+00:00"
+    },
+    "detailRoom[Nhà tắm]": {
+      "text": "Nhà tắm",
+      "band": [
+        230,
+        300
+      ],
+      "sig": "e23ce74767",
+      "verified": "2026-11-04T06:06:09+00:00"
+    },
+    "detailRoom[aa]": {
+      "text": "aa",
+      "band": [
+        230,
+        300
+      ],
+      "sig": "3e292cb04f",
+      "verified": "2026-11-04T06:06:11+00:00"
+    },
+    "sortRoom": {
+      "text": "Chỉnh sửa",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "52e8153572",
+      "verified": "2026-11-04T06:06:13+00:00"
+    }
+  }
+}
