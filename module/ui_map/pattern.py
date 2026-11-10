@@ -103,10 +103,21 @@ def _expand(spec: dict, ctx: dict, house: House) -> list[dict]:
 
 
 def _node(nid: str, pn: dict, ctx: dict, file: str) -> Node:
-    return Node(id=nid, route=pn["route"], file=file, anchors=list(pn.get("anchors", [])),
+    return Node(id=nid, route=pn["route"], file=file, anchors=_fill_deep(list(pn.get("anchors", [])), ctx),
                 anchor=_fill_deep(pn.get("anchor"), ctx), check_text=fill(pn.get("check"), ctx),
                 danger=list(pn.get("danger", [])), controls=_fill_deep(pn.get("controls", {}), ctx),
                 scroll=_fill_deep(pn.get("scroll"), ctx), overlay=pn.get("overlay", False))
+
+
+def _layout(pn: dict, ctx: dict) -> list[str]:
+    """Control có "when" đang hiện trên màn này (vd dòng liên kết công tắc ngữ cảnh khi đã liên kết).
+
+    Dòng hiện/ẩn làm dịch vị trí các dòng khác → đưa vào sig mọi cạnh của màn: trạng thái đổi
+    thì toạ độ cũ của cả màn mất hiệu lực, học lại. Rỗng → sig như cũ.
+    """
+    dev = ctx.get("device")
+    return sorted(k for k, c in pn.get("controls", {}).items()
+                  if c.get("when") and dev is not None and holds(c["when"], dev))
 
 
 def _control_edge(key: str, c: dict) -> dict:
@@ -177,12 +188,13 @@ def instantiate(docs: dict, house: House) -> tuple[Map, dict[str, str]]:
         return local(to, c)
 
     # 2. cạnh: "edges" (core) + "controls" có "to". "@back" để bước 3.
-    back_from: list[tuple[Node, dict]] = []
+    back_from: list[tuple[Node, dict, list[str]]] = []
     for node, pn, ctx, local in todo:
+        layout = _layout(pn, ctx)
         eps = list(pn.get("edges", [])) + [_control_edge(k, c) for k, c in pn.get("controls", {}).items() if c.get("to")]
         for ep in eps:
             if ep["to"] == "@back":
-                back_from.append((node, ep))
+                back_from.append((node, ep, layout))
                 continue
             for c in (_expand(places[ep["for_each"]], ctx, house) if ep.get("for_each") else [ctx]):
                 to = resolve_to(ep["to"], c, local)
@@ -195,26 +207,29 @@ def instantiate(docs: dict, house: House) -> tuple[Map, dict[str, str]]:
                 if to not in nodes:
                     log.debug("bỏ cạnh %s → %s: chưa có node đích", node.id, to)
                     continue
-                _add(node, to, ep, c, node.file)
+                _add(node, to, ep, c, node.file, layout=layout)
 
     # 3. "@back" → một cạnh back về mỗi màn có cạnh đi vào node này
-    for node, ep in back_from:
-        for src in sorted({e.src for n in nodes.values() for e in n.edges if e.to == node.id}):
-            _add(node, src, ep, base, node.file, back=True)
+    for node, ep, layout in back_from:
+        # chỉ cạnh đi tới (không tính cạnh back vừa sinh: add → list (back) không làm list có back sang add)
+        for src in sorted({e.src for n in nodes.values() for e in n.edges if e.to == node.id and not e.back}):
+            _add(node, src, ep, base, node.file, back=True, layout=layout)
 
     return Map(list(nodes.values())), glyphs
 
 
-def _add(node: Node, to: str, ep: dict, ctx: dict, file: str, back: bool = False) -> None:
+def _add(node: Node, to: str, ep: dict, ctx: dict, file: str, back: bool = False,
+         layout: list[str] | None = None) -> None:
     a = ep["action"]
     t = a.get("target")
     target = Target(**{k: (fill(v, ctx) if isinstance(v, str) else v) for k, v in t.items()}) if t else None
     eid = f"{node.id}>{to}"
     if any(e.id == eid for e in node.edges):
         eid = f"{eid}#{ep.get('control') or a['gesture']}"
-    sig = hashlib.sha1(json.dumps([ep, to, target and target.desc], sort_keys=True, ensure_ascii=False)
-                       .encode()).hexdigest()[:10]
+    sig = hashlib.sha1(json.dumps([ep, to, target and target.desc] + ([layout] if layout else []),
+                                  sort_keys=True, ensure_ascii=False).encode()).hexdigest()[:10]
     edge = Edge(id=eid, src=node.id, to=to, file=file, sig=sig, back=back, control=ep.get("control"),
+                optional=bool(ep.get("control") and ep.get("when")) and not back,
                 action=Action(a["gesture"], target, a.get("ms", 800)))
     if ep.get("cost"):
         edge.cost_ms = ep["cost"]

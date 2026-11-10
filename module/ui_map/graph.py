@@ -15,6 +15,7 @@ class Target:
     glyph: str | None = None   # tên icon font, tra codepoint trong pattern
     match: str = "exact"       # exact | prefix | part | contains — áp cho desc
     after: str | None = None   # i18n key tiêu đề mục: chỉ tìm phần tử nằm dưới nó
+    header: int | None = None  # nút thứ n (0 = trái, -1 = phải) của hàng nút trên cùng — icon SVG không chữ/desc/id
 
 
 @dataclass(slots=True)
@@ -22,7 +23,8 @@ class Action:
     """LÀM GÌ."""
     gesture: str               # tap | hold | back
     target: Target | None = None
-    ms: int = 800              # thời gian giữ cho hold
+    ms: int = 800              # giữ cho hold. Đo 2026-11-03: 0.55 s và 0.8 s tới màn như nhau (~1.47 s, app chuyển màn từ mốc
+                               # long press 500 ms) → giữ 0.8 s cho chắc không thành tap (= bật/tắt thiết bị)
 
 
 @dataclass(slots=True)
@@ -37,6 +39,7 @@ class Edge:
     back: bool = False         # sinh từ "@back": đích phụ thuộc màn đã đi vào
     cost_ms: int = 3000        # trọng số Dijkstra, cập nhật bằng thời gian đo được
     control: str | None = None # key của nút sinh ra cạnh này (vd "general_info")
+    optional: bool = False     # nút có "when": lúc chạy có thể chưa/không hiện (vd dòng liên kết chờ thiết bị trả lời)
 
 
 @dataclass(slots=True)
@@ -74,8 +77,9 @@ class Map:
                 return e
         raise KeyError(edge_id)
 
-    def path(self, src: str, dst: str, ok: Callable[[Edge], bool] = lambda e: True) -> list[Edge]:
-        """Dijkstra theo cost_ms, chỉ đi các cạnh `ok(edge)` cho phép."""
+    def path(self, src: str, dst: str, ok: Callable[[Edge], bool] = lambda e: True,
+             cost: Callable[[Edge], float] = lambda e: e.cost_ms) -> list[Edge]:
+        """Dijkstra theo `cost` (mặc định cost_ms), chỉ đi các cạnh `ok(edge)` cho phép."""
         if src == dst:
             return []
         dist, prev, pq = {src: 0}, {}, [(0, src)]
@@ -86,7 +90,7 @@ class Map:
             if d > dist[u]:
                 continue
             for e in self.nodes[u].edges:
-                nd = d + e.cost_ms
+                nd = d + cost(e)
                 if ok(e) and nd < dist.get(e.to, float("inf")):
                     dist[e.to], prev[e.to] = nd, (u, e)
                     heapq.heappush(pq, (nd, e.to))

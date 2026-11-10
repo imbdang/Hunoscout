@@ -1,0 +1,65 @@
+{
+  "root_type": "scenario_sw6",
+  "product": "Công tắc ngữ cảnh NeoR6",
+  "status": "draft",
+  "source": "màn: f044447_InfoDeviceNeo.js; liên kết trung gian: f064304_LinkSwitchWithNeoScreen.js; khám trên 2fc3878f ngày 2026-11-05 (app 4.0.23, nhà Homekit Pro, 'Công tắc ngữ cảnh' cấu hình trực tiếp, fw 260512). Route màn nút / chọn thiết bị: nhãn tự đặt, chưa tra hằng số",
+  "entry": "infoDevice",
+  "nodes": {
+    "infoDevice": {
+      "route": "infoDevice",
+      "param": "device",
+      "anchor": {"any": [{"key": "detailDevice"}, {"text": "{device.name}"}]},
+      "anchors": [["detailDevice", "renameDevice", "neo.linkIntermediateSwitch", "generalInformation"]],
+      "check": "{device.name}",
+      "scroll": {"ref": {"key": "renameDevice"}},
+      "note": "title 'Chi tiết thiết bị' ở đầu trang, = tên thiết bị khi cuộn. Dòng: Đổi tên, Phòng, Liên kết QR, Thêm lối tắt, Liên kết thiết bị trung gian (chữ phụ 'Chưa liên kết'), Lấy thông tin pin và phiên bản, Pin ('Pin còn tốt (32%)', chỉ đọc), 6 nút (mặt trời, mặt trăng, ngôi sao, vuông, tam giác, lục giác — chữ phụ 'Chưa chọn hành động' hoặc hành vi đã gán), Thông tin chung. Không có công tắc bật/tắt, chia sẻ, hẹn giờ",
+      "danger": ["nút thùng rác góc phải header: xoá thiết bị (NeoR6 KHÔNG tự về cấu hình — người dùng phải giữ nút)"],
+      "controls": {
+        "back":              {"gesture": "back", "kind": "nav", "to": "@back"},
+        "delete":            {"kind": "danger", "effect": "xoá thiết bị", "note": "icon thùng rác header (1094,154)-(1202,262), không text/desc"},
+        "rename":            {"target": {"key": "renameDevice"}, "kind": "popup"},
+        "room":              {"target": {"key": "room"}, "kind": "popup", "note": "sheet Chọn phòng"},
+        "qr_link":           {"target": {"text": "Liên kết QR"}, "kind": "nav", "to": "feature:qr_link"},
+        "shortcut":          {"target": {"key": "shotcut"}, "kind": "external", "note": "rời app"},
+        "link_intermediate": {"target": {"key": "neo.linkIntermediateSwitch"}, "kind": "nav", "to": "linkIntermediate"},
+        "update_data":       {"target": {"key": "updateData"}, "kind": "popup", "note": "popup 'LẤY THÔNG TIN PIN VÀ PHIÊN BẢN': giữ nút bất kỳ trên NeoR6 tới khi đèn đỏ nháy chậm → Kết nối (cần tay). Back đóng"},
+        "sun":               {"target": {"key": "neo.sun"}, "kind": "nav", "to": "button.sun"},
+        "moon":              {"target": {"key": "neo.moon"}, "kind": "nav", "to": "button.moon"},
+        "star":              {"target": {"key": "neo.star"}, "kind": "nav", "to": "button.star"},
+        "square":            {"target": {"key": "neo.square"}, "kind": "nav", "to": "button.square"},
+        "triangle":          {"target": {"key": "neo.triangle"}, "kind": "nav", "to": "button.triangle"},
+        "hexagon":           {"target": {"key": "neo.hexagon"}, "kind": "nav", "to": "button.hexagon"},
+        "general_info":      {"target": {"key": "generalInformation"}, "kind": "nav", "to": "feature:general_info", "note": "không có dòng Wifi / IP; có Ngày kích hoạt, Phiên bản phần cứng (fw)"}
+      }
+    },
+    "button.sun":      {"note": "vào nút → popup button.tutorial (bấm Đã hiểu). Tab Nhấn 1 lần / Nhấn 2 lần / Nhấn giữ; dòng Thiết bị đã chọn; 'Chưa có hành động'; Lưu lại (khoá khi chưa đổi). Thiết bị đã chọn → sheet Chọn hành động (Kích hoạt ngữ cảnh chạy khi ấn | Điều khiển thiết bị) → màn 'Chọn thiết bị' (ô tìm + ô thiết bị desc '.., <tên>, <hành động>'; bấm ô xoay vòng Không chọn → Đảo trạng thái → Bật → Tắt; Lưu lại; Không chọn → 'Bạn chưa chọn thiết bị nào'). Kích hoạt ngữ cảnh chạy khi ấn (cần liên kết trung gian) → 'Chọn ngữ cảnh' (ô ngữ cảnh, chọn nhiều, đang chọn = desc '.., <tên>') → Lưu lại → 'Ngữ cảnh đã chọn' → Lưu lại → /v3/collection/add (bỏ hết = /v3/collection/update). Màn Chọn thiết bị KHÔNG làm node: dùng chung 6 nút, Back không biết về nút nào → để navigator không nhận ra, Back rồi nhận lại màn nút. module/actions/neo.py", "route": "neoButton", "param": "device", "anchor": {"key": "neo.sun"},      "anchors": ["neo.sun", "neo.press1Time"],      "danger": ["Lưu lại: gán hành vi cho ô (nút × kiểu nhấn) lên NeoR6"], "controls": {"back": {"gesture": "back", "kind": "nav", "to": "@back"}, "press1": {"target": {"key": "neo.press1Time"}, "kind": "choice"}, "press2": {"target": {"key": "neo.press2Times"}, "kind": "choice"}, "hold": {"target": {"key": "neo.longPress"}, "kind": "choice"}, "action": {"target": {"key": "neo.selectDevice"}, "kind": "popup", "note": "sheet Chọn hành động → button.chooseDevice"}, "save": {"target": {"key": "save"}, "kind": "danger", "effect": "lưu hành vi"}}},
+    "button.moon":     {"route": "neoButton", "param": "device", "anchor": {"key": "neo.moon"},     "anchors": ["neo.moon", "neo.press1Time"],     "danger": ["Lưu lại: gán hành vi cho ô (nút × kiểu nhấn) lên NeoR6"], "controls": {"back": {"gesture": "back", "kind": "nav", "to": "@back"}, "press1": {"target": {"key": "neo.press1Time"}, "kind": "choice"}, "press2": {"target": {"key": "neo.press2Times"}, "kind": "choice"}, "hold": {"target": {"key": "neo.longPress"}, "kind": "choice"}, "action": {"target": {"key": "neo.selectDevice"}, "kind": "popup", "note": "sheet Chọn hành động → button.chooseDevice"}, "save": {"target": {"key": "save"}, "kind": "danger", "effect": "lưu hành vi"}}},
+    "button.star":     {"route": "neoButton", "param": "device", "anchor": {"key": "neo.star"},     "anchors": ["neo.star", "neo.press1Time"],     "danger": ["Lưu lại: gán hành vi cho ô (nút × kiểu nhấn) lên NeoR6"], "controls": {"back": {"gesture": "back", "kind": "nav", "to": "@back"}, "press1": {"target": {"key": "neo.press1Time"}, "kind": "choice"}, "press2": {"target": {"key": "neo.press2Times"}, "kind": "choice"}, "hold": {"target": {"key": "neo.longPress"}, "kind": "choice"}, "action": {"target": {"key": "neo.selectDevice"}, "kind": "popup", "note": "sheet Chọn hành động → button.chooseDevice"}, "save": {"target": {"key": "save"}, "kind": "danger", "effect": "lưu hành vi"}}},
+    "button.square":   {"route": "neoButton", "param": "device", "anchor": {"key": "neo.square"},   "anchors": ["neo.square", "neo.press1Time"],   "danger": ["Lưu lại: gán hành vi cho ô (nút × kiểu nhấn) lên NeoR6"], "controls": {"back": {"gesture": "back", "kind": "nav", "to": "@back"}, "press1": {"target": {"key": "neo.press1Time"}, "kind": "choice"}, "press2": {"target": {"key": "neo.press2Times"}, "kind": "choice"}, "hold": {"target": {"key": "neo.longPress"}, "kind": "choice"}, "action": {"target": {"key": "neo.selectDevice"}, "kind": "popup", "note": "sheet Chọn hành động → button.chooseDevice"}, "save": {"target": {"key": "save"}, "kind": "danger", "effect": "lưu hành vi"}}},
+    "button.triangle": {"route": "neoButton", "param": "device", "anchor": {"key": "neo.triangle"}, "anchors": ["neo.triangle", "neo.press1Time"], "danger": ["Lưu lại: gán hành vi cho ô (nút × kiểu nhấn) lên NeoR6"], "controls": {"back": {"gesture": "back", "kind": "nav", "to": "@back"}, "press1": {"target": {"key": "neo.press1Time"}, "kind": "choice"}, "press2": {"target": {"key": "neo.press2Times"}, "kind": "choice"}, "hold": {"target": {"key": "neo.longPress"}, "kind": "choice"}, "action": {"target": {"key": "neo.selectDevice"}, "kind": "popup", "note": "sheet Chọn hành động → button.chooseDevice"}, "save": {"target": {"key": "save"}, "kind": "danger", "effect": "lưu hành vi"}}},
+    "button.hexagon":  {"route": "neoButton", "param": "device", "anchor": {"key": "neo.hexagon"},  "anchors": ["neo.hexagon", "neo.press1Time"],  "danger": ["Lưu lại: gán hành vi cho ô (nút × kiểu nhấn) lên NeoR6"], "controls": {"back": {"gesture": "back", "kind": "nav", "to": "@back"}, "press1": {"target": {"key": "neo.press1Time"}, "kind": "choice"}, "press2": {"target": {"key": "neo.press2Times"}, "kind": "choice"}, "hold": {"target": {"key": "neo.longPress"}, "kind": "choice"}, "action": {"target": {"key": "neo.selectDevice"}, "kind": "popup", "note": "sheet Chọn hành động → button.chooseDevice"}, "save": {"target": {"key": "save"}, "kind": "danger", "effect": "lưu hành vi"}}},
+    "button.tutorial": {
+      "route": "neoButton",
+      "param": "device",
+      "overlay": true,
+      "anchors": ["neo.actionTutorial", "neo.hideTutorial"],
+      "note": "popup 'Hoạt động nút nhấn' bật MỖI LẦN vào một nút (tới khi bấm 'Không hiển thị lại'); Back KHÔNG đóng. 2fc3878f đã bấm 'Không hiển thị lại' 2026-11-05 (người dùng chọn) → không còn chặn navigator; máy khác / cài lại app: popup chặn cạnh infoDevice → button.* (lạc, agent bấm Đã hiểu). Nội dung: Kích hoạt ngữ cảnh chạy khi ấn (cần liên kết thiết bị trung gian, nhiều ngữ cảnh) / Điều khiển thiết bị (~15 m, chạy ngay, không cần internet)",
+      "controls": {
+        "ok":    {"target": {"key": "understandText"}, "kind": "nav", "note": "đóng → màn nút bên dưới"},
+        "never": {"target": {"key": "neo.hideTutorial"}, "kind": "action", "effect": "app lưu: không hiện popup này nữa"}
+      }
+    },
+    "linkIntermediate": {
+      "route": "LinkSwitchWithNeoScreen",
+      "param": "device",
+      "anchor": {"key": "neo.linkIntermediateSwitch"},
+      "anchors": ["neo.linkIntermediateSwitch", "listDevice"],
+      "note": "= NeoR6 'ký sinh' lên công tắc Wi-Fi (beacon → công tắc đưa lên mạng). Chưa liên kết: 'Danh sách thiết bị' (desc '<tên>, <root_id>', ô chọn bên phải) → chọn → Liên kết (updateDataExtra) → app tự về infoDevice. Đã liên kết: 'Danh sách thiết bị đã liên kết' (+ 'Phiên bản: x') + nút Xoá liên kết → gỡ xong app Ở LẠI màn này. Gỡ trung gian không xoá hành vi điều khiển thiết bị của nút; gỡ ở thiết bị đích (contextLink) xoá cả hai. module/actions/neo.py",
+      "danger": ["Liên kết: liên kết NeoR6 với thiết bị trung gian (đổi trạng thái thiết bị)"],
+      "controls": {
+        "back": {"gesture": "back", "kind": "nav", "to": "@back"},
+        "link": {"target": {"key": "deviceLink"}, "kind": "danger", "effect": "liên kết thiết bị trung gian"}
+      }
+    }
+  }
+}

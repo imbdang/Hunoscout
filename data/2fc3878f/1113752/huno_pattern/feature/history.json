@@ -1,0 +1,43 @@
+{
+  "resolved_for": {
+    "w": 1220,
+    "h": 2712,
+    "density": 480,
+    "font_scale": 1.0,
+    "app": "4.0.23"
+  },
+  "edges": {
+    "history/list[Ổ cắm 3]>infoDevice@sswitch2v[Ổ cắm 3]": {
+      "xy": null,
+      "cost_ms": 588,
+      "sig": "f3390782b9",
+      "verified": "2026-11-05T04:04:15+00:00"
+    },
+    "history/list[Module Input 6]>infoDevice@swinputv2[Module Input 6]": {
+      "xy": null,
+      "cost_ms": 705,
+      "sig": "fe036692a7",
+      "verified": "2026-11-06T01:33:23+00:00"
+    }
+  },
+  "nodes": {
+    "history/list[Ổ cắm 3]": {
+      "text": "Lịch sử Ổ cắm 3",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "33b31818aa",
+      "verified": "2026-11-05T04:04:14+00:00"
+    },
+    "history/list[Module Input 6]": {
+      "text": "Lịch sử Module Input 6",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "0d022a78a4",
+      "verified": "2026-11-06T01:32:01+00:00"
+    }
+  }
+}

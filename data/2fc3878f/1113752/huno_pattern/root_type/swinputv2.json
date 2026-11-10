@@ -1,0 +1,64 @@
+{
+  "resolved_for": {
+    "w": 1220,
+    "h": 2712,
+    "density": 480,
+    "font_scale": 1.0,
+    "app": "4.0.23"
+  },
+  "edges": {
+    "infoDevice@swinputv2[Module Input 6]>detailRoom[Chưa xếp phòng]": {
+      "xy": null,
+      "cost_ms": 696,
+      "sig": "5521dc7523",
+      "verified": "2026-11-06T01:52:18+00:00"
+    },
+    "infoDevice@swinputv2[Module Input 6]>timer/list[Module Input 6]": {
+      "xy": [
+        608,
+        1086
+      ],
+      "content_y": 1056,
+      "dy": 30,
+      "cost_ms": 993,
+      "sig": "53f53016d9",
+      "verified": "2026-11-06T01:52:27+00:00"
+    },
+    "infoDevice@swinputv2[Module Input 6]>cycle/list[Module Input 6]": {
+      "xy": [
+        608,
+        2010
+      ],
+      "content_y": 1980,
+      "dy": 30,
+      "cost_ms": 1002,
+      "sig": "491bf4fbe5",
+      "verified": "2026-11-06T01:52:34+00:00"
+    },
+    "infoDevice@swinputv2[Module Input 6]>general_info/info[Module Input 6]": {
+      "xy": [
+        608,
+        2438
+      ],
+      "content_y": 3261,
+      "dy": 30,
+      "cost_ms": 2342,
+      "sig": "f68da1bbbb",
+      "verified": "2026-11-06T02:35:58+00:00"
+    }
+  },
+  "scroll": {
+    "infoDevice@swinputv2[Module Input 6]": 650
+  },
+  "nodes": {
+    "infoDevice@swinputv2[Module Input 6]": {
+      "text": "Chi tiết thiết bị",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "f8fc299a23",
+      "verified": "2026-11-06T01:31:59+00:00"
+    }
+  }
+}

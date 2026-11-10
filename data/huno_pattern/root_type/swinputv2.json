@@ -1,0 +1,81 @@
+{
+  "root_type": "swinputv2",
+  "product": "Module Input (type switch)",
+  "status": "draft",
+  "source": "màn: infoDevice + SettingSwitchView (4.0.20 f043762) + SwInputView (4.0.20 f043910); khám trên 2fc3878f ngày 2026-11-03 (Module Input 5)",
+  "entry": "infoDevice",
+  "share": {"template": "OtherDeviceNoChangeIcon",
+            "perms": ["control", "timer", "collection", "basic", "advanced", "history", "notify_offline"],
+            "default": ["control", "timer", "collection", "basic", "advanced", "history"],
+            "source": "Wallpad docs/device/feature/share/swinputv2.md (F19640 → F19638)",
+            "note": "thứ tự = thứ tự dòng trên form share/add và hộp thoại Chỉnh sửa quyền; tên quyền → key i18n ở module/actions/share.py PERMS. Chọn đủ 7 → app gửi [-1]. Danh sách người được chia sẻ hiện 'Tùy chỉnh'."},
+  "nodes": {
+    "infoDevice": {
+      "route": "infoDevice",
+      "param": "device",
+      "anchor": {"any": [{"key": "detailDevice"}, {"text": "{device.name}"}]},
+      "anchors": [["detailDevice", "renameDevice", "statusPower", "generalInformation"]],
+      "check": "{device.name}",
+      "scroll": {"ref": {"key": "renameDevice"}},
+      "note_anchors": "trang cuộn giữ nguyên khi Back từ màn con → đầu trang (detailDevice/renameDevice), giữa (statusPower), cuối (generalInformation) đều nhận được",
+      "note": "title = 'Chi tiết thiết bị' ở đầu trang, = tên thiết bị khi cuộn. Giống sswitch2v + 4 dòng riêng: liên kết công tắc ngữ cảnh, đầu vào AC/DC. Cuộn 1 lần (~drag 2300 px) là tới cuối trên 2fc3878f.",
+      "danger": [
+        "nút thùng rác góc phải header: xoá thiết bị",
+        "công tắc ở thẻ đầu trang (desc 'Tắt'/'Bật'): bật/tắt thiết bị thật",
+        "công tắc bên phải dòng 'Cài đặt đầu vào AC': gửi lệnh cấu hình đầu vào"
+      ],
+      "controls": {
+        "back":           {"gesture": "back", "kind": "nav", "to": "@back",
+                           "note": "Back hệ thống (đã thử 2026-11-03, về màn đã đi vào). Nút ‹ header nằm ngoài vùng cuộn → _find() dùng reach() không thấy (lỗi chung màn có scroll)"},
+        "delete":         {"kind": "danger", "effect": "xoá thiết bị",
+                           "note": "icon thùng rác header (1094,154)-(1202,262); không bấm được trong dump (không clickable, không text/desc)"},
+        "power":          {"target": {"desc": "Tắt"}, "kind": "action", "danger": true,
+                           "effect": "bật/tắt thiết bị thật", "note": "desc đổi theo trạng thái: 'Tắt' khi đang tắt, 'Bật' khi đang bật — viết cứng tiếng Việt"},
+        "rename":         {"target": {"key": "renameDevice"}, "kind": "popup", "note": "showModalEditName — lưu = đổi tên thiết bị"},
+        "room":           {"target": {"key": "room"}, "kind": "popup", "note": "sheet Chọn phòng (selectRoom): mọi phòng của nhà, phòng hiện tại tô xanh, không có nút huỷ. Chọn = POST /v3/device/updateRoot ngay (không hỏi lại) + banner \"Thành công, Cập nhật thành công\" ~3 s đè header; app tự tải lại listDeviceOfHomeSelect. Chữ phụ dòng = tên phòng. module/actions/room.py (đã thử 2026-11-04, app 4.0.23)"},
+        "share":          {"target": {"key": "share"}, "kind": "nav", "to": "feature:share", "route": "KEY_NAME_SHARE_DEVICE"},
+        "timer":          {"target": {"key": "normalTimer"}, "kind": "nav", "to": "feature:timer", "route": "listAlarm",
+                           "note": "VI 'Hẹn giờ' (normalTimer), KHÔNG phải 'Hẹn giờ hành động'"},
+        "qr_link":        {"target": {"text": "Liên kết QR"}, "kind": "nav", "to": "feature:qr_link", "route": "ScanQRLinkDevice",
+                           "note": "chữ viết cứng; màn quét QR mở camera"},
+        "shortcut":       {"target": {"key": "shotcut"}, "kind": "external", "note": "Linking.openURL(deeplink) — rời app"},
+        "power_state":    {"target": {"key": "statusPower"}, "kind": "popup", "note": "sheet giữ nguyên/bật/tắt — chọn = gửi lệnh cấu hình"},
+        "press_mode":     {"target": {"key": "pressMode"}, "kind": "popup",
+                           "note": "VI 'Chế độ nhấn nhả' (pressMode gốc; gate.pressMode = 'Cài thời gian nhả nút' là key khác). Hộp thoại autoClickMode: ô phút + ô giây (bấm → danh sách native 'Chọn phút'/'Chọn giây'), Thoát / Lưu lại = gửi lệnh. 00:00 = tắt. Chữ phụ dòng: 'Tắt' hoặc clickModeLANHasMinute '<tên> được tự động Bật sau 1 phút 25 giây khi Tắt đi'. module/actions/press.py"},
+        "quick_timer":    {"target": {"key": "quickTimer"}, "kind": "popup", "note": "ModalQuickAlarmNew; mở = gửi lệnh ĐỌC hẹn giờ. Ô 'Thời gian (Phút)' (bấm → danh sách 'Phút' 2–999) + Sẽ bật / Sẽ tắt (willOn/willOff viết hoa, xanh = chọn), Thoát | Xoá hẹn giờ (khi đang có, xoá ngay không hỏi) / Lưu hẹn giờ. Mở luôn ở 02 phút, không hiện giá trị đang đặt. Chữ phụ dòng: 'Chưa đặt hẹn giờ' / '14:45 03-11-2026 sẽ tắt'. module/actions/press.py"},
+        "repeat":         {"target": {"key": "periodicallyRepeat"}, "kind": "nav", "to": "feature:cycle", "route": "KEY_NAME_TIMER_LOOP_LIST_SCREEN",
+                           "note": "Lặp tuần hoàn = màn danh sách (F44076, cần quyền KEY_PERMISSION_ALL_TYPE_ALARM), không phải popup"},
+        "lock":           {"target": {"key": "lockSwitch"}, "kind": "popup", "note": "sheet khoá trên thiết bị/app — chọn = gửi lệnh"},
+        "context_link":   {"target": {"key": "neo.contextButtonLink"}, "kind": "nav", "to": "contextLink", "route": "DeleteLinkNeoScreen",
+                           "when": "neo_links != 0",
+                           "note": "chỉ hiện khi đã liên kết ≥1 công tắc ngữ cảnh (useNeoLogic → listLinkedNeo). Vào màn app gửi getCmdGetListLinkNeor6 (MQTT/LAN); dòng hiện SAU khi thiết bị trả lời → hiện muộn, thiết bị offline thì không hiện dù REST data_extra.neoLinks có. when = gợi ý từ REST; lúc chạy cạnh optional: chờ tại chỗ, không có thì Absent. Sub 'Đã liên kết: n' (WCRoom.linked)"},
+        "stair_link":     {"target": {"key": "ST02.linkStairSensor"}, "kind": "unknown",
+                           "when": "st02_links != 0",
+                           "note": "chỉ hiện khi đã liên kết cảm biến cầu thang ST02 (useSt02Logic → listLinkedSt02, REST data_extra.listSt02Linked) và isOwenDevice; chưa gặp trên máy, chưa rõ mở gì"},
+        "history":        {"target": {"key": "doorHistory"}, "kind": "nav", "to": "feature:history", "route": "KEY_NAME_SWITCH_HISTORY"},
+        "input_ac":       {"target": {"text": "Cài đặt đầu vào AC"}, "kind": "action", "danger": true,
+                           "effect": "bật/tắt chế độ đầu vào AC (gửi lệnh cấu hình)",
+                           "note": "chữ = translate('inputText') + ' AC'; dòng không bấm được, chỉ công tắc bên phải (desc 'Bật'/'Tắt' = trạng thái); sub textSWInputSub 'Xanh bật, đỏ tắt'. module/actions/inputs.py (đã thử 2026-11-03)"},
+        "input_dc_green": {"target": {"text": "Cài đặt đầu vào DC (Xanh)"}, "kind": "popup",
+                           "note": "chữ = inputText + ' DC (' + colorGreen + ')'; mở RBSheet 'Chọn hành động' (Bật / Tắt / ATM.actionNone 'Không làm gì', không có Huỷ) — chọn = gửi lệnh; chữ phụ dòng = hành động đang đặt. module/actions/inputs.py"},
+        "input_dc_red":   {"target": {"text": "Cài đặt đầu vào DC (Đỏ)"}, "kind": "popup",
+                           "note": "chữ = inputText + ' DC (' + colorRed + ')'; cùng sheet selectAction với DC xanh"},
+        "notify_offline": {"target": {"key": "notifyDeviceOff"}, "kind": "popup", "note": "sheet bật/tắt thông báo mất kết nối"},
+        "general_info":   {"target": {"key": "generalInformation"}, "kind": "nav", "to": "feature:general_info", "route": "infoDeviceCommonView"},
+        "icon":           {"kind": "unknown", "note": "icon thiết bị đầu màn, chưa tra"}
+      }
+    },
+    "contextLink": {
+      "route": "DeleteLinkNeoScreen",
+      "param": "device",
+      "anchor": {"key": "neo.contextButtonLink"},
+      "anchors": ["neo.contextButtonLink", "listDevice"],
+      "note": "title 'Liên kết công tắc ngữ cảnh', mục 'Danh sách thiết bị', mỗi công tắc ngữ cảnh đã liên kết là một thẻ (desc '<tên>, <phòng>, Pin: n%\\nPhiên bản: x'). Không hiện tên thiết bị đang xem → không có check, chưa phân biệt được instance khi nhà có >1 swinputv2.",
+      "danger": ["thùng rác SVG bên phải thẻ → Xoá: gỡ NeoR6 (getCmdDeleteLinkNeoR6); trên sswitch2v 2026-11-05: xoá cả hành vi nút lẫn liên kết trung gian của NeoR6"],
+      "controls": {
+        "back":    {"gesture": "back", "kind": "nav", "to": "@back", "note": "Back hệ thống — đã thử 2026-11-03, về infoDevice"},
+        "linked":  {"kind": "danger", "note": "thẻ thiết bị đã liên kết — chưa bấm"}
+      }
+    }
+  }
+}

@@ -20,7 +20,7 @@ from enum import Enum, auto
 
 from . import config
 from . import interact as adb
-from .parse_data import Capture, check_fresh, latest_response, parse_house
+from .parse_data import Capture, MitmCapture, check_fresh, latest_response, parse_house
 from .ui_map import Edge, Lexicon, Lost, Map, Navigator, Resolved, instantiate, load_docs
 from .ui_map.locate import learns_band
 
@@ -50,6 +50,7 @@ class Report:
     failed: list[tuple[str, str]] = field(default_factory=list)
     unexplored: list[str] = field(default_factory=list)   # cạnh tới màn chưa biết cách nhận ra
     pruned: list[str] = field(default_factory=list)
+    tiles: list[str] = field(default_factory=list)        # cạnh hold vào ô thiết bị vừa ghi lại toạ độ
     transitions: list[str] = field(default_factory=list)
 
 
@@ -58,6 +59,7 @@ class Scout:
         if serial:
             adb.set_serial(serial)
         self.serial = adb.serial()
+        self.home_id = config.current_home(self.serial)   # nhà đang chọn trên app → map + toạ độ đã học của nhà đó
         self.state = State.IDLE
         self.report = Report()
         self.graph: Map | None = None
@@ -75,8 +77,9 @@ class Scout:
 
     def _fetch_house(self, fresh: bool):
         """Danh sách nhà/thiết bị: fresh → mở lại app qua hook rồi lấy response mới (mặc định)."""
-        if fresh:
-            cap = Capture(config.CAPTURE_SCRIPT, self.serial)
+        if fresh:                                # không có script collector (máy khác) → đọc response qua mitm
+            cap = (Capture(config.CAPTURE_SCRIPT, self.serial) if config.CAPTURE_SCRIPT.exists()
+                   else MitmCapture(config.EXPORTS, config.MITM_FLOWS))
             t = time.monotonic()
             cap.start()
             try:
@@ -85,14 +88,16 @@ class Scout:
                 cap.wait_list()
             finally:
                 cap.stop()
-            log.info("danh sách thiết bị mới qua hook: %.1f s", time.monotonic() - t)
+            log.info("danh sách thiết bị mới: %.1f s", time.monotonic() - t)
         resp, observed = latest_response(config.EXPORTS)
         if not fresh and (warn := check_fresh(observed, config.MAX_AGE)):
             self.report.warnings.append(warn)
-        return parse_house(resp, config.HOME_ID, observed.isoformat())
+        return parse_house(resp, self.home_id, observed.isoformat())
 
-    def start(self, fresh: bool = True) -> Report:
-        r = self.report
+    def load(self, fresh: bool) -> None:
+        """IDLE: danh sách nhà/thiết bị → map + toạ độ đã học của máy này. Không chạm màn hình
+        (trừ fresh: mở lại app để lấy danh sách qua hook). Gọi lại được để làm mới map."""
+        r = self.report = Report(transitions=self.report.transitions)
         house = self._fetch_house(fresh)
         r.devices = len(house.devices)
         if house.duplicates:
@@ -106,23 +111,50 @@ class Scout:
         self.graph, glyphs = instantiate(load_docs(config.PATTERN_DIR, house.root_types), house)
         r.leaves = sorted(n.id for n in self.graph.nodes.values() if n.file.startswith("root_type/")
                           and any(e.to == n.id for e in self.graph.edges() if e.file == "core"))
-        self.res = Resolved(pdir / "huno_pattern", profile)
+        # toạ độ đã học theo từng nhà: cùng id màn (home, detailRoom[Chưa xếp phòng]) ở nhà khác là màn khác
+        self.res = Resolved(pdir / self.home_id / "huno_pattern", profile)
         r.pruned = self.res.prune(self.graph)
         self.res.apply_costs(self.graph)
         self.nav = Navigator(self.graph, self.res, Lexicon(config.I18N), glyphs)
 
+    def reload(self) -> None:
+        """Dựng lại map từ pattern + danh sách đã lưu (không chạm màn hình), giữ 📍 cũ nếu node còn."""
+        old = self.nav
+        self.load(fresh=False)
+        if old is None or old.cur not in self.graph.nodes:
+            return
+        live = self.graph.nodes
+        self.nav.cur = old.cur
+        self.nav.stack = [x for x in old.stack if x in live]
+        self.nav.scroll = {k: v for k, v in old.scroll.items() if k in live}
+        self.nav.came_from = {k: v for k, v in old.came_from.items() if k in live and v in live}
+
+    def use_house(self, home_id: str, name: str) -> None:
+        """App vừa chuyển sang nhà khác: ghi lại cho máy này rồi dựng map của nhà đó (không chạm màn hình).
+        Sau đó chưa biết màn hiện tại → lần goto sau tự nhận ra (recover)."""
+        config.set_current_home(self.serial, home_id, name)
+        self.home_id = home_id
+        self.load(fresh=False)
+
+    def start(self, fresh: bool = True) -> Report:
+        self.load(fresh)
+        r = self.report
         if adb.current_package() != config.APP_PACKAGE:
             raise Lost(f"app {config.APP_PACKAGE} không ở màn hình trước — mở app rồi chạy lại")
         missing, r.unexplored = self.plan()
         unlearned = self.unlearned()
-        if missing or unlearned:
-            self._go(State.DISCOVERY, f"core: thiếu toạ độ {len(missing)} cạnh, chưa học title {len(unlearned)} màn")
+        if missing or unlearned or fresh:
+            self._go(State.DISCOVERY, f"core: thiếu toạ độ {len(missing)} cạnh, chưa học title {len(unlearned)} màn"
+                     + (", quét lại ô thiết bị" if fresh else ""))
             if missing:
                 done, failed = self.nav.discover(missing)
                 r.resolved += [e.id for e in done]
                 r.failed += [(e.id, why) for e, why in failed]
             self._learn_anchors()
-        self._go(State.ACTIVE, f"{len(r.resolved)} cạnh mới, {len(r.anchors)} title mới, {len(r.failed)} lỗi")
+            if fresh:
+                self._scan_tiles()
+        self._go(State.ACTIVE, f"{len(r.resolved)} cạnh mới, {len(r.anchors)} title mới, {len(r.tiles)} ô thiết bị, "
+                 f"{len(r.failed)} lỗi")
         return r
 
     def usable(self, e: Edge) -> bool:
@@ -147,9 +179,15 @@ class Scout:
         return missing, unexplored
 
     def unlearned(self) -> list[str]:
-        """Màn core đã khám nhưng chưa học vị trí title trên máy này (màn thiết bị học khi đi tới)."""
+        """Màn core đã khám nhưng chưa học vị trí title trên máy này (màn thiết bị học khi đi tới).
+
+        Bỏ màn không có cạnh vào (popup tự bật, vd popup.switchHouse): không đi tới được để học,
+        học khi nó tự xuất hiện — giống plan().
+        """
+        reachable = {e.to for e in self.graph.edges()} | {"home"}
         return [n.id for n in self.graph.nodes.values()
-                if n.file == "core" and n.explored and learns_band(n) and self.res.get_anchor(n) is None]
+                if n.file == "core" and n.explored and learns_band(n) and n.id in reachable
+                and self.res.get_anchor(n) is None]
 
     def _learn_anchors(self) -> None:
         for nid in self.unlearned():
@@ -161,6 +199,18 @@ class Scout:
                     self.report.failed.append((nid, "không thấy title trên màn"))
             except (Lost, LookupError) as err:
                 self.report.failed.append((nid, f"học title: {err}"))
+
+    def _scan_tiles(self) -> None:
+        """Vị trí ô thiết bị đổi theo thiết bị thêm/bớt, trạng thái → mỗi lần discovery đọc lại màn từng phòng."""
+        for room in self.graph.nodes.values():
+            holds = [e for e in room.edges if e.action.gesture == "hold" and e.action.target and e.action.target.desc]
+            if room.file != "core" or not holds:
+                continue
+            try:
+                self.nav.goto(room.id, self.usable)
+                self.report.tiles += self.nav.scan_tiles(holds)
+            except (Lost, LookupError) as err:
+                self.report.failed.append((room.id, f"quét ô thiết bị: {err}"))
 
     # ---- ACTIVE ----
 

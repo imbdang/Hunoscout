@@ -1,0 +1,17 @@
+{
+  "entry": true,
+  "route": "infoDeviceCommonView",
+  "source": "khám trên 2fc3878f ngày 2026-11-03; Wallpad docs/device/feature/general_info/swinputv2.md",
+  "anchor": {"text": "{device.name}"},
+  "anchors": ["production"],
+  "check": "{device.name}",
+  "note": "title = tên thiết bị (trùng title infoDevice khi cuộn) → nhận bằng 'Nơi sản xuất' (production, luôn có). Dòng: Nơi sản xuất, Chủ sở hữu, Wifi, IP, Loại thiết bị, Ngày kích hoạt, Ngày sản xuất, Bảo hành, Phiên bản phần cứng, ID.",
+  "controls": {
+    "back":             {"gesture": "back", "kind": "nav", "to": "@back"},
+    "owner":            {"target": {"key": "owner"}, "kind": "unknown", "note": "có mũi tên › (F035F) — chưa bấm"},
+    "wifi":             {"target": {"text": "Wifi"}, "kind": "unknown", "note": "bấm được — có thể vào luồng đổi Wi-Fi, chưa bấm"},
+    "warranty":         {"target": {"key": "warrantyTime"}, "kind": "unknown", "note": "có mũi tên › — chưa bấm"},
+    "hardware_version": {"target": {"key": "hardwareVersion"}, "kind": "unknown", "note": "có mũi tên › — có thể vào kiểm tra / cập nhật firmware (OTA cmd 129), chưa bấm"},
+    "header_right":     {"kind": "unknown", "note": "nút góc phải header (1094,154)-(1202,262), không có glyph chữ (icon SVG?) — chưa bấm"}
+  }
+}

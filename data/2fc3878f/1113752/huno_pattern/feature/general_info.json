@@ -1,0 +1,58 @@
+{
+  "resolved_for": {
+    "w": 1220,
+    "h": 2712,
+    "density": 480,
+    "font_scale": 1.0,
+    "app": "4.0.23"
+  },
+  "edges": {
+    "general_info/info[Ổ cắm 3]>infoDevice@sswitch2v[Ổ cắm 3]": {
+      "xy": null,
+      "cost_ms": 488,
+      "sig": "f3390782b9",
+      "verified": "2026-11-05T04:04:13+00:00"
+    },
+    "general_info/info[Công tắc ngữ cảnh]>infoDevice@scenario_sw6[Công tắc ngữ cảnh]": {
+      "xy": null,
+      "cost_ms": 719,
+      "sig": "05c994a462",
+      "verified": "2026-11-05T06:44:22+00:00"
+    },
+    "general_info/info[Module Input 6]>infoDevice@swinputv2[Module Input 6]": {
+      "xy": null,
+      "cost_ms": 514,
+      "sig": "fe036692a7",
+      "verified": "2026-11-06T02:36:02+00:00"
+    }
+  },
+  "nodes": {
+    "general_info/info[Ổ cắm 3]": {
+      "text": "Ổ cắm 3",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "4cba763132",
+      "verified": "2026-11-05T04:04:13+00:00"
+    },
+    "general_info/info[Công tắc ngữ cảnh]": {
+      "text": "Công tắc ngữ cảnh",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "9f16f666b0",
+      "verified": "2026-11-05T06:44:22+00:00"
+    },
+    "general_info/info[Module Input 6]": {
+      "text": "Module Input 6",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "45c4a6b2ae",
+      "verified": "2026-11-06T02:35:58+00:00"
+    }
+  }
+}

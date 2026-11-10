@@ -1,0 +1,14 @@
+{
+  "route": "KEY_NAME_TIMER_LOOP_ADD_SCREEN",
+  "source": "khám trên 2fc3878f ngày 2026-11-03; editor F65618 (Wallpad cycle/swinputv2.md)",
+  "anchor": {"key": "timerLoop.createTimerLoop"},
+  "anchors": ["timerLoop.createTimerLoop", "timerLoop.turnOnTime"],
+  "note": "Thời gian bật / tắt: bánh xe phút 0–359 : giây 0–59 (cuộn vòng, mở ở 00:01). Chạy mãi mãi / Giới hạn thời gian. Giới hạn: Bắt đầu/Kết thúc HH:MM (mở ở giờ máy +1/+2 phút), Lặp hàng tuần (mặc định bật, chip T2…CN chọn hết); tắt → lịch chọn 1 ngày (nhãn tách 'Tháng 11 - Năm' | '2026'). Form sửa dùng chung title này. Thùng rác header (w-72, 207) = xoá (ở form sửa).",
+  "danger": ["nút 'Lưu lại': tạo tuần hoàn thật (MQTT 64 + POST v3/alarm/addalarmcycle)"],
+  "controls": {
+    "back":         {"gesture": "back", "kind": "nav", "to": "@back", "note": "Back hệ thống về list, không hỏi xác nhận (thử 2026-11-03)"},
+    "mode_forever": {"target": {"key": "timerLoop.modeRunForever"}, "kind": "form"},
+    "mode_limit":   {"target": {"key": "timerLoop.modeRunLimit"}, "kind": "form"},
+    "save":         {"target": {"key": "timerLoop.saveTimeLoop"}, "kind": "danger", "effect": "tạo tuần hoàn, gửi lệnh 64 xuống thiết bị"}
+  }
+}

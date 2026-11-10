@@ -2,7 +2,9 @@
 
 Vị trí trong nội dung: content_y = y_trên_màn + scroll. Biết content_y (học trong discovery) và
 scroll hiện tại (pointer) thì kéo đúng một lần là tới; không biết thì dò từng nấc.
-Độ cuộn đo bằng một phần tử mốc (`ref`) trước/sau mỗi lần kéo; mốc không dịch nữa = hết nội dung.
+Độ cuộn đo bằng một phần tử mốc trước/sau mỗi lần kéo; mốc không dịch nữa = hết nội dung. Mốc lấy lại trước
+mỗi lần kéo (dòng thấp nhất đang thấy) — mốc cố định ở đầu trang trôi khỏi màn ngay lần kéo đầu, khi đó không
+biết đã chạm cuối, cứ kéo tới max_drags (đo: trang 853 px, tìm phần tử không có → kéo 8 lần, 7.8 s).
 """
 from __future__ import annotations
 
@@ -32,19 +34,30 @@ class Reach:
     end: bool = False         # đã chạm cuối nội dung
 
 
-SLOP = 50   # px Android nuốt ở đầu mỗi lần kéo (đo trên 2fc3878f: kéo 250 → cuộn 200)
+SLOP = 30   # = interact.u2.NUDGE: đoạn nhích đầu mỗi lần kéo, nội dung không cuộn đoạn này
 
 
 def _drag_by(area: Area, px: int) -> None:
+    """Cuộn nội dung lên đúng px (tối đa chiều cao vùng − 80 − SLOP)."""
     start = area.bottom - 40
-    adb.drag(area.x, start, max(area.top + 40, start - px))
+    adb.drag(area.x, start, max(area.top + 40, start - px - SLOP))
 
 
-def to_top(area: Area, ref: dict, ref_top: int, max_drags: int = 6) -> int:
-    """Về đầu trang mà KHÔNG kéo quá đầu (kéo quá = pull-to-refresh, app tải lại dữ liệu).
+def _mark(area: Area, ref: dict, px: int) -> tuple[dict, int] | None:
+    """Mốc đo lần kéo sắp tới: `ref` nếu kéo xong vẫn còn trên màn, không thì dòng thấp nhất đang thấy."""
+    b = adb.locate(ref)
+    if b and area.inside(b) and b[1] - px > area.top + 10:
+        return ref, b[1]
+    return adb.lowest(area.top, area.bottom)
+
+
+def to_top(area: Area, ref: dict, ref_top: int, max_drags: int = 6, known: int | None = None) -> int:
+    """Về đầu trang mà KHÔNG kéo quá đầu (kéo quá = pull-to-refresh: trang bị đẩy xuống + app tải lại → tap lệch).
 
     ref_top: y của mốc khi màn ở đầu trang (học trong discovery). Mốc đã ở đó → không kéo gì.
-    Còn thiếu bao nhiêu thì kéo xuống đúng bấy nhiêu (+SLOP), chậm, không quán tính. → số lần kéo.
+    Mốc thấy được → kéo đúng phần còn thiếu. Mốc khuất phía trên: biết độ cuộn (`known`, pointer navigator) → kéo đúng
+    bấy nhiêu 1 lần; không biết → kéo 1/3 vùng mỗi lần rồi kiểm (trước kéo cứng nửa vùng ~1185 px trong khi trang chỉ
+    cuộn 853 px → quá đầu → tải lại). → số lần kéo.
     """
     for n in range(max_drags + 1):
         b = adb.locate(ref)
@@ -52,7 +65,12 @@ def to_top(area: Area, ref: dict, ref_top: int, max_drags: int = 6) -> int:
             return n
         if n == max_drags:
             break
-        need = ref_top - b[1] if b else int((area.bottom - area.top) * 0.5)   # mốc khuất phía trên
+        if b:
+            need = ref_top - b[1]
+        elif known:
+            need, known = known, None                 # chỉ tin độ cuộn cho lần kéo đầu
+        else:
+            need = int((area.bottom - area.top) / 3)
         start = area.top + 40
         adb.drag(area.x, start, min(area.bottom - 40, start + need + SLOP))
     return max_drags
@@ -73,20 +91,26 @@ def reach(selector: dict, area: Area, ref: dict, *, content_y: int | None = None
         return done(b, 0, 0)
 
     drags = scrolled = 0
-    mark = adb.locate(ref)
     plan = [content_y - scroll - (area.top + area.bottom) // 2] if content_y is not None else []
     while drags < max_drags:
+        planned = bool(plan)
         px = plan.pop(0) if plan else int((area.bottom - area.top) * step)
         if px <= 0:
             break
+        mark = None if planned else _mark(area, ref, px)  # kéo theo vị trí đã học: đo bằng chính phần tử đích
         _drag_by(area, px)
         drags += 1
-        b, new = adb.locate(selector), adb.locate(ref)
-        moved = mark[1] - new[1] if mark and new else px
+        b = adb.locate(selector)
+        if mark:
+            new = adb.locate(mark[0])
+            moved = mark[1] - new[1] if new else px      # mất mốc (hiếm) → coi như cuộn đủ
+        elif b:
+            moved = content_y - b[1] - (scroll + scrolled)   # content_y = y trên màn + độ cuộn
+        else:
+            moved = px
         scrolled += moved
-        mark = new
         if b and area.inside(b):
             return done(b, drags, scrolled)
-        if abs(moved) < 5:                       # mốc không dịch → hết nội dung
+        if mark and abs(moved) < 5:              # mốc không dịch → hết nội dung
             return done(None, drags, scrolled, end=True)
     return done(None, drags, scrolled)

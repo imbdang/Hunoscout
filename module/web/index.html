@@ -1,0 +1,935 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hunoscout Map</title>
+<link rel="icon" href="data:,">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.30.2/cytoscape.min.js"></script>
+<style>
+  :root {
+    --bg: #070b14; --panel: #0c1220; --panel2: #101829; --line: #1b2538; --line2: #2a3858;
+    --text: #d6deeb; --muted: #7b8aa5; --accent: #4f8cff;
+    --ok: #22c55e; --warn: #f59e0b; --err: #ef4444;
+    --c-core: #4f8cff; --c-root: #2dd4bf; --c-feature: #a78bfa; --c-overlay: #f59e0b; --c-off: #475569;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
+    font: 13px/1.45 Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+  body { display: grid; grid-template-rows: 50px 1fr; height: 100vh; overflow: hidden; }
+  .mono { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; }
+  .muted { color: var(--muted); }
+  button { font: inherit; color: var(--text); background: var(--panel2); border: 1px solid var(--line);
+    border-radius: 7px; padding: 5px 10px; cursor: pointer; }
+  button:hover:not(:disabled) { border-color: var(--line2); background: #15203a; }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; width: 100%; padding: 8px; margin-top: 10px; }
+  button.primary:hover:not(:disabled) { background: #3f7bf0; }
+
+  /* ---- top bar ---- */
+  header { display: flex; align-items: center; gap: 14px; padding: 0 16px; border-bottom: 1px solid var(--line);
+    background: linear-gradient(180deg, #0c1323, #090e1a); min-width: 0; }
+  .brand { display: flex; align-items: center; gap: 9px; font-weight: 650; white-space: nowrap; }
+  .logo { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 8px;
+    background: linear-gradient(135deg, #4f8cff, #a78bfa); color: #fff; font-size: 14px; box-shadow: 0 0 18px #4f8cff55; }
+  .brand .sub { color: var(--muted); font-weight: 500; }
+  .stats { display: flex; gap: 14px; color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; }
+  .stats b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .spacer { flex: 1; }
+  .chip { padding: 4px 11px; border: 1px solid var(--line); border-radius: 999px; background: var(--panel);
+    font-size: 12px; white-space: nowrap; max-width: 380px; overflow: hidden; text-overflow: ellipsis; }
+  .chip.busy { border-color: #f59e0b55; color: #fbbf24; }
+  .chip.busy::before { content: ''; display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+    background: #fbbf24; margin-right: 7px; animation: pulse 1s infinite; }
+  @keyframes pulse { 50% { opacity: .25; } }
+
+  /* ---- layout ---- */
+  main { display: grid; grid-template-columns: 270px 1fr 390px; min-height: 0; }
+  aside { background: var(--panel); min-height: 0; overflow: auto; }
+  aside.left { border-right: 1px solid var(--line); padding: 12px; }
+  aside.right { border-left: 1px solid var(--line); padding: 12px; display: flex; flex-direction: column; gap: 12px; }
+
+  /* ---- explorer ---- */
+  #search { width: 100%; padding: 7px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg);
+    color: var(--text); margin-bottom: 10px; font: inherit; }
+  #search:focus { outline: none; border-color: var(--accent); }
+  .grp { margin-bottom: 12px; }
+  .gh { display: flex; align-items: center; gap: 7px; color: var(--muted); font-size: 10.5px; text-transform: uppercase;
+    letter-spacing: .7px; margin: 4px 0 6px; }
+  .gh .cnt { margin-left: auto; }
+  .item { display: flex; align-items: center; gap: 8px; padding: 4px 6px; border-radius: 6px; cursor: pointer; }
+  .item:hover { background: var(--panel2); }
+  .item.sel { background: #18264a; }
+  .item.off { opacity: .5; }
+  .item .nm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .item.cur .nm { color: #4ade80; }
+  .item .go { padding: 0 7px; font-size: 10px; opacity: 0; }
+  .item:hover .go { opacity: 1; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+
+  /* ---- canvas ---- */
+  .canvas { position: relative; min-width: 0;
+    background: radial-gradient(1100px 650px at 50% 42%, #0f1830 0%, var(--bg) 72%); }
+  .canvas::before { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .35;
+    background-image: radial-gradient(#1b2740 1px, transparent 1px); background-size: 22px 22px; }
+  #cy { position: absolute; inset: 0; }
+  .toolbar { position: absolute; top: 12px; right: 12px; display: flex; gap: 6px; align-items: center;
+    background: #0c1220d9; border: 1px solid var(--line); padding: 6px; border-radius: 10px; backdrop-filter: blur(6px); }
+  .toolbar label { display: flex; gap: 5px; align-items: center; color: var(--muted); font-size: 12px; padding: 0 4px; cursor: pointer; }
+  .legend { position: absolute; left: 12px; bottom: 12px; display: flex; flex-wrap: wrap; gap: 6px 12px;
+    background: #0c1220d9; border: 1px solid var(--line); padding: 8px 11px; border-radius: 10px; font-size: 11px;
+    color: var(--muted); max-width: calc(100% - 24px); backdrop-filter: blur(6px); }
+  .legend span { display: flex; align-items: center; gap: 5px; }
+  .legend .ln { width: 18px; border-top: 2px solid #4a5a7d; }
+  .legend .ln.d { border-top-style: dashed; }
+  .legend .ln.p { border-top-color: #fbbf24; }
+  .legend .ln.w { border-top-color: #22c55e; }
+  .tip { position: absolute; pointer-events: none; background: #0a1120f2; border: 1px solid var(--line2);
+    border-radius: 9px; padding: 8px 10px; font-size: 12px; max-width: 290px; box-shadow: 0 10px 28px #000a; z-index: 5; }
+  .tip b { display: block; margin-bottom: 3px; }
+  .tip .k { color: #fbbf24; font-variant-numeric: tabular-nums; }
+
+  /* ---- cards ---- */
+  .card { background: var(--panel2); border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
+  .card h3 { margin: 0 0 8px; font-size: 13px; }
+  .card h4 { margin: 14px 0 6px; font-size: 10.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .7px; }
+  .runhead { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .runhead h3 { margin: 0; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .badge { font-size: 11px; padding: 2px 9px; border-radius: 999px; border: 1px solid var(--line); white-space: nowrap; }
+  .badge.running { color: #fbbf24; border-color: #fbbf2455; }
+  .badge.ok { color: var(--ok); border-color: #22c55e55; }
+  .badge.err { color: var(--err); border-color: #ef444455; }
+  .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
+  .kpis div { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 6px 9px; }
+  .kpis label { display: block; font-size: 10.5px; color: var(--muted); }
+  .kpis b { font-size: 17px; font-variant-numeric: tabular-nums; }
+  .kpis .slow { color: #fb923c; } .kpis .fast { color: #4ade80; }
+  .steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
+  .step { padding: 7px 9px; border-radius: 8px; background: var(--bg); border: 1px solid var(--line); }
+  .step.active { border-color: #fbbf2466; box-shadow: 0 0 0 1px #fbbf2422 inset; }
+  .step.done { border-color: #22c55e2e; }
+  .st { display: flex; gap: 5px; align-items: baseline; font-size: 12px; min-width: 0; }
+  .st .sx { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .st .arr { color: var(--muted); flex: none; }
+  .st .ctl { margin-left: auto; flex: none; color: var(--muted); }
+  .bars { position: relative; height: 6px; border-radius: 3px; background: #121b2c; margin: 6px 0 5px; overflow: hidden; }
+  .bars i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 3px; transition: width .25s; }
+  .bars i.est { background: #273451; }
+  .bars i.act { background: #4f8cff; }
+  .bars i.b-cache { background: #22c55e; } .bars i.b-learn { background: #f59e0b; }
+  .bars i.b-back { background: #94a3b8; } .bars i.b-scroll { background: #a78bfa; }
+  .nums { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: 11.5px; font-variant-numeric: tabular-nums; }
+  .nums .v { font-weight: 600; }
+  .how { font-size: 10.5px; padding: 1px 7px; border-radius: 999px; background: #18223a; }
+  .h-cache { color: #4ade80; } .h-ask { color: #7aa7ff; } .h-learn { color: #fbbf24; }
+  .h-back { color: #a8b5ca; } .h-scroll { color: #c4b5fd; } .h-extra { color: #fb923c; }
+  .logs { margin-top: 8px; display: flex; flex-direction: column; gap: 3px; }
+  .log { font-size: 11.5px; color: var(--muted); padding-left: 8px; border-left: 2px solid var(--line2); }
+  .log.WARNING, .log.ERROR { color: #fbbf24; border-color: #f59e0b88; }
+  .msg-err { color: #fca5a5; background: #3b111166; border: 1px solid #ef444444; border-radius: 8px; padding: 7px 9px; margin-top: 8px; font-size: 12px; }
+  .msg-warn { color: #fcd34d; font-size: 12px; margin: 0 0 8px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 5px; margin: 6px 0; }
+  .tag { font-size: 11px; padding: 1px 8px; border-radius: 999px; background: var(--bg); border: 1px solid var(--line); }
+  .tag.c { border-color: color-mix(in srgb, var(--c) 45%, transparent); color: var(--c); }
+  .tbl { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .tbl td { padding: 4px 4px; border-top: 1px solid var(--line); vertical-align: top; }
+  .tbl tr:first-child td { border-top: 0; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .kind { font-size: 10.5px; padding: 0 7px; border-radius: 999px; background: #18223a; white-space: nowrap; }
+  .k-nav { color: #7aa7ff; } .k-popup { color: #c4b5fd; } .k-action, .k-danger { color: #fca5a5; }
+  .k-external { color: #a8b5ca; } .k-unknown { color: var(--muted); }
+  tr.dg td:first-child { color: #fca5a5; }
+  .yes { color: #4ade80; }
+  ul.danger { margin: 0; padding-left: 16px; color: #fca5a5; font-size: 12px; }
+  .hist tr.bad td:nth-child(2) { color: #fca5a5; }
+  button.warn { border-color: #f59e0b66; color: #fbbf24; }
+  button.warn:hover:not(:disabled) { background: #2a1d07; border-color: #f59e0b; }
+  button.danger { background: #b45309; border-color: #b45309; color: #fff; font-weight: 600; }
+  button.danger:hover:not(:disabled) { background: #c2610c; }
+  .modal { position: fixed; inset: 0; background: #02050bcc; display: grid; place-items: center; z-index: 30; padding: 16px; }
+  .modal[hidden] { display: none; }
+  .dialog { width: min(480px, 100%); background: var(--panel2); border: 1px solid var(--line2); border-radius: 14px;
+    padding: 18px 20px; box-shadow: 0 24px 60px #000c; }
+  .dialog h3 { margin: 0 0 10px; font-size: 15px; }
+  .dialog p { margin: 0 0 8px; }
+  .dialog ol { margin: 0 0 10px; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
+  .dialog .actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
+  .sumline { font-size: 12px; margin: 4px 0; }
+  .logs.mono .log { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 11px; white-space: pre-wrap; word-break: break-word; }
+  .item .new { font-size: 10px; color: #22d3ee; border: 1px solid #22d3ee55; border-radius: 999px; padding: 0 6px; }
+  .toast { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); background: #111a2e; border: 1px solid var(--line2);
+    padding: 8px 14px; border-radius: 9px; font-size: 12.5px; box-shadow: 0 10px 30px #000a; z-index: 20; }
+
+  /* ---- menu chuột phải + form hàm ---- */
+  .ctx { position: fixed; z-index: 25; min-width: 230px; max-width: 320px; max-height: 70vh; overflow: auto;
+    background: #0d1526f5; border: 1px solid var(--line2); border-radius: 10px; padding: 6px; box-shadow: 0 16px 40px #000b; }
+  .ctx[hidden] { display: none; }
+  .ctx .hd { font-size: 11px; color: var(--muted); padding: 4px 8px 6px; border-bottom: 1px solid var(--line); margin-bottom: 4px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ctx .gl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .7px; padding: 6px 8px 2px; }
+  .ctx button { display: flex; width: 100%; text-align: left; border: 0; background: none; padding: 5px 8px; border-radius: 6px; gap: 6px; }
+  .ctx button:hover { background: #18264a; }
+  .ctx button.dg { color: #fca5a5; }
+  .ctx button .p { margin-left: auto; color: var(--muted); font-size: 11px; }
+  .form { display: grid; grid-template-columns: 150px 1fr; gap: 7px 10px; align-items: center; margin: 6px 0 4px; }
+  .form label { color: var(--muted); font-size: 12px; }
+  .form label.req::after { content: ' *'; color: #fca5a5; }
+  .form input[type=text], .form input[type=number], .form select { width: 100%; padding: 5px 8px; border-radius: 7px;
+    border: 1px solid var(--line); background: var(--bg); color: var(--text); font: inherit; }
+  .form input:focus, .form select:focus { outline: none; border-color: var(--accent); }
+  .form .checks { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 12px; }
+  .form .checks label { color: var(--text); display: flex; gap: 4px; align-items: center; }
+  .result { margin-top: 8px; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 9px;
+    max-height: 320px; overflow: auto; white-space: pre-wrap; word-break: break-word; }
+  button.run { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+
+  @media (max-width: 1150px) { main { grid-template-columns: 220px 1fr 330px; } .stats { display: none; } }
+  @media (max-width: 820px) {
+    body { overflow: auto; height: auto; grid-template-rows: auto auto; }
+    header { flex-wrap: wrap; padding: 8px 16px; gap: 8px; }
+    main { grid-template-columns: 1fr; }
+    .canvas { height: 60vh; order: 1; } aside.right { order: 2; border-left: 0; } aside.left { order: 3; border-right: 0; }
+    .chip { max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><span class="logo">◈</span>Hunoscout <span class="sub">UI map</span></div>
+  <div class="stats" id="stats"></div>
+  <div class="spacer"></div>
+  <div class="chip" id="pointer">📍 —</div>
+  <div class="chip busy" id="busy" hidden>đang route…</div>
+  <button id="whereBtn" title="Dump màn hình, nhận diện điện thoại đang ở màn nào">Nhận diện</button>
+  <button id="refreshBtn" title="Dựng lại map từ pattern + danh sách thiết bị đã lưu, không chạm điện thoại">Làm mới</button>
+  <button id="discoverBtn" class="warn" title="Mở lại app lấy danh sách thiết bị mới, dựng lại map, học core">Discovery lại</button>
+</header>
+
+<main>
+  <aside class="left">
+    <input id="search" placeholder="Tìm màn…" autocomplete="off">
+    <div id="tree"></div>
+  </aside>
+
+  <section class="canvas">
+    <div id="cy"></div>
+    <div class="toolbar">
+      <button id="fitBtn">Vừa khung</button>
+      <button id="layoutBtn">Sắp lại</button>
+      <label><input type="checkbox" id="showBack" checked> cạnh back</label>
+      <label><input type="checkbox" id="showCost"> ms trên cạnh</label>
+    </div>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--c-core)"></i>core</span>
+      <span><i class="dot" style="background:var(--c-root)"></i>thiết bị</span>
+      <span><i class="dot" style="background:var(--c-feature)"></i>feature</span>
+      <span><i class="dot" style="background:var(--c-overlay)"></i>popup</span>
+      <span><i class="dot" style="background:var(--c-off)"></i>chưa khám</span>
+      <span><i class="ln"></i>đã học</span>
+      <span><i class="ln d"></i>chưa học</span>
+      <span><i class="ln p"></i>đường dự kiến</span>
+      <span><i class="ln w"></i>đã đi</span>
+    </div>
+    <div class="tip" id="tip" hidden></div>
+  </section>
+
+  <aside class="right">
+    <section class="card" id="run"></section>
+    <section class="card" id="node"></section>
+    <section class="card" id="hist"></section>
+  </aside>
+</main>
+
+<div class="ctx" id="ctx" hidden></div>
+
+<div class="modal" id="actModal" hidden>
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="amTitle">
+    <h3 id="amTitle"></h3>
+    <div class="mono muted" id="amNode"></div>
+    <p class="msg-warn" id="amDanger" hidden>Hàm này thay đổi thiết bị thật (gửi lệnh / lưu cấu hình).</p>
+    <div class="form" id="amForm"></div>
+    <div class="actions"><button id="amCancel">Huỷ</button><button class="run" id="amOk">Chạy</button></div>
+  </div>
+</div>
+
+<div class="modal" id="discoverModal" hidden>
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dmTitle">
+    <h3 id="dmTitle">Chạy lại discovery?</h3>
+    <p>Scout sẽ điều khiển điện thoại khoảng 20–60 giây:</p>
+    <ol>
+      <li>Tắt rồi mở lại app Hunonic để lấy danh sách nhà/thiết bị mới qua hook.</li>
+      <li>Dựng lại map; xoá toạ độ đã học của thiết bị/phòng không còn.</li>
+      <li>Đi học các cạnh core còn thiếu và title các màn chưa học.</li>
+    </ol>
+    <p class="muted">Cạnh vào thiết bị/feature vẫn học dọc đường khi route. Đừng chạm vào điện thoại trong lúc chạy.</p>
+    <div class="actions"><button id="dmCancel">Huỷ</button><button class="danger" id="dmOk">Chạy discovery</button></div>
+  </div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
+const fmt = ms => ms == null ? '—' : ms >= 1000 ? (ms / 1000).toFixed(2) + ' s' : Math.round(ms) + ' ms';
+const COLORS = {core: '#4f8cff', root_type: '#2dd4bf', feature: '#a78bfa', overlay: '#f59e0b', off: '#475569'};
+
+let G = null, cy = null, SEL = null, RUN = null, busy = false, timer = null, FRESH = new Set();
+const HIST = [], pathCache = new Map();
+
+// ---- tên node ----
+function parseId(id) {
+  const m = id.match(/^([^@\[]+)(?:@([^\[]+))?(?:\[(.*)\])?$/);
+  return m ? {screen: m[1], rt: m[2], inst: m[3]} : {screen: id};
+}
+const label = id => { const p = parseId(id); return p.inst ? `${p.screen}\n${p.inst}` : p.screen; };
+const short = id => id ? label(id).replace('\n', ' · ') : '—';
+const nodeOf = id => G.nodes.find(n => n.id === id);
+const group = n => n.overlay ? 'overlay' : !n.explored ? 'off' : n.file.split('/')[0];
+const fileRank = f => f === 'core' ? 0 : f.startsWith('root_type') ? 1 : 2;
+function howClass(how) {
+  if (!how) return '';
+  if (how.includes('học')) return 'learn';
+  if (how.startsWith('cache')) return 'cache';
+  if (how.startsWith('back')) return 'back';
+  if (how.includes('cuộn')) return 'scroll';
+  return 'ask';
+}
+
+// ---- đồ thị ----
+const STYLE = [
+  {selector: 'node', style: {
+    'background-color': e => COLORS[e.data('g')], 'width': 'data(size)', 'height': 'data(size)',
+    'label': 'data(label)', 'color': '#c3cee2', 'font-size': 9, 'font-family': 'Inter, system-ui, sans-serif',
+    'text-wrap': 'wrap', 'text-max-width': 120, 'text-valign': 'bottom', 'text-margin-y': 6,
+    'text-outline-width': 2.5, 'text-outline-color': '#070b14',
+    'border-width': 2, 'border-color': '#070b14',
+    'underlay-color': e => COLORS[e.data('g')], 'underlay-opacity': 0.16, 'underlay-padding': 7, 'underlay-shape': 'ellipse'}},
+  {selector: 'node.off', style: {'background-opacity': 0.35, 'border-style': 'dashed', 'border-color': '#64748b', 'color': '#64748b', 'underlay-opacity': 0}},
+  {selector: 'node.fresh', style: {'border-color': '#22d3ee', 'border-width': 3, 'border-style': 'dashed', 'color': '#67e8f9'}},
+  {selector: 'node.hover', style: {'underlay-opacity': 0.35, 'underlay-padding': 10}},
+  {selector: 'node.sel', style: {'border-color': '#e2e8f0', 'border-width': 3}},
+  {selector: 'node.target', style: {'border-color': '#fbbf24', 'border-width': 4}},
+  {selector: 'node.cur', style: {'border-color': '#22c55e', 'border-width': 4, 'underlay-color': '#22c55e', 'underlay-opacity': 0.42, 'underlay-padding': 13}},
+  {selector: 'edge', style: {
+    'width': 1.3, 'line-color': '#34425f', 'target-arrow-color': '#34425f', 'target-arrow-shape': 'triangle',
+    'arrow-scale': 0.75, 'curve-style': 'bezier', 'control-point-step-size': 22, 'opacity': 0.9}},
+  {selector: 'edge.unlearned', style: {'line-style': 'dashed', 'line-dash-pattern': [5, 4], 'line-color': '#2b3753', 'target-arrow-color': '#2b3753'}},
+  {selector: 'edge.back', style: {'width': 1, 'opacity': 0.55}},
+  {selector: 'edge.hidden', style: {'display': 'none'}},
+  {selector: 'edge.costlbl', style: {'label': 'data(cost)', 'font-size': 8, 'color': '#8fa3c4', 'text-rotation': 'autorotate',
+    'text-background-color': '#070b14', 'text-background-opacity': 1, 'text-background-padding': 1.5}},
+  {selector: 'edge.path', style: {'line-color': '#fbbf24', 'target-arrow-color': '#fbbf24', 'width': 3, 'opacity': 1, 'z-index': 10, 'display': 'element'}},
+  {selector: 'edge.walked', style: {'line-color': '#22c55e', 'target-arrow-color': '#22c55e', 'width': 3.5, 'opacity': 1, 'z-index': 11, 'display': 'element'}},
+];
+const LAYOUT = {name: 'cose', animate: false, randomize: true, padding: 50, nodeRepulsion: () => 40000,
+  idealEdgeLength: () => 120, nodeDimensionsIncludeLabels: true, edgeElasticity: () => 100, gravity: 0.4, numIter: 3000, nodeOverlap: 30, componentSpacing: 140};
+const POS_KEY = 'hunoscout.pos.v3';
+
+const edgeCost = e => (e.learned ? '' : '~') + fmt(e.cost_ms);
+function edgeClasses(e) {
+  return [e.learned ? 'learned' : 'unlearned', e.back ? 'back' : '',
+    e.back && !$('#showBack').checked ? 'hidden' : '', $('#showCost').checked ? 'costlbl' : ''].join(' ');
+}
+function loadPos() { try { return JSON.parse(localStorage.getItem(POS_KEY) || 'null'); } catch { return null; } }
+function savePos() {
+  const pos = {};
+  cy.nodes().forEach(n => { pos[n.id()] = n.position(); });
+  try { localStorage.setItem(POS_KEY, JSON.stringify(pos)); } catch {}
+}
+
+function placeNew(pos) {
+  // node chưa có vị trí (thiết bị/feature mới): đặt quanh láng giềng đã có vị trí, không xếp lại cả đồ thị
+  const known = Object.values(pos);
+  const mid = known.length ? {x: known.reduce((a, p) => a + p.x, 0) / known.length, y: known.reduce((a, p) => a + p.y, 0) / known.length} : {x: 0, y: 0};
+  let todo = G.nodes.filter(n => !pos[n.id]), k = 0;
+  while (todo.length) {
+    const left = [];
+    for (const n of todo) {
+      const e = G.edges.find(e => (e.src === n.id && pos[e.to]) || (e.to === n.id && pos[e.src]));
+      if (!e && left.length < todo.length - 1) { left.push(n); continue; }
+      const c = e ? pos[e.src === n.id ? e.to : e.src] : mid, a = 0.9 + k++ * 2.4;
+      pos[n.id] = {x: c.x + 120 * Math.cos(a), y: c.y + 120 * Math.sin(a)};
+    }
+    if (left.length === todo.length) { left.forEach(n => { const a = k++ * 2.4; pos[n.id] = {x: mid.x + 160 * Math.cos(a), y: mid.y + 160 * Math.sin(a)}; }); break; }
+    todo = left;
+  }
+}
+
+function buildCy(prev) {
+  const deg = {};
+  G.edges.forEach(e => { if (!e.back) { deg[e.src] = (deg[e.src] || 0) + 1; deg[e.to] = (deg[e.to] || 0) + 1; } });
+  const els = [
+    ...G.nodes.map(n => ({group: 'nodes', classes: group(n),
+      data: {id: n.id, label: label(n.id), g: group(n), size: Math.min(46, 18 + 4.5 * Math.sqrt(deg[n.id] || 0)) + (n.id === 'home' ? 8 : 0)}})),
+    ...G.edges.map(e => ({group: 'edges', classes: edgeClasses(e), data: {id: e.id, source: e.src, target: e.to, cost: edgeCost(e)}})),
+  ];
+  const pos = Object.assign({}, loadPos() || {}, prev || {});
+  const some = G.nodes.some(n => pos[n.id]);
+  if (some) placeNew(pos);
+  cy = cytoscape({
+    container: $('#cy'), elements: els, style: STYLE, minZoom: 0.15, maxZoom: 3,
+    layout: some ? {name: 'preset', positions: n => pos[n.id()], fit: true, padding: 50} : LAYOUT,
+  });
+  FRESH.forEach(id => cy.getElementById(id).addClass('fresh'));
+  savePos();
+  cy.on('dragfree', 'node', savePos);
+  cy.on('mouseover', 'node', ev => hover(ev.target));
+  cy.on('mouseout', 'node', unhover);
+  cy.on('tap', 'node', ev => clickNode(ev.target.id()));
+  cy.on('cxttap', 'node', ev => openCtx(ev.target.id(), ev.originalEvent));
+  cy.on('tap', ev => { if (ev.target === cy) select(null); });
+  cy.on('pan zoom', () => { $('#tip').hidden = true; });
+}
+
+function syncCy() {
+  G.nodes.forEach(n => {
+    const el = cy.getElementById(n.id);
+    el.data('g', group(n));
+    el.classes([group(n), n.id === G.pointer.node ? 'cur' : '', n.id === SEL ? 'sel' : '', el.hasClass('target') ? 'target' : ''].join(' '));
+  });
+  G.edges.forEach(e => {
+    const el = cy.getElementById(e.id);
+    const keep = ['path', 'walked'].filter(c => el.hasClass(c));
+    el.data('cost', edgeCost(e));
+    el.classes(edgeClasses(e) + ' ' + keep.join(' '));
+  });
+}
+
+function rebuild(added) {
+  FRESH = new Set(added || []);
+  const prev = {};
+  cy.nodes().forEach(n => { prev[n.id()] = n.position(); });
+  cy.destroy();
+  buildCy(prev);
+  if (SEL && !nodeOf(SEL)) SEL = null;
+  if (SEL) cy.getElementById(SEL).addClass('sel');
+  setCur(G.pointer.node);
+  renderStats(); renderTree(); renderNode();
+}
+
+// ---- dữ liệu ----
+async function loadGraph() {
+  G = await (await fetch('/api/graph')).json();
+  pathCache.clear();
+}
+async function getPath(dst) {
+  const key = (G.pointer.node || '') + '|' + dst;
+  if (!pathCache.has(key)) pathCache.set(key, fetch('/api/path?dst=' + encodeURIComponent(dst)).then(r => r.json()));
+  return pathCache.get(key);
+}
+
+// ---- hover: đường dự kiến + ước tính ----
+let hoverId = null;
+async function hover(node) {
+  node.addClass('hover');
+  if (busy) return;
+  const id = hoverId = node.id();
+  const p = await getPath(id);
+  if (hoverId !== id || busy) return;
+  cy.edges().removeClass('path');
+  (p.path || []).forEach(e => cy.getElementById(e.id).addClass('path'));
+  const n = nodeOf(id);
+  let body;
+  if (group(n) === 'off') body = '<span class="muted">Màn chưa khám (chưa có anchors) — không route được</span>';
+  else if (id === G.pointer.node) body = '<span class="muted">Điện thoại đang ở màn này</span>';
+  else if (p.error) body = `<span class="muted">${esc(p.error)}</span>`;
+  else {
+    const raw = p.path.filter(e => !e.learned).length;
+    body = `${p.path.length} bước · ước tính <span class="k">${fmt(p.est_ms)}</span>` +
+      (raw ? `<br><span class="muted">${raw} cạnh chưa học (ước tính mặc định, sẽ học dọc đường)</span>` : '') +
+      '<br><span class="muted">Bấm để route</span>';
+  }
+  const tip = $('#tip'), r = node.renderedPosition(), box = $('#cy').getBoundingClientRect();
+  tip.innerHTML = `<b>${esc(short(id))}</b>${body}`;
+  tip.hidden = false;
+  tip.style.left = Math.min(r.x + 18, box.width - tip.offsetWidth - 10) + 'px';
+  tip.style.top = Math.max(10, r.y - tip.offsetHeight / 2) + 'px';
+}
+function unhover(ev) {
+  ev.target.removeClass('hover');
+  hoverId = null;
+  $('#tip').hidden = true;
+  if (!busy) cy.edges().removeClass('path');
+}
+
+// ---- chọn / route ----
+function select(id) {
+  SEL = id;
+  cy.nodes().removeClass('sel');
+  if (id) cy.getElementById(id).addClass('sel');
+  renderNode();
+  renderTree();
+}
+function toast(msg) {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2600);
+}
+function clickNode(id) {
+  select(id);
+  const n = nodeOf(id);
+  if (busy) return toast('Đang route — chờ xong lần này');
+  if (group(n) === 'off') return toast('Màn chưa khám — không route được');
+  if (id === G.pointer.node) return toast('Điện thoại đang ở màn này');
+  route(id);
+}
+function setBusy(b, label = 'đang route…') {
+  busy = b;
+  $('#busy').hidden = !b;
+  $('#busy').textContent = label;
+  ['#whereBtn', '#refreshBtn', '#discoverBtn'].forEach(id => { $(id).disabled = b; });
+  const go = $('#goBtn');
+  if (go) go.disabled = b || !SEL || SEL === G.pointer.node || group(nodeOf(SEL)) === 'off';
+}
+function setCur(id) {
+  G.pointer.node = id;
+  cy.nodes().removeClass('cur');
+  if (id) cy.getElementById(id).addClass('cur');
+  $('#pointer').textContent = '📍 ' + (id ? short(id) : 'chưa rõ màn hiện tại');
+  renderTree();
+}
+
+async function stream(url, body, onEv) {
+  // POST rồi đọc NDJSON: mỗi dòng một sự kiện, xử lý ngay khi tới
+  const res = await fetch(url, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)});
+  if (!res.ok) {
+    const j = await res.json().catch(() => ({}));
+    throw new Error(j.error || `HTTP ${res.status}`);
+  }
+  const reader = res.body.getReader(), dec = new TextDecoder();
+  let buf = '';
+  for (;;) {
+    const {value, done} = await reader.read();
+    if (done) break;
+    buf += dec.decode(value, {stream: true});
+    let i;
+    while ((i = buf.indexOf('\n')) >= 0) {
+      const line = buf.slice(0, i);
+      buf = buf.slice(i + 1);
+      if (line.trim()) onEv(JSON.parse(line));
+    }
+  }
+}
+
+async function refreshMap() {
+  setBusy(true, 'đang làm mới…');
+  try {
+    const res = await fetch('/api/refresh', {method: 'POST'});
+    const j = await res.json();
+    if (!res.ok) throw new Error(j.error || `HTTP ${res.status}`);
+    await loadGraph();
+    rebuild(j.added);
+    toast(`Làm mới: ${G.nodes.length} màn · +${j.added.length} / −${j.removed.length}` +
+      (j.pruned.length ? ` · xoá ${j.pruned.length} toạ độ cũ` : ''));
+  } catch (err) { toast('Làm mới lỗi: ' + (err.message || err)); }
+  setBusy(false);
+}
+
+async function discovery() {
+  setBusy(true, 'đang discovery…');
+  $('#tip').hidden = true;
+  cy.elements().removeClass('path walked target');
+  const before = new Set(G.nodes.map(n => n.id));
+  RUN = {kind: 'discovery', t0: performance.now(), logs: [], status: 'running', total: null};
+  renderRun();
+  timer = setInterval(() => { const el = $('#elapsed'); if (el) el.textContent = fmt(performance.now() - RUN.t0); }, 100);
+  try {
+    await stream('/api/discovery', {}, ev => {
+      if (ev.type === 'log') {
+        RUN.logs.push(ev);
+        const m = ev.msg.match(/^📍 (.+?)\s+← /);
+        if (m && cy.getElementById(m[1]).length) setCur(m[1]);
+      } else if (ev.type === 'done') { RUN.status = 'ok'; RUN.sum = ev; RUN.total = ev.total_ms; }
+      else if (ev.type === 'error') { RUN.status = 'err'; RUN.err = ev.msg; RUN.total = ev.total_ms; }
+      renderRun();
+    });
+    if (RUN.status === 'running') { RUN.status = 'err'; RUN.err = 'Kết nối đóng trước khi xong'; }
+  } catch (err) {
+    RUN.status = 'err';
+    RUN.err = String(err.message || err);
+  }
+  clearInterval(timer);
+  RUN.total = RUN.total ?? performance.now() - RUN.t0;
+  await loadGraph();
+  RUN.added = G.nodes.map(n => n.id).filter(id => !before.has(id));
+  RUN.removed = [...before].filter(id => !nodeOf(id));
+  rebuild(RUN.added);
+  renderRun();
+  setBusy(false);
+}
+
+async function route(dst) {
+  setBusy(true);
+  $('#tip').hidden = true;
+  cy.elements().removeClass('path walked target');
+  cy.getElementById(dst).addClass('target');
+  RUN = {dst, t0: performance.now(), rows: [], next: 0, logs: [], status: 'running', est: null, total: null};
+  renderRun();
+  timer = setInterval(() => { const el = $('#elapsed'); if (el) el.textContent = fmt(performance.now() - RUN.t0); }, 100);
+  try {
+    await stream('/api/goto', {dst}, onEvent);
+    if (RUN.status === 'running') { RUN.status = 'err'; RUN.err = 'Kết nối đóng trước khi xong'; }
+  } catch (err) {
+    RUN.status = 'err';
+    RUN.err = String(err.message || err);
+    RUN.total = performance.now() - RUN.t0;
+  }
+  clearInterval(timer);
+  const filled = RUN.rows.filter(x => x.ms != null).length;
+  HIST.unshift({dst, ok: RUN.status === 'ok', total: RUN.total, est: RUN.est, steps: filled,
+    at: new Date().toLocaleTimeString('vi-VN', {hour12: false})});
+  renderRun();
+  renderHist();
+  await loadGraph();
+  syncCy();
+  setCur(G.pointer.node);
+  renderStats();
+  renderTree();
+  renderNode();
+  setBusy(false);
+}
+
+function onEvent(ev) {
+  const r = RUN;
+  if (ev.type === 'plan') {
+    r.est = ev.est_ms ?? null;
+    r.planErr = ev.error || null;
+    r.rows = (ev.path || []).map(e => ({id: e.id, src: e.src, to: e.to, control: e.control || e.gesture,
+      est: e.cost_ms, learned: e.learned, ms: null, how: null}));
+    (ev.path || []).forEach(e => cy.getElementById(e.id).addClass('path'));
+  } else if (ev.type === 'step') {
+    let idx = r.rows.findIndex((x, i) => i >= r.next && x.ms == null && x.id === ev.edge);
+    if (idx < 0) {                                   // lạc → lập lại đường: bước ngoài kế hoạch
+      r.rows.push({id: ev.edge, src: ev.src, to: ev.to, control: ev.control, est: null, extra: true});
+      idx = r.rows.length - 1;
+    }
+    Object.assign(r.rows[idx], {ms: ev.ms, how: ev.how, t: ev.t});
+    r.next = idx + 1;
+    const el = cy.getElementById(ev.edge);
+    el.removeClass('path');
+    el.addClass('walked');
+    setCur(ev.to);
+  } else if (ev.type === 'log') {
+    r.logs.push(ev);
+  } else if (ev.type === 'done' || ev.type === 'error') {
+    r.status = ev.type === 'done' ? 'ok' : 'err';
+    r.total = ev.total_ms;
+    if (ev.type === 'error') r.err = ev.msg;
+    if (ev.node !== undefined) setCur(ev.node);
+  }
+  renderRun();
+}
+
+// ---- hàm tương tác (chuột phải) ----
+const FEAT = {device: 'Màn chi tiết thiết bị', timer: 'Hẹn giờ', share: 'Chia sẻ', cycle: 'Lặp tuần hoàn', history: 'Lịch sử',
+  general_info: 'Thông tin chung'};
+async function openCtx(id, ev) {
+  ev.preventDefault();
+  select(id);
+  const menu = $('#ctx');
+  let acts;
+  try { acts = (await (await fetch('/api/actions?node=' + encodeURIComponent(id))).json()).actions; }
+  catch (err) { return toast('Không lấy được danh sách hàm: ' + (err.message || err)); }
+  if (!acts.length) return toast('Màn này chưa có hàm tương tác');
+  let html = `<div class="hd">${esc(short(id))}</div>`, last = null;
+  acts.forEach((a, i) => {
+    if (a.feature !== last) { html += `<div class="gl">${esc(FEAT[a.feature] || a.feature)}</div>`; last = a.feature; }
+    html += `<button data-i="${i}" class="${a.danger ? 'dg' : ''}">${esc(a.label)}${a.params.length ? '<span class="p">…</span>' : ''}</button>`;
+  });
+  menu.innerHTML = html;
+  menu.hidden = false;
+  const r = menu.getBoundingClientRect();
+  menu.style.left = Math.max(8, Math.min(ev.clientX, innerWidth - r.width - 8)) + 'px';
+  menu.style.top = Math.max(8, Math.min(ev.clientY, innerHeight - r.height - 8)) + 'px';
+  menu.onclick = e => {
+    const b = e.target.closest('button[data-i]');
+    if (!b) return;
+    menu.hidden = true;
+    const a = acts[+b.dataset.i];
+    if (busy) return toast('Đang chạy việc khác — chờ xong lần này');
+    if (!a.params.length && !a.danger) return runAction(id, a, {});
+    openForm(id, a);
+  };
+}
+
+function field(p) {
+  const v = p.default ?? '', nm = esc(p.name);
+  if (p.type === 'bool' || p.type === 'flag')
+    return `<input type="checkbox" name="${nm}" ${p.default ? 'checked' : ''}>`;
+  if (p.type === 'tri')
+    return `<select name="${nm}"><option value="">giữ nguyên</option><option value="on">bật</option><option value="off">tắt</option></select>`;
+  if (p.type === 'choice') {
+    const opts = (p.required || p.default != null ? [] : ['']).concat(p.choices.filter(c => c !== '' || !p.required));
+    return `<select name="${nm}">${[...new Set(opts)].map(c => `<option value="${esc(c)}" ${c === v ? 'selected' : ''}>${c === '' ? '—' : esc(c)}</option>`).join('')}</select>`;
+  }
+  if (p.type === 'list' && p.choices)
+    return `<div class="checks" data-list="${nm}">${p.choices.map(c => `<label><input type="checkbox" value="${esc(c)}">${esc(c)}</label>`).join('')}</div>`;
+  return `<input type="${p.type === 'int' ? 'number' : 'text'}" name="${nm}" value="${esc(v)}" placeholder="${esc(p.hint || '')}">`;
+}
+
+function openForm(id, a) {
+  $('#amTitle').textContent = 'ƒ ' + a.label;
+  $('#amNode').textContent = id;
+  $('#amDanger').hidden = !a.danger;
+  $('#amForm').innerHTML = a.params.length ? a.params.map(p =>
+    `<label class="${p.required ? 'req' : ''}" title="${esc(p.hint || '')}">${esc(p.label)}</label>${field(p)}`).join('')
+    : '<span class="muted" style="grid-column:1/-1">Không có tham số.</span>';
+  $('#actModal').hidden = false;
+  const first = $('#amForm').querySelector('input, select');
+  if (first) first.focus();
+  $('#amOk').onclick = () => {
+    const f = $('#amForm'), params = {};
+    a.params.forEach(p => {
+      if (p.type === 'list' && p.choices)
+        params[p.name] = [...f.querySelectorAll(`[data-list="${p.name}"] input:checked`)].map(x => x.value);
+      else {
+        const el = f.querySelector(`[name="${p.name}"]`);
+        params[p.name] = el.type === 'checkbox' ? el.checked : el.value;
+      }
+    });
+    $('#actModal').hidden = true;
+    runAction(id, a, params);
+  };
+}
+
+async function runAction(id, a, params) {
+  setBusy(true, 'đang chạy hàm…');
+  $('#tip').hidden = true;
+  cy.elements().removeClass('path walked target');
+  RUN = {kind: 'action', node: id, label: a.label, params, t0: performance.now(), rows: [], logs: [], status: 'running', total: null};
+  renderRun();
+  timer = setInterval(() => { const el = $('#elapsed'); if (el) el.textContent = fmt(performance.now() - RUN.t0); }, 100);
+  try {
+    await stream('/api/action', {node: id, action: a.id, params}, ev => {
+      const r = RUN;
+      if (ev.type === 'step') {
+        r.rows.push({src: ev.src, to: ev.to, control: ev.control, ms: ev.ms, how: ev.how});
+        cy.getElementById(ev.edge).addClass('walked');
+        setCur(ev.to);
+      } else if (ev.type === 'log') r.logs.push(ev);
+      else if (ev.type === 'done') { r.status = 'ok'; r.result = ev.result; r.total = ev.total_ms; }
+      else if (ev.type === 'error') { r.status = 'err'; r.err = ev.msg; r.total = ev.total_ms; }
+      if (ev.node !== undefined && (ev.type === 'done' || ev.type === 'error')) setCur(ev.node);
+      renderRun();
+    });
+    if (RUN.status === 'running') { RUN.status = 'err'; RUN.err = 'Kết nối đóng trước khi xong'; }
+  } catch (err) {
+    RUN.status = 'err';
+    RUN.err = String(err.message || err);
+  }
+  clearInterval(timer);
+  RUN.total = RUN.total ?? performance.now() - RUN.t0;
+  HIST.unshift({dst: id, label: a.label, ok: RUN.status === 'ok', total: RUN.total, est: null, steps: RUN.rows.length,
+    at: new Date().toLocaleTimeString('vi-VN', {hour12: false})});
+  renderRun();
+  renderHist();
+  pathCache.clear();
+  await loadGraph();
+  syncCy();
+  setCur(G.pointer.node);
+  renderStats(); renderTree(); renderNode();
+  setBusy(false);
+}
+
+function renderAction(el, r, elapsed) {
+  const status = {running: 'đang chạy', ok: 'xong', err: 'lỗi'}[r.status];
+  const nav = r.rows.reduce((s, x) => s + (x.ms || 0), 0);
+  const shown = Object.entries(r.params).filter(([, v]) => v !== '' && v !== false && !(Array.isArray(v) && !v.length));
+  el.innerHTML = `
+    <div class="runhead"><h3>ƒ ${esc(r.label)}</h3><span class="badge ${r.status}">${status}</span></div>
+    <div class="mono muted" style="margin-bottom:8px">${esc(short(r.node))}${shown.length ? ' · ' + esc(shown.map(([k, v]) => `${k}=${v}`).join(' ')) : ''}</div>
+    <div class="kpis">
+      <div><label>Tổng</label><b id="elapsed">${fmt(elapsed)}</b></div>
+      <div><label>Route (${r.rows.length} bước)</label><b>${fmt(nav)}</b></div>
+      <div><label>Thao tác</label><b>${r.total != null ? fmt(Math.max(0, r.total - nav)) : '—'}</b></div>
+    </div>
+    ${r.rows.length ? `<ol class="steps">${r.rows.map(x => `
+      <li class="step done"><div class="st"><span class="sx">${esc(short(x.src))}</span><span class="arr">→</span><span class="sx">${esc(short(x.to))}</span>
+        <span class="ctl mono">${esc(x.control)}</span></div>
+        <div class="nums"><span class="v">${fmt(x.ms)}</span>${x.how ? `<span class="how h-${howClass(x.how)}">${esc(x.how)}</span>` : ''}</div></li>`).join('')}</ol>` : ''}
+    ${r.status === 'ok' ? `<h4>Kết quả</h4><div class="result mono">${esc(JSON.stringify(r.result, null, 2))}</div>` : ''}
+    ${r.logs.length ? `<div class="logs">${r.logs.map(l => `<div class="log ${esc(l.level)}">${esc(l.msg)}</div>`).join('')}</div>` : ''}
+    ${r.err ? `<div class="msg-err">${esc(r.err)}</div>` : ''}`;
+}
+
+// ---- render ----
+function renderStats() {
+  const learned = G.edges.filter(e => e.learned).length;
+  const known = G.edges.filter(e => e.learned);
+  const avg = known.length ? known.reduce((s, e) => s + e.cost_ms, 0) / known.length : null;
+  $('#stats').innerHTML = `<span><b>${G.nodes.length}</b> màn</span><span><b>${G.edges.length}</b> cạnh</span>` +
+    `<span>đã học <b>${learned}</b>/${G.edges.length}</span><span>TB cạnh đã học <b>${fmt(avg)}</b></span>` +
+    `<span class="mono">${esc(G.serial)}</span>`;
+}
+
+function renderTree() {
+  const q = $('#search').value.trim().toLowerCase();
+  const groups = {};
+  G.nodes.forEach(n => { if (!q || n.id.toLowerCase().includes(q)) (groups[n.file] ||= []).push(n); });
+  const files = Object.keys(groups).sort((a, b) => fileRank(a) - fileRank(b) || a.localeCompare(b));
+  $('#tree').innerHTML = files.map(f => `
+    <div class="grp">
+      <div class="gh"><span class="dot" style="background:${COLORS[f.split('/')[0]]}"></span>${esc(f)}<span class="cnt">${groups[f].length}</span></div>
+      ${groups[f].map(n => `
+        <div class="item ${n.id === G.pointer.node ? 'cur' : ''} ${n.id === SEL ? 'sel' : ''} ${group(n) === 'off' ? 'off' : ''}" data-id="${esc(n.id)}" title="${esc(n.id)}">
+          <span class="dot" style="background:${COLORS[group(n)]}"></span>
+          <span class="nm">${esc(short(n.id))}${n.id === G.pointer.node ? ' 📍' : ''}</span>${FRESH.has(n.id) ? '<span class="new">mới</span>' : ''}
+          <button class="go" data-go="${esc(n.id)}" title="Route tới đây">▶</button>
+        </div>`).join('')}
+    </div>`).join('') || '<p class="muted">Không có màn nào khớp.</p>';
+}
+
+function renderRun() {
+  const el = $('#run'), r = RUN;
+  if (!r) {
+    el.innerHTML = '<h3>Route</h3><p class="muted" style="margin:0">Bấm vào một node để điện thoại đi tới màn đó. ' +
+      'Rê chuột lên node để xem đường đi dự kiến và thời gian ước tính. ' +
+      'Chuột phải vào màn chi tiết thiết bị / màn feature để chạy thử hàm tương tác (khoá, hẹn giờ, chia sẻ…).</p>';
+    return;
+  }
+  const elapsed = r.total ?? (performance.now() - r.t0);
+  if (r.kind === 'discovery') return renderDiscovery(el, r, elapsed);
+  if (r.kind === 'action') return renderAction(el, r, elapsed);
+  const max = Math.max(1, ...r.rows.map(x => Math.max(x.ms || 0, x.est || 0)));
+  const delta = r.total != null && r.est != null ? r.total - r.est : null;
+  const status = {running: 'đang chạy', ok: 'đã tới', err: 'lỗi'}[r.status];
+  const firstPending = r.rows.findIndex(x => x.ms == null);
+  el.innerHTML = `
+    <div class="runhead"><h3>→ ${esc(short(r.dst))}</h3><span class="badge ${r.status}">${status}</span></div>
+    <div class="kpis">
+      <div><label>Ước tính</label><b>${fmt(r.est)}</b></div>
+      <div><label>Thực tế</label><b id="elapsed">${fmt(elapsed)}</b></div>
+      <div><label>Chênh lệch</label><b class="${delta == null ? '' : delta > 0 ? 'slow' : 'fast'}">${delta == null ? '—' : (delta > 0 ? '+' : '−') + fmt(Math.abs(delta))}</b></div>
+    </div>
+    ${r.planErr ? `<p class="msg-warn">${esc(r.planErr)}</p>` : ''}
+    <ol class="steps">${r.rows.map((x, i) => `
+      <li class="step ${x.ms != null ? 'done' : r.status === 'running' && i === firstPending ? 'active' : ''}">
+        <div class="st"><span class="sx">${esc(short(x.src))}</span><span class="arr">→</span><span class="sx">${esc(short(x.to))}</span>
+          <span class="ctl mono">${esc(x.control)}</span></div>
+        <div class="bars">${x.est != null ? `<i class="est" style="width:${x.est / max * 100}%"></i>` : ''}
+          <i class="act b-${howClass(x.how)}" style="width:${(x.ms || 0) / max * 100}%"></i></div>
+        <div class="nums"><span class="v">${x.ms != null ? fmt(x.ms) : r.status === 'running' && i === firstPending ? 'đang đi…' : '—'}</span>
+          ${x.how ? `<span class="how h-${howClass(x.how)}">${esc(x.how)}</span>` : ''}
+          ${x.extra ? '<span class="how h-extra">ngoài kế hoạch</span>' : ''}
+          ${x.est != null ? `<span class="muted">ước tính ${x.learned ? '' : '~'}${fmt(x.est)}</span>` : ''}</div>
+      </li>`).join('')}</ol>
+    ${r.logs.length ? `<div class="logs">${r.logs.map(l => `<div class="log ${esc(l.level)}">${esc(l.msg)}</div>`).join('')}</div>` : ''}
+    ${r.err ? `<div class="msg-err">${esc(r.err)}</div>` : ''}`;
+}
+
+function renderDiscovery(el, r, elapsed) {
+  const status = {running: 'đang chạy', ok: 'xong', err: 'lỗi'}[r.status], s = r.sum;
+  const list = ids => ids.map(id => esc(short(id))).join(', ');
+  el.innerHTML = `
+    <div class="runhead"><h3>Discovery lại</h3><span class="badge ${r.status}">${status}</span></div>
+    <div class="kpis">
+      <div><label>Thời gian</label><b id="elapsed">${fmt(elapsed)}</b></div>
+      <div><label>Thiết bị</label><b>${s ? s.devices : '—'}</b></div>
+      <div><label>Cạnh mới học</label><b>${s ? s.resolved.length : '—'}</b></div>
+    </div>
+    ${s ? `<div class="sumline">Ô thiết bị cập nhật toạ độ ${(s.tiles || []).length} · title mới ${s.anchors.length} · xoá toạ độ cũ ${s.pruned.length} · lỗi ${s.failed.length} · cạnh tới màn chưa khám ${s.unexplored}</div>` : ''}
+    ${r.added && r.added.length ? `<div class="sumline">Màn mới (+${r.added.length}): ${list(r.added)}</div>` : ''}
+    ${r.removed && r.removed.length ? `<div class="sumline muted">Màn bỏ (−${r.removed.length}): ${list(r.removed)}</div>` : ''}
+    ${s && s.warnings.length ? s.warnings.map(w => `<p class="msg-warn">${esc(w)}</p>`).join('') : ''}
+    ${s && s.failed.length ? `<div class="msg-err">${s.failed.map(([id, why]) => `${esc(id)}: ${esc(why)}`).join('<br>')}</div>` : ''}
+    ${r.err ? `<div class="msg-err">${esc(r.err)}</div>` : ''}
+    <div class="logs mono">${r.logs.slice(-80).map(l => `<div class="log ${esc(l.level)}">${esc(l.msg.replace(/\s{2,}/g, ' '))}</div>`).join('')}</div>`;
+}
+
+function renderNode() {
+  const el = $('#node'), n = SEL && nodeOf(SEL);
+  if (!n) { el.innerHTML = '<h3>Màn</h3><p class="muted" style="margin:0">Chọn một node để xem chi tiết.</p>'; return; }
+  const out = G.edges.filter(e => e.src === n.id), inn = G.edges.filter(e => e.to === n.id);
+  const edgeRows = (list, other) => list.map(e => `<tr>
+      <td>${esc(short(e[other]))}${e.back ? ' <span class="muted">(back)</span>' : ''}</td>
+      <td class="mono">${esc(e.control || e.gesture)}</td>
+      <td style="white-space:nowrap">${e.learned ? '<span class="yes">đã học</span>' : '<span class="muted">chưa</span>'}</td>
+      <td class="num">${e.learned ? '' : '~'}${fmt(e.cost_ms)}</td></tr>`).join('');
+  const disabled = busy || n.id === G.pointer.node || group(n) === 'off';
+  el.innerHTML = `
+    <h3>${esc(short(n.id))}</h3>
+    <div class="mono muted">${esc(n.id)}</div>
+    <div class="tags">
+      <span class="tag c" style="--c:${COLORS[group(n)]}">${esc(n.file)}</span>
+      <span class="tag mono">route ${esc(n.route)}</span>
+      ${n.overlay ? '<span class="tag">overlay</span>' : ''}
+      ${!n.explored ? '<span class="tag c" style="--c:#f59e0b">chưa khám</span>' : ''}
+      ${n.id === G.pointer.node ? '<span class="tag c" style="--c:#22c55e">đang ở đây</span>' : ''}
+    </div>
+    <div style="font-size:12px">Title đã học: ${n.title ? `<b>${esc(n.title.text)}</b> <span class="muted">y ${n.title.band.join('–')}</span>` : '<span class="muted">chưa</span>'}</div>
+    <button class="primary" id="goBtn" ${disabled ? 'disabled' : ''}>Route tới đây</button>
+    ${n.danger.length ? `<h4>Không được chạm</h4><ul class="danger">${n.danger.map(d => `<li>${esc(d)}</li>`).join('')}</ul>` : ''}
+    ${n.controls.length ? `<h4>Controls (${n.controls.length})</h4><table class="tbl">${n.controls.map(c => `
+      <tr class="${c.danger ? 'dg' : ''}" title="${esc(c.note || '')}">
+        <td class="mono">${esc(c.key)}</td><td><span class="kind k-${esc(c.kind || 'unknown')}">${esc(c.kind || '?')}</span></td>
+        <td>${c.to ? '→ ' + esc(c.to) : ''}${c.when ? ` <span class="mono muted">when ${esc(c.when)}</span>` : ''}</td></tr>`).join('')}</table>` : ''}
+    <h4>Cạnh đi (${out.length})</h4>${out.length ? `<table class="tbl">${edgeRows(out, 'to')}</table>` : '<span class="muted">—</span>'}
+    <h4>Cạnh vào (${inn.length})</h4>${inn.length ? `<table class="tbl">${edgeRows(inn, 'src')}</table>` : '<span class="muted">—</span>'}`;
+  $('#goBtn').onclick = () => clickNode(n.id);
+}
+
+function renderHist() {
+  const el = $('#hist');
+  if (!HIST.length) { el.innerHTML = '<h3>Lịch sử</h3><p class="muted" style="margin:0">Chưa có lần route nào.</p>'; return; }
+  el.innerHTML = `<h3>Lịch sử</h3><table class="tbl hist">${HIST.map(h => `
+    <tr class="${h.ok ? '' : 'bad'}">
+      <td class="muted mono">${esc(h.at)}</td><td>${h.label ? 'ƒ ' + esc(h.label) + '<br><span class="muted">' + esc(short(h.dst)) + '</span>' : esc(short(h.dst))}</td>
+      <td class="num muted">${h.steps} bước</td>
+      <td class="num"><b>${fmt(h.total)}</b>${h.steps ? `<br><span class="muted">${fmt(h.total / h.steps)}/bước</span>` : ''}</td>
+      <td class="num muted">${h.est != null ? 'ư/t ' + fmt(h.est) : ''}</td></tr>`).join('')}</table>`;
+}
+
+// ---- sự kiện giao diện ----
+$('#tree').addEventListener('click', ev => {
+  const go = ev.target.closest('[data-go]');
+  if (go) return clickNode(go.dataset.go);
+  const it = ev.target.closest('.item');
+  if (!it) return;
+  select(it.dataset.id);
+  cy.animate({center: {eles: cy.getElementById(it.dataset.id)}, zoom: Math.max(cy.zoom(), 1.1)}, {duration: 300});
+});
+$('#search').addEventListener('input', renderTree);
+$('#fitBtn').onclick = () => cy.fit(undefined, 50);
+$('#layoutBtn').onclick = () => { cy.layout(LAYOUT).run(); savePos(); };
+$('#showBack').onchange = $('#showCost').onchange = syncCy;
+$('#refreshBtn').onclick = refreshMap;
+$('#discoverBtn').onclick = () => { $('#discoverModal').hidden = false; $('#dmOk').focus(); };
+$('#dmCancel').onclick = () => { $('#discoverModal').hidden = true; };
+$('#discoverModal').addEventListener('click', ev => { if (ev.target.id === 'discoverModal') $('#discoverModal').hidden = true; });
+document.addEventListener('keydown', ev => {
+  if (ev.key === 'Escape') { $('#discoverModal').hidden = true; $('#actModal').hidden = true; $('#ctx').hidden = true; }
+});
+document.addEventListener('click', ev => { if (!ev.target.closest('#ctx')) $('#ctx').hidden = true; });
+$('#cy').addEventListener('contextmenu', ev => ev.preventDefault());
+$('#tree').addEventListener('contextmenu', ev => {
+  const it = ev.target.closest('.item');
+  if (it) openCtx(it.dataset.id, ev);
+});
+$('#amCancel').onclick = () => { $('#actModal').hidden = true; };
+$('#actModal').addEventListener('click', ev => { if (ev.target.id === 'actModal') $('#actModal').hidden = true; });
+$('#dmOk').onclick = () => { $('#discoverModal').hidden = true; if (!busy) discovery(); };
+$('#whereBtn').onclick = async () => {
+  setBusy(true);
+  try {
+    const res = await fetch('/api/where', {method: 'POST'});
+    const p = await res.json();
+    if (!res.ok) throw new Error(p.error);
+    pathCache.clear();
+    setCur(p.node);
+    toast(p.node ? 'Đang ở ' + short(p.node) : 'Không nhận ra màn hiện tại');
+  } catch (err) { toast(String(err.message || err)); }
+  renderTree(); renderNode();
+  setBusy(false);
+};
+
+(async () => {
+  await loadGraph();
+  buildCy();
+  setCur(G.pointer.node);
+  renderStats(); renderTree(); renderRun(); renderNode(); renderHist();
+  setBusy(G.busy);
+})();
+</script>
+</body>
+</html>

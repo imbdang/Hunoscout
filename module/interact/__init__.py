@@ -22,11 +22,11 @@ except ImportError:          # chưa cài uiautomator2
     _fast = None
 
 if _fast is not None:
-    from .u2 import back, drag, dump, find, hold, home, locate, screenshot, swipe, tap, wait, wait_band
+    from .u2 import back, drag, dump, find, hold, home, locate, lowest, screenshot, swipe, tap, wait, wait_band
     BACKEND = "uiautomator2"
 else:
     from .adb import back, dump, hold, home, screenshot, swipe, tap
-    find = wait = wait_band = locate = drag = None   # Navigator tự rơi về cách dump + so anchors
+    find = wait = wait_band = locate = drag = lowest = None   # Navigator tự rơi về cách dump + so anchors
     BACKEND = "adb"
 
 

@@ -1,0 +1,14 @@
+{
+  "entry": true,
+  "route": "listAlarm",
+  "source": "khám trên 2fc3878f ngày 2026-11-03; Wallpad docs/device/feature/timer/",
+  "anchor": {"key": ["normalTimer", "timer"], "suffix": " {device.name}"},
+  "anchors": [{"key": ["normalTimer", "timer"], "suffix": " {device.name}"}],
+  "note": "title ghép 'Hẹn giờ ' + tên thiết bị. Rỗng: 'Ấn dấu \" + \" để thêm hẹn giờ' (AddAlarm).",
+  "danger": ["công tắc trên từng dòng hẹn giờ: bật/tắt lịch (REST)"],
+  "controls": {
+    "back": {"gesture": "back", "kind": "nav", "to": "@back"},
+    "add":  {"target": {"glyph": "plus"}, "kind": "nav", "to": "add"},
+    "item": {"kind": "unknown", "note": "dòng hẹn giờ đã có → sửa (EditAlarmNew) — chưa có để khám"}
+  }
+}
