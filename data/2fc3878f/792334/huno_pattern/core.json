@@ -76,33 +76,6 @@
       "sig": "4b67529d12",
       "verified": "2026-11-04T06:06:13+00:00"
     },
-    "detailRoom[Chưa xếp phòng]>infoDevice@gatewayv3[Thiết bị trung tâm Homekit]": {
-      "xy": [
-        223,
-        892
-      ],
-      "cost_ms": 3000,
-      "sig": "0d80e170dd",
-      "verified": "2026-11-04T06:12:49+00:00"
-    },
-    "detailRoom[Chưa xếp phòng]>infoDevice@atmwifiv2[Aptomat]": {
-      "xy": [
-        610,
-        892
-      ],
-      "cost_ms": 3000,
-      "sig": "b0e670138e",
-      "verified": "2026-11-04T06:12:49+00:00"
-    },
-    "detailRoom[Nhà tắm]>infoDevice@GACHshock[Chống giật 4]": {
-      "xy": [
-        223,
-        892
-      ],
-      "cost_ms": 3000,
-      "sig": "20481dc5b0",
-      "verified": "2026-11-04T06:12:51+00:00"
-    },
     "detailRoom[Nhà tắm]>room": {
       "xy": [
         73,
@@ -111,15 +84,6 @@
       "cost_ms": 688,
       "sig": "46e33559a2",
       "verified": "2026-11-04T06:13:20+00:00"
-    },
-    "detailRoom[Chưa xếp phòng]>infoDevice@swinputv2[Công tắc ]": {
-      "xy": [
-        996,
-        933
-      ],
-      "cost_ms": 1464,
-      "sig": "bbea139fd0",
-      "verified": "2026-11-04T06:24:11+00:00"
     },
     "detailRoom[Chưa xếp phòng]>room": {
       "xy": [

@@ -10,15 +10,17 @@ dist/
 .ruff_cache/
 
 # --- Dữ liệu sinh ra khi chạy ---
-# Commit pattern dùng chung (data/huno_pattern/) + map đã học của từng điện thoại (data/<serial>/huno_pattern/:
-# toạ độ, title, cạnh core/feature/root_type — chỉ dùng lại khi đúng máy, xem "resolved_for").
-# Mọi thứ khác trong data/<serial>/ (profile.json sinh lại mỗi lần chạy…) vẫn bỏ qua.
+# Commit pattern dùng chung (data/huno_pattern/) + map đã học của từng điện thoại, từng nhà
+# (data/<serial>/<home_id>/huno_pattern/: toạ độ, title, cạnh core/feature/root_type — chỉ dùng lại khi đúng máy,
+# xem "resolved_for"). Mọi thứ khác trong data/<serial>/ (profile.json, home.json sinh lại khi chạy…) vẫn bỏ qua.
 data/*
-!data/huno_pattern/
-!data/huno_pattern/**
 !data/*/
 data/*/*
-!data/*/huno_pattern/
+!data/*/*/
+data/*/*/*
+!data/*/*/huno_pattern/
+!data/huno_pattern/
+!data/huno_pattern/**
 
 # Ảnh chụp, báo cáo test
 runs/

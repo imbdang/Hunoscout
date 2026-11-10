@@ -1,0 +1,85 @@
+{
+  "resolved_for": {
+    "w": 1220,
+    "h": 2712,
+    "density": 480,
+    "font_scale": 1.0,
+    "app": "4.0.23"
+  },
+  "edges": {
+    "cycle/list[Ổ cắm 3]>cycle/add[Ổ cắm 3]": {
+      "xy": [
+        1146,
+        207
+      ],
+      "cost_ms": 842,
+      "sig": "ae4a070d39",
+      "verified": "2026-11-05T04:04:10+00:00"
+    },
+    "cycle/add[Ổ cắm 3]>cycle/list[Ổ cắm 3]": {
+      "xy": null,
+      "cost_ms": 546,
+      "sig": "9d3c761b6b",
+      "verified": "2026-11-05T04:04:10+00:00"
+    },
+    "cycle/list[Ổ cắm 3]>infoDevice@sswitch2v[Ổ cắm 3]": {
+      "xy": null,
+      "cost_ms": 539,
+      "sig": "f3390782b9",
+      "verified": "2026-11-05T04:04:11+00:00"
+    },
+    "cycle/list[Module Input 6]>infoDevice@swinputv2[Module Input 6]": {
+      "xy": null,
+      "cost_ms": 620,
+      "sig": "fe036692a7",
+      "verified": "2026-11-06T01:52:35+00:00"
+    },
+    "cycle/list[Module Input 6]>cycle/add[Module Input 6]": {
+      "xy": [
+        1146,
+        207
+      ],
+      "cost_ms": 876,
+      "sig": "ae4a1def5c",
+      "verified": "2026-11-06T03:56:41+00:00"
+    }
+  },
+  "nodes": {
+    "cycle/list[Ổ cắm 3]": {
+      "text": "Danh sách hẹn giờ tuần hoàn",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "770810624b",
+      "verified": "2026-11-05T04:04:09+00:00"
+    },
+    "cycle/add[Ổ cắm 3]": {
+      "text": "Tạo tuần hoàn",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "df782c9dc5",
+      "verified": "2026-11-05T04:04:10+00:00"
+    },
+    "cycle/list[Module Input 6]": {
+      "text": "Danh sách hẹn giờ tuần hoàn",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "770810624b",
+      "verified": "2026-11-06T01:52:34+00:00"
+    },
+    "cycle/add[Module Input 6]": {
+      "text": "Tạo tuần hoàn",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "df782c9dc5",
+      "verified": "2026-11-06T03:56:42+00:00"
+    }
+  }
+}

@@ -45,7 +45,9 @@
         "nút mic nổi góc phải dưới"
       ],
       "edges": [
-        {"to": "room", "action": {"gesture": "tap", "target": {"glyph": "view-grid"}}}
+        {"to": "room", "action": {"gesture": "tap", "target": {"glyph": "view-grid"}}},
+        {"to": "config.list", "action": {"gesture": "tap", "target": {"header": -1}},
+         "note": "nút + góc phải header (SVG, không chữ/desc/id) — hàng header: avatar, tên nhà, hỗ trợ, ⋮, +"}
       ],
       "note_device": "không có cạnh Home → thiết bị (mục Thiết bị hay dùng): vào thiết bị luôn qua room → detailRoom (bỏ ngày 2026-11-03 theo yêu cầu)"
     },
@@ -111,6 +113,94 @@
       "edges": [
         {"to": "room", "action": {"gesture": "back"}}
       ]
+    },
+    "config.list": {
+      "route": "listDeviceConfig",
+      "anchors": ["deviceAvailableAroundText"],
+      "anchor": {"key": "addDevice"},
+      "note": "Thêm thiết bị (ListDeviceConfigScreen). Mục 'Thiết bị có sẵn xung quanh' (viewScanDevice) tự quét BLE ~10 s/lượt: đang quét = icon xoay, xong = nút Thử lại. Ô = tên mặc định của loại (getDeviceTypeName, không truyền số kênh → công tắc mesh hiện '*CH'), thứ tự đổi giữa các lượt, có thể trùng tên. Dưới là 'Thêm thủ công' theo loại; cuối danh sách 'Thiết bị trung tâm' (gateway, tìm qua LAN). Nhiều ô xung quanh thì 'Thêm thủ công' bị đẩy khỏi màn. Đọc / chọn ô: actions/config.py",
+      "danger": [
+        "ô trong 'Thiết bị có sẵn xung quanh': bắt đầu cấu hình thiết bị đó qua BLE",
+        "ô trong 'Thêm thủ công': bắt đầu luồng cấu hình loại đó"
+      ],
+      "controls": {
+        "retry": {"target": {"key": "config.tryAgain"}, "kind": "action", "effect": "quét BLE lượt mới (~10 s)",
+                  "note": "chỉ hiện khi quét xong"}
+      },
+      "edges": [
+        {"to": "home", "action": {"gesture": "back"}}
+      ]
+    },
+    "config.ble.wifi": {
+      "route": "BluetoothConfig",
+      "anchors": ["configWithBluetooth.titleConfig", "selectWifi"],
+      "anchor": {"key": "configWithBluetooth.titleConfig"},
+      "note": "vào từ ô thiết bị ở config.list (actions/config.py). Thiết bị tự quét wifi rồi trả danh sách (~5 s; lúc đầu chỉ có 'Chọn wifi' + 'Nhập wifi khác'). Dòng wifi: desc '<SSID>, ..'",
+      "danger": ["dòng wifi / Nhập wifi khác: mở form nhập mật khẩu (chưa gửi gì)"],
+      "controls": {
+        "other_wifi": {"target": {"key": "anotherWifi"}, "kind": "popup"}
+      }
+    },
+    "config.ble.password": {
+      "route": "BluetoothConfig",
+      "overlay": true,
+      "anchors": ["inputManualWifi", "wifiPass"],
+      "anchor": {"key": "inputManualWifi"},
+      "note": "2 ô nhập: tên wifi (EditText 0, điền sẵn SSID đã chọn), mật khẩu (EditText 1)",
+      "danger": ["Xác nhận: gửi wifi cho thiết bị qua BLE → bắt đầu cấu hình (~4 s 'Đang thực hiện cấu hình thiết bị...')"],
+      "controls": {
+        "cancel":  {"target": {"key": "cancel"}, "kind": "nav", "note": "đóng form, về danh sách wifi (không để cạnh: màn BLE chỉ vào bằng actions/config.py, discovery không đi tới được)"},
+        "confirm": {"target": {"key": "confirm"}, "kind": "danger"}
+      }
+    },
+    "config.ble.recover": {
+      "route": "configSelectRecoverDeviceView",
+      "anchors": ["configRecover.methodSectionTitle"],
+      "anchor": {"key": "configWithBluetooth.titleConfig"},
+      "note": "chỉ hiện khi thiết bị từng có cấu hình (xoá rồi cấu hình lại; API warningMigrateDeviceRootConfigData). Route theo hằng số trong code, chưa xác nhận trên máy. Tiếp theo → API addRoot (thiết bị lên máy chủ)",
+      "controls": {
+        "as_new":  {"target": {"key": "configRecover.configureAsNewTitle"}, "kind": "choice"},
+        "restore": {"target": {"key": "configRecover.restoreOldConfigTitle"}, "kind": "choice"},
+        "next":    {"target": {"key": "configNextStep"}, "kind": "danger", "effect": "tạo thiết bị trên máy chủ (addRoot)"}
+      }
+    },
+    "config.ble.done": {
+      "route": "BluetoothConfig",
+      "anchors": ["configWithBluetooth.titleConfig", "addToSuggestList", "configComplete"],
+      "anchor": {"key": "configWithBluetooth.titleConfig"},
+      "note": "thiết bị đã lên máy chủ: tên mặc định (vd 'Ổ cắm 3'), phòng 'Chưa xếp phòng', ô Thêm vào thiết bị hay dùng. Hoàn thành → API updateRoot + setDeviceSuggest → Home (app tải lại danh sách thiết bị)",
+      "danger": ["công tắc Tắt/Bật cạnh tên: bật/tắt thiết bị thật"],
+      "controls": {
+        "complete": {"target": {"key": "configComplete"}, "kind": "nav", "to": "home"}
+      }
+    },
+    "config.mode": {
+      "route": "GatewayConfigurationSelector",
+      "anchors": ["DriverLed.chooseConfigDledAp", "configSensorHS"],
+      "anchor": {"key": "DriverLed.chooseConfigDledAp"},
+      "note": "thiết bị chọn mode (NeoR6, cảm biến khói, ST02): 'Chọn loại cấu hình' → 1 trong 2 dòng → Tiếp theo. Mesh = qua bộ trung tâm (cần gateway); trực tiếp = BLE (NeoR6 'Cấu hình trực tiếp' → GatewayChildConfig; khói 'Cấu hình cảm biến liên kết')",
+      "controls": {
+        "hub":    {"target": {"key": "configSensorHS"}, "kind": "choice", "effect": "mesh qua bộ trung tâm"},
+        "direct": {"target": {"key": "neo.configNeoNoHSTitle"}, "kind": "choice", "effect": "BLE trực tiếp (NeoR6)"},
+        "next":   {"target": {"key": "configNextStep"}, "kind": "danger", "effect": "cấu hình thiết bị → addRoot + updateDataExtra (~1,3 s khi BLE tốt)"}
+      }
+    },
+    "config.smart.done": {
+      "route": "GatewayChildConfig",
+      "anchors": ["configDeviceSmart", "addToSuggestList", "configComplete"],
+      "anchor": {"key": "configDeviceSmart"},
+      "note": "màn cuối 'Tìm thông minh' (NeoR6 trực tiếp, ConfigSetupDeviceView): tên = ô nhập ngay trên màn (EditText 0), dòng phòng → sheet 'Chọn phòng', ô Thêm vào thiết bị hay dùng (mặc định bật). Hoàn thành → updateRoot + setDeviceSuggest. updateRoot trả status:false (vd 'Thiết bị không thuộc sở hữu của bạn!') → app KHÔNG báo, đứng yên (BACKLOG-ca-di). Trước đó 'Đang lưu lên máy chủ': BLE mất → ~150 s → config.error",
+      "controls": {
+        "name":     {"kind": "form", "note": "ô nhập tên (EditText 0), set_text; Back đóng bàn phím — actions/config.py"},
+        "room":     {"kind": "popup", "note": "dòng '<phòng>, ..' → sheet 'Chọn phòng' (selectRoom), mục = tên phòng — actions/config.py"},
+        "complete": {"target": {"key": "configComplete"}, "kind": "nav", "to": "home"}
+      }
+    },
+    "config.error": {
+      "route": "GatewayChildConfig",
+      "anchors": ["config.errorTitle", "config.errorDefault"],
+      "anchor": {"key": "config.errorTitle"},
+      "note": "'Lỗi cấu hình': Nguyên nhân (vd 'Lỗi quá thời gian chờ'), Thời gian, ROOT_ID, Error Code (vd TIMEOUT). Thấy khi tắt BT điện thoại lúc 'Đang lưu lên máy chủ' (~150 s), không addRoot"
     }
   }
 }

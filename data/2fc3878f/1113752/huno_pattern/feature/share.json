@@ -1,0 +1,52 @@
+{
+  "resolved_for": {
+    "w": 1220,
+    "h": 2712,
+    "density": 480,
+    "font_scale": 1.0,
+    "app": "4.0.23"
+  },
+  "edges": {
+    "share/list[Ổ cắm 3]>share/add[Ổ cắm 3]": {
+      "xy": [
+        1148,
+        207
+      ],
+      "cost_ms": 899,
+      "sig": "ed25c1bd8a",
+      "verified": "2026-11-05T04:04:17+00:00"
+    },
+    "share/add[Ổ cắm 3]>share/list[Ổ cắm 3]": {
+      "xy": null,
+      "cost_ms": 394,
+      "sig": "66d5367a33",
+      "verified": "2026-11-05T04:04:17+00:00"
+    },
+    "share/list[Ổ cắm 3]>infoDevice@sswitch2v[Ổ cắm 3]": {
+      "xy": null,
+      "cost_ms": 634,
+      "sig": "f3390782b9",
+      "verified": "2026-11-05T04:04:18+00:00"
+    }
+  },
+  "nodes": {
+    "share/list[Ổ cắm 3]": {
+      "text": "Chia sẻ thiết bị",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "c76a07a500",
+      "verified": "2026-11-05T04:04:16+00:00"
+    },
+    "share/add[Ổ cắm 3]": {
+      "text": "Chia sẻ thiết bị",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "c76a07a500",
+      "verified": "2026-11-05T04:04:17+00:00"
+    }
+  }
+}

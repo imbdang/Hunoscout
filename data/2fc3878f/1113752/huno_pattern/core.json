@@ -1,0 +1,169 @@
+{
+  "resolved_for": {
+    "w": 1220,
+    "h": 2712,
+    "density": 480,
+    "font_scale": 1.0,
+    "app": "4.0.23"
+  },
+  "edges": {
+    "home>room": {
+      "xy": [
+        366,
+        2571
+      ],
+      "cost_ms": 758,
+      "sig": "93a8443469",
+      "verified": "2026-11-05T02:57:39+00:00"
+    },
+    "room>home": {
+      "xy": [
+        122,
+        2571
+      ],
+      "cost_ms": 564,
+      "sig": "5af31b2dbc",
+      "verified": "2026-11-05T02:57:39+00:00"
+    },
+    "room>detailRoom[Chưa xếp phòng]": {
+      "xy": [
+        240,
+        755
+      ],
+      "cost_ms": 914,
+      "sig": "c0c1b02ba0",
+      "verified": "2026-11-05T02:57:41+00:00"
+    },
+    "detailRoom[Chưa xếp phòng]>room": {
+      "xy": [
+        73,
+        265
+      ],
+      "cost_ms": 673,
+      "sig": "46e33559a2",
+      "verified": "2026-11-05T02:57:41+00:00"
+    },
+    "room>sortRoom": {
+      "xy": [
+        1052,
+        183
+      ],
+      "cost_ms": 790,
+      "sig": "2c3e81455d",
+      "verified": "2026-11-05T02:57:42+00:00"
+    },
+    "sortRoom>room": {
+      "xy": null,
+      "cost_ms": 472,
+      "sig": "4b67529d12",
+      "verified": "2026-11-05T02:57:43+00:00"
+    },
+    "home>config.list": {
+      "xy": [
+        1127,
+        183
+      ],
+      "cost_ms": 831,
+      "sig": "eb8bceac17",
+      "verified": "2026-11-05T04:02:26+00:00"
+    },
+    "config.list>home": {
+      "xy": null,
+      "cost_ms": 542,
+      "sig": "81489ef007",
+      "verified": "2026-11-05T04:02:27+00:00"
+    },
+    "detailRoom[Chưa xếp phòng]>infoDevice@gatewayv3[Wallpad treo]": {
+      "xy": [
+        223,
+        892
+      ],
+      "cost_ms": 3000,
+      "sig": "0598ff9a52",
+      "verified": "2026-11-06T01:28:22+00:00"
+    },
+    "detailRoom[Chưa xếp phòng]>infoDevice@gatewayv3[Wallpad main]": {
+      "xy": [
+        610,
+        892
+      ],
+      "cost_ms": 3000,
+      "sig": "708f678322",
+      "verified": "2026-11-06T01:28:22+00:00"
+    },
+    "detailRoom[Chưa xếp phòng]>infoDevice@sswitch2v[Ổ cắm 3]": {
+      "xy": [
+        996,
+        892
+      ],
+      "cost_ms": 3000,
+      "sig": "6029c1d043",
+      "verified": "2026-11-06T01:28:22+00:00"
+    },
+    "detailRoom[Chưa xếp phòng]>infoDevice@scenario_sw6[Công tắc ngữ cảnh]": {
+      "xy": [
+        223,
+        1277
+      ],
+      "cost_ms": 3000,
+      "sig": "0bade97ae9",
+      "verified": "2026-11-06T01:28:22+00:00"
+    },
+    "detailRoom[Chưa xếp phòng]>GateControlScreen@gatev2[Cổng]": {
+      "xy": [
+        610,
+        1277
+      ],
+      "cost_ms": 3000,
+      "sig": "3422a3a61b",
+      "verified": "2026-11-06T01:28:22+00:00"
+    },
+    "detailRoom[Chưa xếp phòng]>infoDevice@swinputv2[Module Input 6]": {
+      "xy": [
+        996,
+        1277
+      ],
+      "cost_ms": 3000,
+      "sig": "85f8a6043d",
+      "verified": "2026-11-06T01:28:22+00:00"
+    }
+  },
+  "nodes": {
+    "room": {
+      "text": "Quản lý phòng",
+      "band": [
+        148,
+        218
+      ],
+      "sig": "2a3e01048c",
+      "verified": "2026-11-05T02:57:39+00:00"
+    },
+    "detailRoom[Chưa xếp phòng]": {
+      "text": "Chưa xếp phòng",
+      "band": [
+        230,
+        300
+      ],
+      "sig": "9516caed3c",
+      "verified": "2026-11-05T02:57:41+00:00"
+    },
+    "sortRoom": {
+      "text": "Chỉnh sửa",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "52e8153572",
+      "verified": "2026-11-05T02:57:42+00:00"
+    },
+    "config.list": {
+      "text": "Thêm thiết bị",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "2c26b7b963",
+      "verified": "2026-11-05T04:02:26+00:00"
+    }
+  }
+}

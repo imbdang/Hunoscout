@@ -15,7 +15,9 @@ from .history import history
 from .info import general_info
 from .inputs import get_inputs, set_input_ac, set_input_dc
 from .lock import MODES, get_lock, set_lock
-from .power import get_power
+from .neo import (BUTTONS, PRESS, STATE, get_neo, link_intermediate, set_button, set_button_scenes,
+                  unlink_intermediate, unlink_target)
+from .power import get_power, set_power
 from .room import get_room, set_room
 from .press import delete_quick_timer, get_press_mode, get_quick_timer, set_press_mode, set_quick_timer
 from .share import PERMS, edit_share, share, shared_users, unshare
@@ -61,6 +63,8 @@ ACTIONS = [
     # ---- màn chi tiết thiết bị ----
     {"id": "power-get", "label": "Bật/tắt: đọc trạng thái", "feature": "device", "at": "infoDevice@", "fn": get_power,
      "params": []},
+    {"id": "power-set", "label": "Bật/tắt: bấm công tắc ở màn chi tiết", "feature": "device", "at": "infoDevice@", "needs": "power",
+     "fn": set_power, "danger": True, "params": [P("state", "Trạng thái", "choice", choices=["on", "off"], required=True)]},
     {"id": "room-get", "label": "Phòng: đọc", "feature": "device", "at": "infoDevice@", "needs": "room",
      "fn": get_room, "params": []},
     {"id": "room-set", "label": "Phòng: đổi", "feature": "device", "at": "infoDevice@", "needs": "room",
@@ -137,10 +141,33 @@ ACTIONS = [
     {"id": "cycle-delete", "label": "Tuần hoàn: xoá", "feature": "cycle", "at": "cycle/list", "fn": delete_cycle,
      "danger": True, "params": [P("index", "Dòng thứ", "int", default=0, hint="0 = dòng đầu")]},
     # ---- thông tin chung ----
+    # ---- NeoR6 (scenario_sw6) ----
+    {"id": "neo-get", "label": "NeoR6: trung gian + hành vi 6 nút", "feature": "device", "at": "linkIntermediate@",
+     "fn": get_neo, "params": []},
+    {"id": "neo-link", "label": "NeoR6: liên kết thiết bị trung gian", "feature": "device", "at": "linkIntermediate@",
+     "fn": link_intermediate, "danger": True,
+     "params": [P("host", "Thiết bị trung gian", required=True, hint="tên công tắc Wi-Fi trong danh sách")]},
+    {"id": "neo-unlink", "label": "NeoR6: gỡ thiết bị trung gian", "feature": "device", "at": "linkIntermediate@",
+     "fn": unlink_intermediate, "danger": True, "params": []},
+    {"id": "neo-button-set", "label": "NeoR6: gán nút điều khiển thiết bị", "feature": "device", "at": "button.sun@",
+     "fn": set_button, "danger": True,
+     "params": [P("button", "Nút", "choice", choices=list(BUTTONS), required=True),
+                P("press", "Kiểu nhấn", "choice", choices=list(PRESS), required=True),
+                P("target", "Thiết bị đích", required=True, hint="tên thiết bị trong 'Chọn thiết bị'"),
+                P("state", "Hành động", "choice", choices=list(STATE), required=True)]},
+    {"id": "neo-button-scenes", "label": "NeoR6: gán nút chạy ngữ cảnh (rỗng = bỏ)", "feature": "device",
+     "at": "button.sun@", "fn": set_button_scenes, "danger": True,
+     "params": [P("button", "Nút", "choice", choices=list(BUTTONS), required=True),
+                P("press", "Kiểu nhấn", "choice", choices=list(PRESS), required=True),
+                P("scenes", "Ngữ cảnh chạy khi ấn", "list", hint="tên, phẩy ngăn cách; rỗng = bỏ hết")]},
+    {"id": "neo-unlink-target", "label": "Gỡ NeoR6 khỏi thiết bị này (Liên kết công tắc ngữ cảnh)", "feature": "device",
+     "at": "infoDevice@", "needs": "context_link", "fn": unlink_target, "danger": True,
+     "params": [P("neo", "Tên NeoR6", required=True)]},
     {"id": "general-info", "label": "Thông tin chung: đọc", "feature": "general_info", "at": "general_info/",
      "fn": general_info, "params": []},
     # ---- lịch sử ----
-    {"id": "history", "label": "Lịch sử: đọc", "feature": "history", "at": "history/", "fn": history, "params": []},
+    {"id": "history", "label": "Lịch sử: đọc", "feature": "history", "at": "history/", "fn": history,
+     "params": [P("since", "Từ mốc", hint="HH:MM[:SS] hôm nay | YYYY-MM-DD HH:MM:SS — cuộn tới mốc; trống = phần đang thấy")]},
 ]
 BY_ID = {a["id"]: a for a in ACTIONS}
 

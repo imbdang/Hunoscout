@@ -59,6 +59,7 @@ class Scout:
         if serial:
             adb.set_serial(serial)
         self.serial = adb.serial()
+        self.home_id = config.current_home(self.serial)   # nhà đang chọn trên app → map + toạ độ đã học của nhà đó
         self.state = State.IDLE
         self.report = Report()
         self.graph: Map | None = None
@@ -91,7 +92,7 @@ class Scout:
         resp, observed = latest_response(config.EXPORTS)
         if not fresh and (warn := check_fresh(observed, config.MAX_AGE)):
             self.report.warnings.append(warn)
-        return parse_house(resp, config.HOME_ID, observed.isoformat())
+        return parse_house(resp, self.home_id, observed.isoformat())
 
     def load(self, fresh: bool) -> None:
         """IDLE: danh sách nhà/thiết bị → map + toạ độ đã học của máy này. Không chạm màn hình
@@ -110,7 +111,8 @@ class Scout:
         self.graph, glyphs = instantiate(load_docs(config.PATTERN_DIR, house.root_types), house)
         r.leaves = sorted(n.id for n in self.graph.nodes.values() if n.file.startswith("root_type/")
                           and any(e.to == n.id for e in self.graph.edges() if e.file == "core"))
-        self.res = Resolved(pdir / "huno_pattern", profile)
+        # toạ độ đã học theo từng nhà: cùng id màn (home, detailRoom[Chưa xếp phòng]) ở nhà khác là màn khác
+        self.res = Resolved(pdir / self.home_id / "huno_pattern", profile)
         r.pruned = self.res.prune(self.graph)
         self.res.apply_costs(self.graph)
         self.nav = Navigator(self.graph, self.res, Lexicon(config.I18N), glyphs)
@@ -126,6 +128,13 @@ class Scout:
         self.nav.stack = [x for x in old.stack if x in live]
         self.nav.scroll = {k: v for k, v in old.scroll.items() if k in live}
         self.nav.came_from = {k: v for k, v in old.came_from.items() if k in live and v in live}
+
+    def use_house(self, home_id: str, name: str) -> None:
+        """App vừa chuyển sang nhà khác: ghi lại cho máy này rồi dựng map của nhà đó (không chạm màn hình).
+        Sau đó chưa biết màn hiện tại → lần goto sau tự nhận ra (recover)."""
+        config.set_current_home(self.serial, home_id, name)
+        self.home_id = home_id
+        self.load(fresh=False)
 
     def start(self, fresh: bool = True) -> Report:
         self.load(fresh)

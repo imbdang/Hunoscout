@@ -1,0 +1,86 @@
+{
+  "resolved_for": {
+    "w": 1220,
+    "h": 2712,
+    "density": 480,
+    "font_scale": 1.0,
+    "app": "4.0.23"
+  },
+  "edges": {
+    "infoDevice@sswitch2v[Ổ cắm 3]>cycle/list[Ổ cắm 3]": {
+      "xy": [
+        608,
+        2010
+      ],
+      "content_y": 1980,
+      "dy": 30,
+      "cost_ms": 813,
+      "sig": "eb62cfe05f",
+      "verified": "2026-11-05T04:04:09+00:00"
+    },
+    "infoDevice@sswitch2v[Ổ cắm 3]>general_info/info[Ổ cắm 3]": {
+      "xy": [
+        608,
+        2438
+      ],
+      "content_y": 2692,
+      "dy": 30,
+      "cost_ms": 1822,
+      "sig": "c9e44dbaed",
+      "verified": "2026-11-05T04:04:13+00:00"
+    },
+    "infoDevice@sswitch2v[Ổ cắm 3]>history/list[Ổ cắm 3]": {
+      "xy": [
+        608,
+        2040
+      ],
+      "content_y": 2294,
+      "dy": 30,
+      "cost_ms": 821,
+      "sig": "a7752e8631",
+      "verified": "2026-11-05T04:04:14+00:00"
+    },
+    "infoDevice@sswitch2v[Ổ cắm 3]>share/list[Ổ cắm 3]": {
+      "xy": [
+        608,
+        658
+      ],
+      "content_y": 912,
+      "dy": 30,
+      "cost_ms": 657,
+      "sig": "6c9fcfbc5b",
+      "verified": "2026-11-05T04:04:16+00:00"
+    },
+    "infoDevice@sswitch2v[Ổ cắm 3]>timer/list[Ổ cắm 3]": {
+      "xy": [
+        608,
+        802
+      ],
+      "content_y": 1056,
+      "dy": 30,
+      "cost_ms": 601,
+      "sig": "1a05767e62",
+      "verified": "2026-11-05T04:04:18+00:00"
+    },
+    "infoDevice@sswitch2v[Ổ cắm 3]>detailRoom[Chưa xếp phòng]": {
+      "xy": null,
+      "cost_ms": 840,
+      "sig": "5521dc7523",
+      "verified": "2026-11-05T04:04:33+00:00"
+    }
+  },
+  "scroll": {
+    "infoDevice@sswitch2v[Ổ cắm 3]": 650
+  },
+  "nodes": {
+    "infoDevice@sswitch2v[Ổ cắm 3]": {
+      "text": "Chi tiết thiết bị",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "9339646774",
+      "verified": "2026-11-05T04:04:08+00:00"
+    }
+  }
+}

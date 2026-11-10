@@ -1,0 +1,221 @@
+{
+  "resolved_for": {
+    "w": 1220,
+    "h": 2712,
+    "density": 480,
+    "font_scale": 1.0,
+    "app": "4.0.23"
+  },
+  "edges": {
+    "linkIntermediate@scenario_sw6[Công tắc ngữ cảnh]>infoDevice@scenario_sw6[Công tắc ngữ cảnh]": {
+      "xy": null,
+      "cost_ms": 570,
+      "sig": "05c994a462",
+      "verified": "2026-11-05T06:44:20+00:00"
+    },
+    "infoDevice@scenario_sw6[Công tắc ngữ cảnh]>general_info/info[Công tắc ngữ cảnh]": {
+      "xy": [
+        608,
+        2438
+      ],
+      "content_y": 2752,
+      "dy": 30,
+      "cost_ms": 2109,
+      "sig": "7486a4264c",
+      "verified": "2026-11-05T06:44:22+00:00"
+    },
+    "button.sun@scenario_sw6[Công tắc ngữ cảnh]>infoDevice@scenario_sw6[Công tắc ngữ cảnh]": {
+      "xy": null,
+      "cost_ms": 622,
+      "sig": "05c994a462",
+      "verified": "2026-11-05T06:50:37+00:00"
+    },
+    "button.moon@scenario_sw6[Công tắc ngữ cảnh]>infoDevice@scenario_sw6[Công tắc ngữ cảnh]": {
+      "xy": null,
+      "cost_ms": 584,
+      "sig": "05c994a462",
+      "verified": "2026-11-05T06:50:38+00:00"
+    },
+    "button.star@scenario_sw6[Công tắc ngữ cảnh]>infoDevice@scenario_sw6[Công tắc ngữ cảnh]": {
+      "xy": null,
+      "cost_ms": 573,
+      "sig": "05c994a462",
+      "verified": "2026-11-05T06:50:39+00:00"
+    },
+    "infoDevice@scenario_sw6[Công tắc ngữ cảnh]>button.square@scenario_sw6[Công tắc ngữ cảnh]": {
+      "xy": [
+        608,
+        1915
+      ],
+      "content_y": 1885,
+      "dy": 30,
+      "cost_ms": 643,
+      "sig": "1c7a32e68e",
+      "verified": "2026-11-05T06:50:40+00:00"
+    },
+    "button.square@scenario_sw6[Công tắc ngữ cảnh]>infoDevice@scenario_sw6[Công tắc ngữ cảnh]": {
+      "xy": null,
+      "cost_ms": 582,
+      "sig": "05c994a462",
+      "verified": "2026-11-05T06:50:41+00:00"
+    },
+    "infoDevice@scenario_sw6[Công tắc ngữ cảnh]>button.triangle@scenario_sw6[Công tắc ngữ cảnh]": {
+      "xy": [
+        608,
+        2059
+      ],
+      "content_y": 2029,
+      "dy": 30,
+      "cost_ms": 677,
+      "sig": "f0bf829d74",
+      "verified": "2026-11-05T06:50:41+00:00"
+    },
+    "button.triangle@scenario_sw6[Công tắc ngữ cảnh]>infoDevice@scenario_sw6[Công tắc ngữ cảnh]": {
+      "xy": null,
+      "cost_ms": 593,
+      "sig": "05c994a462",
+      "verified": "2026-11-05T06:50:42+00:00"
+    },
+    "infoDevice@scenario_sw6[Công tắc ngữ cảnh]>button.hexagon@scenario_sw6[Công tắc ngữ cảnh]": {
+      "xy": [
+        608,
+        2203
+      ],
+      "content_y": 2173,
+      "dy": 30,
+      "cost_ms": 596,
+      "sig": "323689c935",
+      "verified": "2026-11-05T06:50:43+00:00"
+    },
+    "button.hexagon@scenario_sw6[Công tắc ngữ cảnh]>infoDevice@scenario_sw6[Công tắc ngữ cảnh]": {
+      "xy": null,
+      "cost_ms": 614,
+      "sig": "05c994a462",
+      "verified": "2026-11-05T06:50:43+00:00"
+    },
+    "infoDevice@scenario_sw6[Công tắc ngữ cảnh]>detailRoom[Chưa xếp phòng]": {
+      "xy": null,
+      "cost_ms": 516,
+      "sig": "5521dc7523",
+      "verified": "2026-11-05T06:54:46+00:00"
+    },
+    "infoDevice@scenario_sw6[Công tắc ngữ cảnh]>button.sun@scenario_sw6[Công tắc ngữ cảnh]": {
+      "xy": [
+        608,
+        1827
+      ],
+      "content_y": 1797,
+      "dy": 30,
+      "cost_ms": 686,
+      "sig": "7d2fe00c5c",
+      "verified": "2026-11-05T06:55:14+00:00"
+    },
+    "infoDevice@scenario_sw6[Công tắc ngữ cảnh]>linkIntermediate@scenario_sw6[Công tắc ngữ cảnh]": {
+      "xy": [
+        608,
+        1305
+      ],
+      "content_y": 1275,
+      "dy": 30,
+      "cost_ms": 629,
+      "sig": "710c100343",
+      "verified": "2026-11-05T07:02:53+00:00"
+    },
+    "infoDevice@scenario_sw6[Công tắc ngữ cảnh]>button.moon@scenario_sw6[Công tắc ngữ cảnh]": {
+      "xy": [
+        608,
+        1971
+      ],
+      "content_y": 1941,
+      "dy": 30,
+      "cost_ms": 1037,
+      "sig": "83c5ae0332",
+      "verified": "2026-11-05T07:13:34+00:00"
+    },
+    "infoDevice@scenario_sw6[Công tắc ngữ cảnh]>button.star@scenario_sw6[Công tắc ngữ cảnh]": {
+      "xy": [
+        608,
+        2115
+      ],
+      "content_y": 2085,
+      "dy": 30,
+      "cost_ms": 809,
+      "sig": "95af448b70",
+      "verified": "2026-11-06T03:17:26+00:00"
+    }
+  },
+  "nodes": {
+    "infoDevice@scenario_sw6[Công tắc ngữ cảnh]": {
+      "text": "Chi tiết thiết bị",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "cf39a1909d",
+      "verified": "2026-11-05T06:15:11+00:00"
+    },
+    "linkIntermediate@scenario_sw6[Công tắc ngữ cảnh]": {
+      "text": "Liên kết thiết bị trung gian",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "18d65bb7cf",
+      "verified": "2026-11-05T06:44:19+00:00"
+    },
+    "button.sun@scenario_sw6[Công tắc ngữ cảnh]": {
+      "text": "Nút mặt trời",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "aa4a637191",
+      "verified": "2026-11-05T06:50:36+00:00"
+    },
+    "button.moon@scenario_sw6[Công tắc ngữ cảnh]": {
+      "text": "Nút mặt trăng",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "157807b645",
+      "verified": "2026-11-05T06:50:37+00:00"
+    },
+    "button.star@scenario_sw6[Công tắc ngữ cảnh]": {
+      "text": "Nút ngôi sao",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "cfcc7b4e09",
+      "verified": "2026-11-05T06:50:39+00:00"
+    },
+    "button.square@scenario_sw6[Công tắc ngữ cảnh]": {
+      "text": "Nút vuông",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "8ba7e26783",
+      "verified": "2026-11-05T06:50:40+00:00"
+    },
+    "button.triangle@scenario_sw6[Công tắc ngữ cảnh]": {
+      "text": "Nút tam giác",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "59fc4f3f71",
+      "verified": "2026-11-05T06:50:41+00:00"
+    },
+    "button.hexagon@scenario_sw6[Công tắc ngữ cảnh]": {
+      "text": "Nút lục giác",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "56c37c1f86",
+      "verified": "2026-11-05T06:50:43+00:00"
+    }
+  }
+}

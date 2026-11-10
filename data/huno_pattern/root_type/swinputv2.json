@@ -71,7 +71,7 @@
       "anchor": {"key": "neo.contextButtonLink"},
       "anchors": ["neo.contextButtonLink", "listDevice"],
       "note": "title 'Liên kết công tắc ngữ cảnh', mục 'Danh sách thiết bị', mỗi công tắc ngữ cảnh đã liên kết là một thẻ (desc '<tên>, <phòng>, Pin: n%\\nPhiên bản: x'). Không hiện tên thiết bị đang xem → không có check, chưa phân biệt được instance khi nhà có >1 swinputv2.",
-      "danger": ["thẻ công tắc ngữ cảnh / nút xác nhận: xoá liên kết (getCmdDeleteLinkNeoR6) — chưa thử"],
+      "danger": ["thùng rác SVG bên phải thẻ → Xoá: gỡ NeoR6 (getCmdDeleteLinkNeoR6); trên sswitch2v 2026-11-05: xoá cả hành vi nút lẫn liên kết trung gian của NeoR6"],
       "controls": {
         "back":    {"gesture": "back", "kind": "nav", "to": "@back", "note": "Back hệ thống — đã thử 2026-11-03, về infoDevice"},
         "linked":  {"kind": "danger", "note": "thẻ thiết bị đã liên kết — chưa bấm"}

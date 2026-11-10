@@ -22,6 +22,11 @@ from .scroll import Area, reach, to_top
 log = logging.getLogger(__name__)
 
 
+
+def _inst(node_id: str | None) -> str | None:
+    """'timer/list[Ổ cắm 3]' → '[Ổ cắm 3]'."""
+    return node_id[node_id.index("["):] if node_id and node_id.endswith("]") and "[" in node_id else None
+
 class Lost(RuntimeError):
     """Không nhận ra màn / không thấy phần tử / không tới được đích."""
 
@@ -57,6 +62,8 @@ class Navigator:
         self._areas: dict[str, Area] = {}
         self._els: list[Element] | None = None   # cây UI hiện tại; None = đã thao tác, phải dump lại
         self.on_move: Callable[[Edge, str, int], None] | None = None   # gọi sau mỗi bước (trang web đo tốc độ)
+        self.ctx: str | None = None              # "[thiết bị]" của màn biết gần nhất — màn feature giống hệt nhau giữa
+                                                 # các thiết bị (hẹn giờ, tuần hoàn…) → nhận diện ưu tiên thiết bị này
 
     # ---- pointer ----
 
@@ -90,8 +97,10 @@ class Navigator:
         self._els = None
         els = self.elements()
         hits = [n for n in self.g.nodes.values() if n.explored and satisfied(n, els, self.lex)]
-        hits.sort(key=lambda n: n.check_text is None)   # instance có check_text cụ thể hơn
-        self.cur = hits[0].id if hits else None
+        ctx = _inst(self.cur) or self.ctx
+        hits.sort(key=lambda n: (n.check_text is None, ctx is None or _inst(n.id) != ctx))  # check_text cụ thể hơn,
+        self.cur = hits[0].id if hits else None                                           # rồi cùng thiết bị
+        self.ctx = _inst(self.cur) or self.ctx
         if self.cur is None or (self.stack and self.stack[-1] == self.cur):
             self.stack = []
         return self.cur

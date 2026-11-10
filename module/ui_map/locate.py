@@ -158,6 +158,15 @@ def title_element(elements: list[Element], node: Node, lex: Lexicon) -> Element 
     return min(hits, key=lambda e: (_clickable(elements, e) is not None, e.bounds[1]))
 
 
+def _header_row(elements: list[Element]) -> list[Element]:
+    """Nút bấm được cùng hàng với nút cao nhất màn (lệch mép trên ≤ 20 px), trái → phải."""
+    cl = [e for e in elements if e.clickable]
+    if not cl:
+        return []
+    top = min(e.bounds[1] for e in cl)
+    return sorted((e for e in cl if e.bounds[1] - top <= 20), key=lambda e: e.bounds[0])
+
+
 def target_selectors(target: Target, glyphs: dict[str, str]) -> list[dict]:
     """Target glyph → các selector thử lần lượt trên máy (dump uiautomator2 làm hỏng glyph ngoài BMP).
 
@@ -174,7 +183,7 @@ def device_selectors(target: Target, lex: Lexicon, glyphs: dict[str, str]) -> li
 
     Rỗng khi target cần lọc theo cây UI (`after` = nằm dưới tiêu đề mục) → phải dùng locate() trên dump.
     """
-    if target.after is not None:
+    if target.after is not None or target.header is not None:
         return []
     if target.glyph is not None:
         return target_selectors(target, glyphs)
@@ -198,6 +207,9 @@ def spec_selector(spec: dict, lex: Lexicon) -> dict:
 
 def locate(elements: list[Element], target: Target, glyphs: dict[str, str], lex: Lexicon) -> Element | None:
     """Phần tử bấm được ứng với target. None nếu không thấy, Ambiguous nếu nhiều hơn một."""
+    if target.header is not None:
+        row = _header_row(elements)
+        return row[target.header] if -len(row) <= target.header < len(row) else None
     if target.desc is not None:
         hits = [e for e in elements if _desc_match(e.desc, target.desc, target.match)]
     elif target.key is not None:

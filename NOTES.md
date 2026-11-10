@@ -298,3 +298,104 @@ Số liệu + kịch bản + dữ liệu thô: `conversation/2026-11-03-benchmar
   phiên/lượt chạy là sidebar ẩn được (☰).
 - MCP ghi thêm `status.busy = {tool, args, since}` lúc tool bắt đầu (xoá khi xong) để web biết agent đang làm gì.
 - Chú Claude: SVG tự vẽ (robot cam đất), không dùng logo.
+
+## 2026-11-05 — map Aptomat (`atmwifiv2`) + lượt "case dị"
+- Proxy: điện thoại (Wi-Fi 192.168.1.x) khác mạng máy tính (192.168.9.x) → `repack_apk.py proxy on` (Wi-Fi) làm app
+  mất mạng ("Lỗi tải dữ liệu" ở màn giá điện — lỗi môi trường, không phải app). Dùng `proxy on --usb` (adb reverse 8080).
+  Máy khởi động lại → mitm / monitor / proxy đều mất, phải bật lại theo REPACK.md.
+- `root_type/atmwifiv2.json`: infoDevice đủ dòng (cuộn ~2 lần) + 4 màn riêng `threshold` (SettingAtmVoltageScreen,
+  6 ngưỡng + hành động Không làm gì / Thông báo / Thông báo và tắt), `price` (SettingAtmMoneyScreen, Mức sinh hoạt 5 bậc /
+  Tự thiết lập 1 ô), `closingDate` (SettingAtmElectricalScreen, danh sách 'Chọn ngày'), `safeRepair` (route tạm).
+  Nối feature share / timer / cycle / history / general_info. Đi thử 13 màn: 0.5–4.4 s/bước, 2 lượt không lạc.
+  Sheet: Khoá điều khiển (Bật/Tắt/Huỷ), Trạng thái khi cấp điện (không có Huỷ), Hệ số hộ gia đình (Huỷ/Lưu lại);
+  sheet 'Chọn hành động' của ngưỡng: Back không đóng.
+- `confirm_turn` của Aptomat: code 4.0.20 (`f010198 onPressDevice`) — confirm_turn == '1' (SHOW_ASK_TURN_ON_OFF) → hỏi
+  rồi bật/tắt; khác → loại ATM mở màn đo điện (KEY_NAME_DETAIL_ELECTRIC_METER_SCREEN), KHÔNG bật/tắt. Ngược ghi chú
+  2026-11-03 ("confirm_turn=0 → tap = bật/tắt thật") — chưa thử thật (chạm ô có thể ngắt điện).
+- Lượt case dị: testcase `TestWorkspace/test/swinput/testcases/swinput/ca-di/CD01–08`, thư mục agent mới
+  `TestWorkspace/test/aptomat` (AT01–05); case chưa chạy được: `TestWorkspace/test/BACKLOG-ca-di.md`.
+
+## 2026-11-05 — nhiều nhà: đổi nhà + map theo từng nhà; ổ cắm `sswitch2v`
+- Tài khoản 752363 có 5 nhà (Nhà của Đằng 792334, Hunonic Center, Treo Wallpad, Homekit Pro 1113752, Dung test ble cty
+  — được chia sẻ, role 2). Response `listDeviceOfHomeSelect` có MỌI nhà + phòng nhưng CHỈ nhà đang chọn kèm thiết bị;
+  không có cờ "đang chọn" (request `suggest-context` mang `house_id` nhà hiện tại).
+- Nhà đang chọn của từng máy: `data/<serial>/home.json` (`config.current_home`, mặc định `HOME_ID`). Toạ độ đã học
+  theo từng nhà: `data/<serial>/<home_id>/huno_pattern/` (cùng id màn — home, detailRoom[Chưa xếp phòng] — ở nhà khác
+  là màn khác; `prune` trước đây sẽ xoá sạch map nhà kia). Map cũ của 2fc3878f đã chuyển sang `792334/`; .gitignore sửa
+  để commit được map theo nhà.
+- `actions/house.py`: `houses` (từ response đã lưu) + `switch_house`: Home → bấm tên nhà (desc "<tên>, .., , <tỉnh>")
+  → sheet "Quản lý nhà" (houseManagement; dòng nhà desc "<tên>, <địa chỉ>", nhà đang chọn có tick) → chọn = chuyển ngay
+  → bắt listDeviceOfHomeSelect mới qua MitmCapture → `Scout.use_house` dựng map nhà mới. MCP tool `houses`, `house_switch`.
+  Đo: 5.5–7.2 s/lần; vòng Homekit Pro → Nhà của Đằng → Homekit Pro, goto thiết bị mỗi nhà đều tới.
+- `sswitch2v` (Ổ cắm, nhà Homekit Pro): sửa pattern theo 4.0.23 — Back hệ thống, Lặp tuần hoàn = feature cycle (màn),
+  anchors thêm statusPower / generalInformation, thứ tự dòng. 9 màn đi được (0.5–3 s); 10 tool chỉ đọc chạy được.
+- Sửa `power-get`: trước lấy chữ "Đang bật/Đang tắt" ĐẦU TIÊN trên màn → trang đang cuộn (thẻ đầu khuất) đọc nhầm chữ phụ
+  "Đang tắt" của dòng "Thông báo khi thiết bị mất kết nối" → "off" sai. Giờ chỉ nhận chữ ngay dưới tên thiết bị.
+- Danh sách thiết bị trên server đổi trong lúc khám (Homekit Pro 6 → 2 thiết bị lúc 09:57 → 10:01; Aptomat không còn ở
+  Nhà của Đằng) — map luôn theo response mới nhất.
+
+## 2026-11-05 — map + action cấu hình thiết bị qua BLE
+- Xoá Ổ cắm (sswitch2v, Homekit Pro) → tự vào cấu hình → cấu hình lại qua BLE thành "Ổ cắm 3" (tên mặc định, thiết bị
+  mới trên server); 9 màn của nó đi được. API: deleteRoot → (bấm ô) warningMigrateDeviceRootConfigData → Tiếp theo:
+  addRoot → Hoàn thành: updateRoot + setDeviceSuggest → listDeviceOfHomeSelect.
+- Route (hằng số KEY_NAME_* trong `f007349`): listDeviceConfig (Thêm thiết bị), BluetoothConfig, smartConfig, apConfig,
+  LanConfig, configSelectRecoverDeviceView. Node core: `config.list` (cạnh home ↔), `config.ble.wifi / password /
+  recover / done` (không cạnh vào: chỉ action đi tới; control có `to` vào chúng làm discovery tưởng đi được → lỗi).
+- Nút + ở Home là SVG không chữ/desc/id → thêm `Target.header` (nút thứ n của hàng nút trên cùng, -1 = phải): tìm bằng
+  dump lần đầu, sau đó toạ độ đã học (~0.6 s).
+- `actions/config.py`: `nearby` (đọc ô mục xung quanh, cuộn tới 'Thêm thủ công'; thiếu `want` → Thử lại, tối đa 3 lượt),
+  `config_ble` (ô → wifi → mật khẩu → như mới / khôi phục → Hoàn thành → bắt danh sách mới, dựng lại map). MCP tool
+  `config_nearby`, `config_ble`; mật khẩu che `***` trong log / web.
+- Tên ô lúc quét = getDeviceTypeName(thiết bị) KHÔNG truyền số kênh → tên mesh "Premium/Luxury Switch *CH". Tên mặc định
+  từng root_type ghi trong spec TestWorkspace (chắc chắn 12 loại Wi-Fi + GACHwswitch, còn lại `[?]`).
+- Chưa chạy `config_ble` trọn vòng (cần xoá ổ cắm lần nữa); `nearby` + Thử lại đã chạy (lúc đó xung quanh trống).
+- Quyền tài khoản: `isUserAdmin(user)` = `role_id == '1'` (`f009804`); tài khoản test 752363 là ADMIN → map / test hiện
+  thấy cả dòng chỉ-admin (Cài Hệ số / Reset Hệ số Aptomat, Ngày sản xuất / ID…). Danh sách: TestWorkspace
+  `specs/feature/admin_only.md`. Tài khoản thường chỉ đăng nhập 1 máy cùng lúc; test góc nhìn user thường cần tài khoản
+  thứ 2 (chưa có).
+- NeoR6 (scenario_sw6) cấu hình qua MCP: `config_ble` cũ chỉ đi luồng Wi-Fi → hỏng ở 'Chọn loại cấu hình'. Thêm `mode`
+  (hub | direct), `name`, `room`; wifi/password thành tuỳ chọn; màn 'Lỗi cấu hình' và Hoàn thành không thoát (đọc
+  updateRoot status:false trong flows.jsonl) → ActionError. Node core: config.mode (GatewayConfigurationSelector),
+  config.smart.done ('Tìm thông minh', GatewayChildConfig), config.error. config.ble.done thêm anchor tiêu đề để không
+  trùng config.smart.done.
+- mitm.log ghi file có bộ đệm → đọc API theo flows.jsonl (không trễ). Không in req_body (có token_id).
+- Nghi lỗi NeoR6 'không thuộc sở hữu' sau timeout BLE (BACKLOG-ca-di.md); tắt BT điện thoại 0 / 0,5 s sau Tiếp theo → app
+  TIMEOUT sạch, không tái hiện được.
+- Map NeoR6 `root_type/scenario_sw6.json` (nhà Homekit Pro, 'Công tắc ngữ cảnh'): infoDevice, 6 màn nút (button.sun …
+  button.hexagon), linkIntermediate, general_info (feature có sẵn), + nhận màn button.chooseDevice / popup
+  button.tutorial. Popup 'Hoạt động nút nhấn' bật mỗi lần vào nút, Back không đóng → chặn navigator; người dùng chọn
+  bấm 'Không hiển thị lại' trên 2fc3878f. Đo: vào nút 0,6–1,5 s, liên kết trung gian 1,1 s, thông tin chung 1,6 s,
+  back 0,5 s. Toạ độ học ở phiên trước trong trang đang cuộn có lúc lệch → lạc 1 lần rồi tự học lại.
+- `nearby` (config_nearby / config_ble): có `want` thì đọc ô ngay lúc đang quét, thấy là trả (trước chờ hết lượt ~10 s).
+- NeoR6 action (`actions/neo.py`, MCP: neo-get, neo-link, neo-unlink, neo-button-set, neo-button-scenes,
+  neo-unlink-target trên thiết bị đích): đã chạy trọn vòng qua MCP 2026-11-05 — liên kết trung gian 6,7–8,1 s, gỡ 5,7 s,
+  gán điều khiển thiết bị 9,5 s, gán / bỏ ngữ cảnh 7,8 / 6,6 s, gỡ ở thiết bị đích 10,7 s. Lỗi đã sửa lúc thử: chữ trạng
+  thái lấy nhầm tiếng Anh (`ui.texts` đủ ngôn ngữ, sorted), node chooseDevice không có đường ra (bỏ node → navigator Back),
+  gỡ trung gian app ở lại màn. sswitch2v thêm control context_link + node contextLink (như swinputv2).
+- Ngữ cảnh chạy khi ấn: tab giữa (glyph flash) → popup giới thiệu 'Thư mục ngữ cảnh' (Bỏ qua) → nút góc phải → 'Thêm
+  ngữ cảnh chạy khi ấn' (Tên, Hành động + → Thêm độ trễ | Chọn thiết bị → ô thiết bị xoay Bật/Tắt → Xong, Biểu tượng,
+  Màu sắc) → Lưu ngữ cảnh (/v3/groupAction/add). Tạo tay 'NeoR6 test' (Ổ cắm 3: Tắt) ở Homekit Pro; chưa có map / action.
+- Bấm nút thật trên NeoR6 → ổ cắm đổi: CHƯA xác nhận (theo dõi 2,5 phút không thấy đổi; người dùng chưa xác nhận đã bấm).
+
+## 2026-11-06 — chạy song song nhiều case + đối chiếu theo giờ (HTTP / MQTT / lịch sử)
+- Module Input cấu hình lại vào nhà test Homekit Pro (1113752): "Module Input 6" id 4085773, root
+  HUN177261148728swinputv2N1 (cùng con "Công tắc" cũ). Phiên agent `TestWorkspace/test/swinput/sessions/261106`.
+- `history` (4.0.23): desc dòng "<tên> <sự kiện>, HH:MM:SS - DD/MM/YYYY" (4.0.19 "YYYY-MM-DD HH:MM:SS") → trước trả `[]`.
+  Thêm `since`: cuộn tới khi gặp sự kiện cũ hơn mốc. Chữ thấy: "bật bởi Đinh Bạch Đằng" (bấm app).
+- `power-set(state)` (needs control `power`): bấm Switch ở thẻ đầu màn chi tiết, chờ chữ Đang bật/tắt đổi (0.7–1.1 s);
+  hộp "Xác nhận bật/tắt thiết bị" (key textConfirm) → trả `dialog`, không bấm thêm.
+- Bật/tắt từ app chỉ đi MQTT (không HTTP): `{"swinputv2": 0, "act_id": 0, "action": 1|2, "u": 752363}` app→broker rồi
+  broker→app cùng giây. MQTT giải mã trong server MCP bằng `cryptography` (key/iv từ root_id = đoạn 3 của topic, như
+  HunonicMitm/decrypt_sdoor.py). Gói 105 có `pass` Wi-Fi → `_mask` che token / pass / sign / ssid.
+- `observations` trước lấy 300 ký tự đầu req_body — multipart có `token_id` ngay sau device_id → token lọt vào
+  steps.jsonl / web. Giờ `_fields` tách multipart thành dict + che, kèm response (status/message/data).
+- Tool `evidence(since, until, device, kind, path)`: HTTP + MQTT theo khoảng giờ (lọc theo id / root_id / tên thiết bị).
+- Song song: `case_start(claims=[{res, from, to}])` — server từ chối trùng res + chồng giờ (`_conflicts`); status
+  `active` = các case đang mở; mọi tool nhận `case` (bước ghi đúng case; 1 case mở thì tự gán). Web: khung "Song song"
+  (claims theo trục giờ, vạch đỏ = bây giờ), sidebar gọn (ngày dd/mm, bỏ phiên rỗng + lượt dừng chưa xong case nào).
+- `config.yaml houses_allowed`: house_switch / tool thiết bị / goto ngoài danh sách → PermissionError.
+- Navigator `where()`: màn feature giống hệt giữa các thiết bị (timer/cycle/history của Ổ cắm 3 và Module Input 6) →
+  ưu tiên instance của màn biết gần nhất (`nav.ctx`) — trước lấy hit đầu tiên, sau khi agent tự lái có thể nhận nhầm
+  thiết bị (lượt 082846 nhận `[Aptomat]`).
+- Điện thoại tắt màn sau 10 phút không chạm → tool "Lost app". Đã đặt `settings global stay_on_while_plugged_in 3`
+  (trả lại: 0).

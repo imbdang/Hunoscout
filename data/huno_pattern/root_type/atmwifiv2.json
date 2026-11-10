@@ -2,23 +2,101 @@
   "root_type": "atmwifiv2",
   "product": "Aptomat Wi-Fi v2",
   "status": "draft",
-  "source": "khám trên 2fc3878f ngày 2026-11-03 (thiết bị 'Aptomat'): hold ô thiết bị → 'Chi tiết thiết bị' (1 màn, không phải loại 2 màn)",
+  "source": "khám trên 2fc3878f ngày 2026-11-03 và 2026-11-05 (thiết bị 'Aptomat', app 4.0.23): hold ô thiết bị / deep link → 'Chi tiết thiết bị' (1 màn cuộn, menu SettingAtmInfoMenuView). TAP ô ở Home = bật/tắt thật (confirm_turn=0).",
   "entry": "infoDevice",
   "nodes": {
     "infoDevice": {
       "route": "infoDevice",
       "param": "device",
       "anchor": {"any": [{"key": "detailDevice"}, {"text": "{device.name}"}]},
-      "anchors": [["detailDevice", "renameDevice", "statusPower", "generalInformation"]],
+      "anchors": [["detailDevice", "renameDevice", "statusPower", "ATM.settingThreshold", "ATM.multiplierElectric", "generalInformation"]],
       "check": "{device.name}",
       "scroll": {"ref": {"key": "renameDevice"}},
-      "note_anchors": "Back từ màn con giữ nguyên độ cuộn → đầu (detailDevice/renameDevice), giữa (statusPower), cuối (generalInformation) đều phải nhận được; chỉ 2 mốc đầu trang thì Back từ Thông tin chung báo lạc (~18 s đi lại từ phòng)",
-      "note": "trang cuộn (ScrollView 293–2664). Đầu trang: tên + '1 kWh', Đổi tên, Phòng, Chia sẻ, Hẹn giờ, Liên kết QR, Thêm lối tắt, Trạng thái khi cấp điện, Khoá điều khiển, Chế độ sửa chữa an toàn, Lặp tuần hoàn, Lịch sử, Cài đặt ngưỡng, Cài đặt mức giá tiền điện, Ngày chốt số điện; Thông tin chung nằm dưới mép màn.",
+      "note_anchors": "Back từ màn con giữ nguyên độ cuộn → đầu (detailDevice/renameDevice), giữa (statusPower, Cài đặt ngưỡng, Hệ số hộ gia đình), cuối (generalInformation) đều phải nhận được",
+      "note": "trang cuộn (~2 lần kéo tới cuối). Thứ tự dòng: tên + 'n kWh', Đổi tên, Phòng, Chia sẻ, Hẹn giờ, Liên kết QR, Thêm lối tắt, Trạng thái khi cấp điện, Khoá điều khiển, Chế độ sửa chữa an toàn, Lặp tuần hoàn, Lịch sử, Cài đặt ngưỡng (chữ phụ '--°C / --W / --W / --A / --V / --V' khi chưa đặt), Cài đặt mức giá tiền điện, Ngày chốt số điện ('28 - Hàng tháng'), Hệ số hộ gia đình, Cảnh báo ngưỡng điện năng tiêu thụ, Xoá dữ liệu điện năng, Cài Hệ số, Reset Hệ số, Chế độ cân bằng số điện 2 công tơ, Thông báo khi thiết bị mất kết nối, Thông tin chung. Dòng sát mép dưới màn bấm không ăn → cuộn trước.",
+      "danger": [
+        "nút thùng rác góc phải header: xoá thiết bị",
+        "Xoá dữ liệu điện năng: xoá số liệu đo",
+        "Cài Hệ số / Reset Hệ số: hệ số hiệu chuẩn đo điện (admin)",
+        "Chế độ sửa chữa an toàn: kích hoạt = không cho bật aptomat"
+      ],
       "controls": {
-        "back":         {"gesture": "back", "kind": "nav", "to": "@back"},
-        "general_info": {"target": {"key": "generalInformation"}, "kind": "nav", "to": "feature:general_info", "route": "infoDeviceCommonView",
-                         "note": "dưới mép màn lúc mới vào → phải cuộn"},
-        "rows":         {"kind": "unknown", "note": "các dòng còn lại (share/timer/cycle/history dùng chung feature với swinputv2, ngưỡng/giá điện/ngày chốt riêng ATM) chưa nối cạnh — chưa khám"}
+        "back":          {"gesture": "back", "kind": "nav", "to": "@back"},
+        "delete":        {"kind": "danger", "effect": "xoá thiết bị", "note": "icon thùng rác header, không text/desc"},
+        "rename":        {"target": {"key": "renameDevice"}, "kind": "popup", "note": "showModalEditName — lưu = đổi tên thiết bị"},
+        "room":          {"target": {"key": "room"}, "kind": "popup", "note": "sheet Chọn phòng — chọn = POST /v3/device/updateRoot ngay (giống swinputv2)"},
+        "share":         {"target": {"key": "share"}, "kind": "nav", "to": "feature:share", "route": "KEY_NAME_SHARE_DEVICE"},
+        "timer":         {"target": {"key": "normalTimer"}, "kind": "nav", "to": "feature:timer", "route": "listAlarm"},
+        "qr_link":       {"target": {"text": "Liên kết QR"}, "kind": "nav", "to": "feature:qr_link", "route": "ScanQRLinkDevice", "note": "mở camera"},
+        "shortcut":      {"target": {"key": "shotcut"}, "kind": "external", "note": "Linking.openURL(deeplink) — rời app, tạo lối tắt màn hình chính"},
+        "power_state":   {"target": {"key": "statusPower"}, "kind": "popup", "note": "sheet 'Trạng thái khi cấp điện': Giữ nguyên / Bật / Tắt, KHÔNG có Huỷ — chọn = gửi lệnh cấu hình (đóng mà không đổi: chọn lại giá trị đang có)"},
+        "lock_app":      {"target": {"key": "ATM.lockOnApp"}, "kind": "popup", "note": "sheet 'Khoá điều khiển': Bật / Tắt / Huỷ — chọn = gửi lệnh. Chữ phụ dòng: Bật/Tắt"},
+        "safe_repair":   {"target": {"key": "ATM.lock"}, "kind": "nav", "to": "safeRepair", "note": "màn giải thích + ô 'Tôi đã hiểu'; chữ phụ dòng 'Không kích hoạt'"},
+        "repeat":        {"target": {"key": "periodicallyRepeat"}, "kind": "nav", "to": "feature:cycle", "route": "KEY_NAME_TIMER_LOOP_LIST_SCREEN"},
+        "history":       {"target": {"key": "doorHistory"}, "kind": "nav", "to": "feature:history", "route": "KEY_NAME_SWITCH_HISTORY"},
+        "threshold":     {"target": {"key": "ATM.settingThreshold"}, "kind": "nav", "to": "threshold", "route": "SettingAtmVoltageScreen"},
+        "price":         {"target": {"key": "ATM.settingMoney"}, "kind": "nav", "to": "price", "route": "SettingAtmMoneyScreen", "note": "chữ phụ dòng = loại giá ('Mức sinh hoạt' / 'Tự thiết lập')"},
+        "closing_date":  {"target": {"key": "timeViewElectric"}, "kind": "nav", "to": "closingDate", "route": "SettingAtmElectricalScreen", "note": "chữ phụ '28 - Hàng tháng'"},
+        "multiplier":    {"target": {"key": "ATM.multiplierElectric"}, "kind": "popup", "note": "hộp 'Cài hệ số hộ gia đình' (ATM.multiplierSetting): nhãn 'Hệ số > 0', ô số, Huỷ | Lưu lại = POST multiplier"},
+        "notify_used":   {"target": {"key": "ATM.notifyElectricUsed"}, "kind": "unknown", "note": "Cảnh báo ngưỡng điện năng tiêu thụ, chữ phụ 'Chưa cài' — chưa mở"},
+        "delete_data":   {"target": {"key": "ATM.deleteElectric"}, "kind": "danger", "effect": "xoá dữ liệu điện năng"},
+        "calib":         {"target": {"text": "Cài Hệ số"}, "kind": "danger", "effect": "đổi hệ số hiệu chuẩn (chữ phụ 1024)", "note": "chữ viết cứng"},
+        "calib_reset":   {"target": {"text": "Reset Hệ số"}, "kind": "danger", "effect": "đặt lại hệ số hiệu chuẩn", "note": "chữ viết cứng"},
+        "dual_meter":    {"target": {"key": "ElMeter.dualMeterBalanceMode"}, "kind": "unknown", "note": "Chế độ cân bằng số điện 2 công tơ, chữ phụ 'Chưa liên kết' — chưa mở"},
+        "notify_offline":{"target": {"key": "notifyDeviceOff"}, "kind": "popup", "note": "sheet bật/tắt thông báo mất kết nối"},
+        "general_info":  {"target": {"key": "generalInformation"}, "kind": "nav", "to": "feature:general_info", "route": "infoDeviceCommonView", "note": "cuối trang → phải cuộn"}
+      }
+    },
+    "threshold": {
+      "route": "SettingAtmVoltageScreen",
+      "param": "device",
+      "anchor": {"any": [{"key": "overTemp"}, {"key": "lowV"}]},
+      "anchors": [["overTemp", "overP", "lowV"]],
+      "note": "title 'ATM - Cài đặt ngưỡng' (ghép, không tên thiết bị → không có check). 6 mục, mỗi mục = nhãn có khoảng + ô số (rỗng khi chưa đặt, placeholder = nhãn) + dòng hành động: Quá nhiệt độ 1–60°C, Quá công suất 100–20000W, Dưới ngưỡng công suất 1–20000W, Quá dòng 1–80A, Quá áp 110–260V, Thấp áp 80–200V. Cuộn 1 lần tới 'Lưu lại'.",
+      "danger": ["Lưu lại: ghi ngưỡng xuống aptomat — hành động 'Thông báo và tắt' có thể ngắt điện"],
+      "controls": {
+        "back":   {"gesture": "back", "kind": "nav", "to": "@back"},
+        "fields": {"kind": "form", "note": "ô số: kiểm tra lúc gõ (0, >max, <min → lỗi 'ATM.outOfRange'); rỗng/'-'/'.' KHÔNG báo lỗi (f047762, case dị #2)"},
+        "action": {"target": {"key": "selectAction"}, "kind": "popup", "note": "sheet 'Chọn hành động': Không làm gì / Thông báo / Thông báo và tắt; Back không đóng → chọn lại giá trị đang có"},
+        "save":   {"target": {"key": "save"}, "kind": "danger", "effect": "ghi ngưỡng + hành động xuống aptomat"}
+      }
+    },
+    "price": {
+      "route": "SettingAtmMoneyScreen",
+      "param": "device",
+      "anchor": {"key": "ATM.typeCustomer"},
+      "anchors": ["ATM.typeCustomer"],
+      "note": "title = 'Cài đặt mức giá tiền điện'. Ô 'Mức giá tiền điện' → sheet 'Chọn trạng thái': Tự thiết lập / Mức sinh hoạt. Mức sinh hoạt: bảng 5 bậc EVN (1,901 / 2,289 / 2,894 / 3,456 / 3,844 đ/kWh). Tự thiết lập: 1 ô 'Giá (đ/kWh)' (đang 3000). Proxy hỏng → flash 'Cảnh báo, Lỗi tải dữ liệu'.",
+      "danger": ["Lưu lại: đổi giá điện (addElectricityRate)"],
+      "controls": {
+        "back": {"gesture": "back", "kind": "nav", "to": "@back"},
+        "type": {"target": {"key": "ATM.typeCustomer"}, "kind": "popup", "note": "sheet Chọn trạng thái — chỉ đổi form, chưa lưu"},
+        "save": {"target": {"key": "save"}, "kind": "danger", "effect": "đổi giá điện"}
+      }
+    },
+    "closingDate": {
+      "route": "SettingAtmElectricalScreen",
+      "param": "device",
+      "anchor": {"key": "timeViewElectricDescription"},
+      "anchors": ["timeViewElectricDescription"],
+      "note": "title 'Ngày chốt số điện'. Dòng 'Ngày chốt số điện  28' → danh sách native 'Chọn ngày' 1–31 (Back đóng). Lưu lại cuối màn.",
+      "danger": ["Lưu lại: đổi ngày chốt số điện (kỳ tính tiền)"],
+      "controls": {
+        "back": {"gesture": "back", "kind": "nav", "to": "@back"},
+        "day":  {"target": {"key": "timeViewElectric"}, "kind": "popup", "note": "danh sách 'Chọn ngày' — chỉ đổi form"},
+        "save": {"target": {"key": "save"}, "kind": "danger", "effect": "đổi ngày chốt"}
+      }
+    },
+    "safeRepair": {
+      "route": "SafeRepairMode",
+      "param": "device",
+      "anchor": {"key": "ATM.lockUnderstand"},
+      "anchors": ["ATM.lockUnderstand"],
+      "note": "title 'Chế độ sửa chữa an toàn', đoạn giải thích (không cho phép bật khi sửa điện) + ô tick 'Tôi đã hiểu'. Route thật chưa tra (tên ở đây là tạm).",
+      "danger": ["kích hoạt chế độ sửa chữa an toàn: aptomat không bật được"],
+      "controls": {
+        "back":       {"gesture": "back", "kind": "nav", "to": "@back"},
+        "understand": {"target": {"key": "ATM.lockUnderstand"}, "kind": "danger", "effect": "bước xác nhận kích hoạt"}
       }
     }
   }

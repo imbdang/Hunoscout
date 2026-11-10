@@ -15,6 +15,7 @@ class Target:
     glyph: str | None = None   # tên icon font, tra codepoint trong pattern
     match: str = "exact"       # exact | prefix | part | contains — áp cho desc
     after: str | None = None   # i18n key tiêu đề mục: chỉ tìm phần tử nằm dưới nó
+    header: int | None = None  # nút thứ n (0 = trái, -1 = phải) của hàng nút trên cùng — icon SVG không chữ/desc/id
 
 
 @dataclass(slots=True)

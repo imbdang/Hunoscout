@@ -1,0 +1,91 @@
+{
+  "resolved_for": {
+    "w": 1220,
+    "h": 2712,
+    "density": 480,
+    "font_scale": 1.0,
+    "app": "4.0.23"
+  },
+  "edges": {
+    "timer/list[Ổ cắm 3]>timer/add[Ổ cắm 3]": {
+      "xy": [
+        1148,
+        207
+      ],
+      "cost_ms": 713,
+      "sig": "52a0479617",
+      "verified": "2026-11-05T04:04:19+00:00"
+    },
+    "timer/add[Ổ cắm 3]>timer/list[Ổ cắm 3]": {
+      "xy": null,
+      "cost_ms": 439,
+      "sig": "f062fdf0a0",
+      "verified": "2026-11-05T04:04:20+00:00"
+    },
+    "timer/list[Ổ cắm 3]>infoDevice@sswitch2v[Ổ cắm 3]": {
+      "xy": null,
+      "cost_ms": 599,
+      "sig": "f3390782b9",
+      "verified": "2026-11-05T04:04:20+00:00"
+    },
+    "timer/list[Module Input 6]>infoDevice@swinputv2[Module Input 6]": {
+      "xy": null,
+      "cost_ms": 621,
+      "sig": "fe036692a7",
+      "verified": "2026-11-06T01:52:33+00:00"
+    },
+    "timer/add[Module Input 6]>timer/list[Module Input 6]": {
+      "xy": null,
+      "cost_ms": 548,
+      "sig": "bace68a72d",
+      "verified": "2026-11-06T02:14:01+00:00"
+    },
+    "timer/list[Module Input 6]>timer/add[Module Input 6]": {
+      "xy": [
+        1148,
+        207
+      ],
+      "cost_ms": 849,
+      "sig": "21c06d58bb",
+      "verified": "2026-11-06T03:51:12+00:00"
+    }
+  },
+  "nodes": {
+    "timer/list[Ổ cắm 3]": {
+      "text": "Hẹn giờ Ổ cắm 3",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "18ded22e94",
+      "verified": "2026-11-05T04:04:18+00:00"
+    },
+    "timer/add[Ổ cắm 3]": {
+      "text": "Thêm hẹn giờ Ổ cắm 3",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "ad9dca1219",
+      "verified": "2026-11-05T04:04:19+00:00"
+    },
+    "timer/list[Module Input 6]": {
+      "text": "Hẹn giờ Module Input 6",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "9ec383fe88",
+      "verified": "2026-11-06T01:52:27+00:00"
+    },
+    "timer/add[Module Input 6]": {
+      "text": "Thêm hẹn giờ Module Input 6",
+      "band": [
+        173,
+        243
+      ],
+      "sig": "4db52f11d9",
+      "verified": "2026-11-06T01:57:55+00:00"
+    }
+  }
+}
